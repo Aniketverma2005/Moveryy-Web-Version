@@ -17,6 +17,7 @@ export const store = configureStore({
     reviews: reviewsReducer,
     users: usersReducer,
     payments: paymentsReducer,
+    // jsknjbj
     
   },
 });
