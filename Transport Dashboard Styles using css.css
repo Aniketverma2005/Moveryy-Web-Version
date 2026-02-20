@@ -1,0 +1,405 @@
+/* Transport Dashboard Styles - Clean & Human-Friendly */
+
+/* Color palette - easy to understand and modify */
+:root {
+  /* Main brand colors */
+  --primary-blue: #1DA1F2;
+  --light-blue: #E8F5FD;
+  
+  /* Text colors */
+  --text-dark: #1A1A1A;
+  --text-gray: #657786;
+  
+  /* Background colors */
+  --bg-light: #F7F9FA;
+  --white: #FFFFFF;
+  
+  /* Border and divider colors */
+  --border-color: #E1E8ED;
+}
+
+/* Reset and base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+body {
+  background-color: var(--white);
+  color: var(--text-dark);
+}
+
+/* Utility classes for common styling */
+.text-blue { 
+  color: var(--primary-blue); 
+}
+
+.bold { 
+  font-weight: 600; 
+}
+
+.label { 
+  font-size: 12px; 
+  color: var(--text-gray); 
+  margin-bottom: 4px; 
+}
+
+.value { 
+  font-size: 14px; 
+  color: var(--text-dark); 
+}
+
+/* Header section - top navigation bar */
+.top-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--white);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* Left side of header - logo and status */
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  background-color: var(--primary-blue);
+  color: var(--white);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.logo-text {
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.status-badge {
+  background-color: var(--primary-blue);
+  color: var(--white);
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+  margin-left: 8px;
+}
+
+/* Right side of header - notifications */
+.nav-right .notification {
+  position: relative;
+  font-size: 20px;
+  color: var(--primary-blue);
+  cursor: pointer;
+}
+
+.nav-right .badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background-color: var(--primary-blue);
+  color: var(--white);
+  font-size: 10px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+/* Main layout container */
+.app-container {
+  display: flex;
+  min-height: calc(100vh - 65px);
+}
+
+/* Side navigation menu */
+.sidebar {
+  width: 250px;
+  padding: 24px 16px;
+  border-right: 1px solid var(--border-color);
+  background-color: var(--white);
+}
+
+.side-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  text-decoration: none;
+  color: var(--text-gray);
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.menu-item i { 
+  width: 20px; 
+  font-size: 18px; 
+}
+
+/* Menu item hover and active states */
+.menu-item:hover { 
+  background-color: var(--bg-light); 
+  color: var(--primary-blue); 
+}
+
+.menu-item.active { 
+  background-color: var(--light-blue); 
+  color: var(--primary-blue); 
+}
+
+/* Main content area */
+.main-content {
+  flex: 1;
+  padding: 32px 48px;
+  background-color: #FAFAFA;
+}
+
+/* Welcome section at the top */
+.welcome-section { 
+  margin-bottom: 32px; 
+}
+
+.welcome-section p { 
+  color: var(--text-gray); 
+  font-size: 14px; 
+  margin-bottom: 4px;
+}
+
+.welcome-section h1 { 
+  font-size: 24px; 
+  font-weight: 600;
+}
+
+/* Statistics cards grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 40px;
+}
+
+.stat-card {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+}
+
+.stat-info p { 
+  font-size: 13px; 
+  color: var(--text-gray); 
+  margin-bottom: 8px; 
+}
+
+.stat-info h2 { 
+  font-size: 24px; 
+  font-weight: 600; 
+}
+
+.stat-icon {
+  width: 40px;
+  height: 40px;
+  background-color: var(--light-blue);
+  color: var(--primary-blue);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+/* Orders section header */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.section-header h2 { 
+  font-size: 18px; 
+  font-weight: 600; 
+}
+
+.new-badge {
+  background-color: var(--light-blue);
+  color: var(--primary-blue);
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* Orders grid layout */
+.orders-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+}
+
+/* Individual order cards */
+.order-card {
+  background: var(--white);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+  transition: transform 0.2s ease;
+}
+
+.order-card:hover {
+  transform: translateY(-2px);
+}
+
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+/* Route information with connecting line */
+.route-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+/* Visual line connecting pickup and dropoff points */
+.route-info::before {
+  content: '';
+  position: absolute;
+  left: 6px;
+  top: 20px;
+  bottom: 20px;
+  width: 2px;
+  background-color: var(--border-color);
+  z-index: 1;
+}
+
+.route-point {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  z-index: 2;
+  background: var(--white);
+}
+
+.route-point i { 
+  margin-top: 4px; 
+  font-size: 14px; 
+}
+
+/* Order details in a grid */
+.order-details-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* Action buttons */
+.card-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.btn {
+  padding: 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s ease;
+  border: none;
+}
+
+.btn-primary {
+  background-color: var(--primary-blue);
+  color: var(--white);
+}
+
+.btn-primary:hover { 
+  background-color: #1a8bcc; 
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--text-dark);
+  border: 1px solid var(--border-color);
+}
+
+.btn-outline:hover { 
+  background-color: var(--bg-light); 
+  transform: translateY(-1px);
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  .app-container {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    padding: 16px;
+  }
+  
+  .side-menu {
+    flex-direction: row;
+    overflow-x: auto;
+  }
+  
+  .main-content {
+    padding: 16px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .orders-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .order-details-grid {
+    grid-template-columns: 1fr;
+  }
+}
