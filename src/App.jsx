@@ -3,10 +3,9 @@ import './App.css'
 import { Route, Routes, Navigate } from 'react-router-dom';
 import UserLayout from './Layout/UserLayout.jsx';
 import AdminLayout from './Layout/Adminlayout.jsx';
+import Transport from './Layout/Transport.jsx';
 import Home from './Pages/User/Home.jsx';
-import Browse from './Pages/User/Compare.jsx';
 import ServiceDetail from './Pages/User/ServiceDetails.jsx';
-import Booking from './Pages/User/Booking.jsx';
 import Dashboard from './Pages/Admin/Dashboard.jsx';
 import Users from './Pages/Admin/Users.jsx';
 import Payments from './Pages/Admin/Payments.jsx';
@@ -16,12 +15,18 @@ import Analytics from './Pages/Admin/Analytics.jsx';
 import Profile from './Pages/Admin/Profile.jsx';
 import Review from './Pages/Admin/Review.jsx';
 import Settings from './Pages/Admin/Settings.jsx';
-import { Provider } from 'react-redux';
 import BookingsPage from './Pages/User/Booking.jsx';
 import ComparePage from './Pages/User/Compare.jsx';
 import MoverSearchPage from './Pages/User/House_Moving.jsx';
 import CarTransportSearchPage from './Pages/User/CarTransportsearch.jsx';
 import OfficeRelocationSearchPage from './Pages/User/OfficeShift.jsx';
+
+// Transport/Driver Pages
+import TransportHome from './Pages/Transport/Home.jsx';
+import TransportBookings from './Pages/Transport/Bookings.jsx';
+import TransportEarnings from './Pages/Transport/Earnings.jsx';
+import TransportRatings from './Pages/Transport/Ratings.jsx';
+import TransportProfile from './Pages/Transport/Profile.jsx';
 
 
 function App() {
@@ -51,6 +56,15 @@ function App() {
 				<Route path="profile" element={<Profile />} />
 				<Route path="reviews" element={<Review />} />
 				<Route path="settings" element={<Settings />} />
+			</Route>
+
+			{/* Transport/Driver Dashboard Routes */}
+			<Route path="/transport/" element={<Transport />}> 
+				<Route index element={<TransportHome />} />
+				<Route path="bookings" element={<TransportBookings />} />
+				<Route path="earnings" element={<TransportEarnings />} />
+				<Route path="ratings" element={<TransportRatings />} />
+				<Route path="profile" element={<TransportProfile />} />
 			</Route>
 
 			<Route path="*" element={<Navigate to="/" replace />} />
