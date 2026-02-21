@@ -14,7 +14,7 @@ const Earnings = () => {
             <span className="text-green-600 text-2xl">💰</span>
           </div>
           <h3 className="text-lg font-semibold text-gray-800 mb-2">Earnings Dashboard</h3>
-          <p className="text-gray-600">We will build a Real Estate Empire of 10000crores in next 10 to 15 years</p>
+          <p className="text-gray-600">Your earnings tracking interface will be implemented here.</p>
         </div>
       </div>
     </div>
