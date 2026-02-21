@@ -89,18 +89,19 @@ const DRIVER_INFO = {
  * @param {Function} onNavigate - Called when user clicks (used to close mobile menu)
  */
 const SidebarItem = ({ item, isHomePage = false, onNavigate }) => {
-    // Safety check - make sure we have the required data
-    if (!item || !item.path || !item.name) {
-        console.warn('SidebarItem: Missing required item data', item);
-        return null;
-    }
-
+    // Handle click events - defined before any early returns
     const handleClick = useCallback(() => {
         // Close mobile sidebar when navigating
         if (onNavigate) {
             onNavigate();
         }
     }, [onNavigate]);
+
+    // Safety check - make sure we have the required data
+    if (!item || !item.path || !item.name) {
+        console.warn('SidebarItem: Missing required item data', item);
+        return null;
+    }
 
     return (
         <NavLink

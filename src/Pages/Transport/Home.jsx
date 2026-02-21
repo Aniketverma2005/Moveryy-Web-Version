@@ -26,7 +26,7 @@ import { MdInfo, MdTrendingUp, MdStar, MdLocationOn, MdSchedule, MdHome, MdBusin
  * - Add real-time updates for live stats
  */
 const DRIVER_STATS = {
-  driverName: "John Doe", // Would come from user authentication
+  driverName: "Navi", // Would come from user authentication
   todaysOrders: 2, // Orders completed today
   monthlyEarnings: "₹4500", // Total earnings this month
   currentRating: 4.7, // Average customer rating
@@ -54,13 +54,13 @@ const NEW_ORDERS = [
     estimatedDuration: "2-3 hours", // How long the job might take
     estimatedEarnings: "₹800", // What the driver would earn
     pickup: {
-      location: "Sandra Kurla Complex, Mumbai",
+      location: "Sector 51, Noida",
       type: "pickup",
       contactName: "Priya Sharma", // Customer contact
       contactPhone: "+91 98765 43210"
     },
     dropoff: {
-      location: "Andheri West, Mumbai", 
+      location: "Omicron 1, Greater Noida", 
       type: "dropoff",
       distance: "12.5 km" // Distance from pickup
     },
@@ -78,13 +78,13 @@ const NEW_ORDERS = [
     estimatedDuration: "1-2 hours",
     estimatedEarnings: "₹600",
     pickup: {
-      location: "MG Road, Bengaluru",
+      location: "Sector 62, Noida",
       type: "pickup",
       contactName: "Rajesh Kumar",
       contactPhone: "+91 87654 32109"
     },
     dropoff: {
-      location: "Koramangala, Bengaluru",
+      location: "Cyber City, Gurugram",
       type: "dropoff",
       distance: "8.2 km"
     },
@@ -274,25 +274,16 @@ const OrderCard = ({
   onViewDetails, 
   isAccepting = false 
 }) => {
-  // Safety check - make sure we have valid order data
-  if (!order || !order.id) {
-    return (
-      <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-        <p className="text-gray-500 text-center">Order data unavailable</p>
-      </div>
-    );
-  }
-
-  // Handle accepting an order
+  // Handle accepting an order - defined before any early returns
   const handleAcceptOrder = useCallback(async () => {
     if (isAccepting) return; // Prevent double-clicks
     
     try {
       // In a real app, this would call an API to accept the order
-      console.log(`🚚 Driver accepting order ${order.id}`);
-      console.log(`📍 Pickup: ${order.pickup?.location}`);
-      console.log(`🏁 Dropoff: ${order.dropoff?.location}`);
-      console.log(`💰 Estimated earnings: ${order.estimatedEarnings}`);
+      console.log(`🚚 Driver accepting order ${order?.id}`);
+      console.log(`📍 Pickup: ${order?.pickup?.location}`);
+      console.log(`🏁 Dropoff: ${order?.dropoff?.location}`);
+      console.log(`💰 Estimated earnings: ${order?.estimatedEarnings}`);
       
       // Call the parent component's accept handler if provided
       if (onAccept) {
@@ -304,10 +295,10 @@ const OrderCard = ({
     }
   }, [order, onAccept, isAccepting]);
 
-  // Handle viewing order details
+  // Handle viewing order details - defined before any early returns
   const handleViewDetails = useCallback(() => {
     try {
-      console.log(`👀 Viewing details for order ${order.id}`);
+      console.log(`👀 Viewing details for order ${order?.id}`);
       
       // In a real app, this would navigate to order details page
       if (onViewDetails) {
@@ -317,6 +308,15 @@ const OrderCard = ({
       console.error('Failed to view order details:', error);
     }
   }, [order, onViewDetails]);
+
+  // Safety check - make sure we have valid order data
+  if (!order || !order.id) {
+    return (
+      <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+        <p className="text-gray-500 text-center">Order data unavailable</p>
+      </div>
+    );
+  }
 
   // Determine priority styling
   const getPriorityStyles = (priority) => {
@@ -445,8 +445,8 @@ const OrderCard = ({
  */
 const Home = () => {
   // State management for the dashboard
-  const [isLoadingStats, setIsLoadingStats] = useState(false);
-  const [isLoadingOrders, setIsLoadingOrders] = useState(false);
+  const [isLoadingStats] = useState(false); // Removed unused setter
+  const [isLoadingOrders] = useState(false); // Removed unused setter
   const [acceptingOrderId, setAcceptingOrderId] = useState(null);
   const [error, setError] = useState(null);
 
