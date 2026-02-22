@@ -1,13 +1,30 @@
 {
-  "name": "moverry",
+  "name": "moveryy",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
+  "description": "Complete moving and transport platform with multi-user dashboards",
+  "keywords": ["moving", "transport", "logistics", "react", "vite", "tailwind"],
+  "author": "Moveryy Team",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "lint:fix": "eslint . --fix",
+    "preview": "vite preview",
+    "deploy": "npm run build && npm run deploy:vercel",
+    "deploy:vercel": "vercel --prod",
+    "deploy:netlify": "netlify deploy --prod --dir=dist",
+    "docker:build": "docker build -t moveryy-web:latest .",
+    "docker:run": "docker run -p 80:80 moveryy-web:latest",
+    "docker:compose": "docker-compose up -d",
+    "docker:compose:down": "docker-compose down",
+    "clean": "rm -rf dist node_modules",
+    "reinstall": "npm run clean && npm install",
+    "analyze": "npm run build && npx vite-bundle-analyzer dist/stats.html",
+    "check-updates": "npx npm-check-updates",
+    "security-audit": "npm audit --audit-level high"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.9.0",
@@ -30,5 +47,21 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
     "vite": "^7.1.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }

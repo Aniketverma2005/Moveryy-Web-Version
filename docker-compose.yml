@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # Frontend Application
+  moveryy-web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    environment:
+      - NODE_ENV=production
+    restart: unless-stopped
+    networks:
+      - moveryy-network
+    depends_on:
+      - backend
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Backend API (placeholder - replace with your actual backend)
+  backend:
+    image: node:18-alpine
+    ports:
+      - "3001:3001"
+    environment:
+      - NODE_ENV=production
+      - PORT=3001
+    networks:
+      - moveryy-network
+    restart: unless-stopped
+    # volumes:
+    #   - ./backend:/app
+    # working_dir: /app
+    # command: ["npm", "start"]
+
+  # Database (placeholder - uncomment and configure as needed)
+  # database:
+  #   image: postgres:15-alpine
+  #   environment:
+  #     POSTGRES_DB: moveryy
+  #     POSTGRES_USER: moveryy_user
+  #     POSTGRES_PASSWORD: secure_password
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   networks:
+  #     - moveryy-network
+  #   restart: unless-stopped
+
+  # Redis for caching (optional)
+  # redis:
+  #   image: redis:7-alpine
+  #   networks:
+  #     - moveryy-network
+  #   restart: unless-stopped
+
+networks:
+  moveryy-network:
+    driver: bridge
+
+# volumes:
+#   postgres_data:
