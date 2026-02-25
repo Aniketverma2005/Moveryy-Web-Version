@@ -102,7 +102,7 @@ const Bookings = () => {
           {/* Back Button */}
           <button
             onClick={() => setSelectedBooking(null)}
-            className="flex items-center text-blue-600 hover:text-blue-800 mb-6"
+            className="flex items-center text-blue-600 hover:text-blue-700 mb-6"
           >
             <span className="mr-2">←</span> Back to Bookings
           </button>
@@ -140,7 +140,7 @@ const Bookings = () => {
 
               {/* Drop-off */}
               <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
+                <div className="w-6 h-6 bg-red-400 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
                   <div className="w-2 h-2 bg-white rounded-full"></div>
                 </div>
                 <div>
@@ -185,10 +185,10 @@ const Bookings = () => {
             <button className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg font-medium text-lg hover:bg-blue-700 transition-colors shadow-sm">
               🚗 Arrived at Pickup
             </button>
-            <button className="w-full bg-blue-500 text-white py-4 px-6 rounded-lg font-medium text-lg hover:bg-blue-600 transition-colors shadow-sm">
+            <button className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg font-medium text-lg hover:bg-blue-700 transition-colors shadow-sm">
               🚀 Start Trip
             </button>
-            <button className="w-full bg-red-500 text-white py-4 px-6 rounded-lg font-medium text-lg hover:bg-red-600 transition-colors shadow-sm">
+            <button className="w-full bg-red-400 text-white py-4 px-6 rounded-lg font-medium text-lg hover:bg-red-500 transition-colors shadow-sm">
               ❌ Cancel Trip
             </button>
             <button className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg font-medium text-lg hover:bg-blue-700 transition-colors shadow-sm">
@@ -266,7 +266,7 @@ const Bookings = () => {
 
                       {/* Destination */}
                       <div className="flex items-center space-x-3">
-                        <div className="w-3 h-3 bg-red-500 rounded-full flex-shrink-0"></div>
+                        <div className="w-3 h-3 bg-red-400 rounded-full flex-shrink-0"></div>
                         <div className="flex-1">
                           <p className="text-sm font-medium text-gray-900">{booking.dropoff}</p>
                         </div>
@@ -277,7 +277,7 @@ const Bookings = () => {
                     <div className="mt-3">
                       <button
                         onClick={() => setSelectedBooking(booking)}
-                        className="text-blue-600 hover:text-blue-800 text-sm underline bg-transparent border-none cursor-pointer"
+                        className="text-blue-600 hover:text-blue-700 text-sm underline bg-transparent border-none cursor-pointer"
                       >
                         Open
                       </button>
@@ -293,7 +293,7 @@ const Bookings = () => {
                             </span>
                           )}
                           {booking.reason && (
-                            <span className="text-sm text-red-600">
+                            <span className="text-sm text-red-500">
                               Reason: {booking.reason}
                             </span>
                           )}
@@ -301,7 +301,7 @@ const Bookings = () => {
 
                         {activeTab === 'Active' && (
                           <div className="flex space-x-2">
-                            <button className="px-3 py-1 text-xs font-medium text-red-600 bg-red-50 rounded-md hover:bg-red-100">
+                            <button className="px-3 py-1 text-xs font-medium text-red-500 bg-red-50 rounded-md hover:bg-red-100">
                               Decline
                             </button>
                             <button className="px-3 py-1 text-xs font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">

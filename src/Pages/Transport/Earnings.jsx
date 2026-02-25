@@ -6,7 +6,7 @@ const Earnings = () => {
 
   // More realistic earnings data for the past 6 months
   const monthlyEarningsData = [
-    { month: 'Aug', amount: 4200, trips: 28 },
+    { month: 'Aug', amount: 6000, trips: 28 },
     { month: 'Sep', amount: 3800, trips: 25 },
     { month: 'Oct', amount: 5100, trips: 34 },
     { month: 'Nov', amount: 4650, trips: 31 },
@@ -37,7 +37,7 @@ const Earnings = () => {
             Earnings: ₹{payload[0].value.toLocaleString()}
           </p>
           {payload[0].payload.trips && (
-            <p className="text-sky-500">
+            <p className="text-blue-600">
               Trips: {payload[0].payload.trips}
             </p>
           )}
@@ -54,12 +54,12 @@ const Earnings = () => {
       {/* Header Section */}
       <div className="mb-8 flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Earnings Dashboard</h1>
+          <h1 className="text-3xl font-bold text-gray-900">Earnings</h1>
           <p className="text-gray-600 mt-2">Track your income, trips, and performance metrics</p>
         </div>
-        <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-4 rounded-lg font-medium transition-colors flex items-center space-x-2 min-h-[3rem]">
-          <span>📊</span>
-          <span>Export</span>
+        <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-4 rounded-lg font-medium transition-colors flex items-center space-x-2 min-h-[3rem]">
+          <span></span>
+          <span>Export Statement</span>
         </button>
       </div>
 
@@ -85,10 +85,10 @@ const Earnings = () => {
             <div>
               <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Completed Orders</h3>
               <p className="text-2xl font-bold text-gray-900 mt-2">{totalTripsThisMonth}</p>
-              <p className="text-sm text-sky-500 mt-1">+5 from last month</p>
+              <p className="text-sm text-blue-600 mt-1">+5 from last month</p>
             </div>
-            <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center">
-              <span className="text-sky-500 text-xl">🚗</span>
+            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+              <span className="text-blue-600 text-xl">🚗</span>
             </div>
           </div>
         </div>
@@ -132,7 +132,7 @@ const Earnings = () => {
             <button
               onClick={() => setSelectedPeriod('weekly')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${selectedPeriod === 'weekly'
-                ? 'bg-white text-sky-500 shadow-sm'
+                ? 'bg-white text-blue-600 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
                 }`}
             >
@@ -141,7 +141,7 @@ const Earnings = () => {
             <button
               onClick={() => setSelectedPeriod('monthly')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${selectedPeriod === 'monthly'
-                ? 'bg-white text-sky-500 shadow-sm'
+                ? 'bg-white text-blue-600 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
                 }`}
             >
@@ -210,7 +210,7 @@ const Earnings = () => {
         </div>
 
         <div className="mt-6 text-center">
-          <button className="text-sky-500 hover:text-sky-600 font-medium">
+          <button className="text-blue-600 hover:text-blue-700 font-medium">
             View All Transactions →
           </button>
         </div>
