@@ -53,16 +53,14 @@ const Earnings = () => {
     <div className="p-6 max-w-7xl mx-auto bg-gray-50 min-h-screen">
       {/* Header Section */}
       <div className="mb-8 flex justify-between items-center">
-        <div className="flex items-center space-x-4">
-          <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2">
-            <span>📊</span>
-            <span>Export</span>
-          </button>
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900">Earnings Dashboard</h1>
-            <p className="text-gray-600 mt-2">Track your income, trips, and performance metrics</p>
-          </div>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Earnings Dashboard</h1>
+          <p className="text-gray-600 mt-2">Track your income, trips, and performance metrics</p>
         </div>
+        <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-4 rounded-lg font-medium transition-colors flex items-center space-x-2 min-h-[3rem]">
+          <span>📊</span>
+          <span>Export</span>
+        </button>
       </div>
 
       {/* Stats Cards */}
@@ -134,8 +132,8 @@ const Earnings = () => {
             <button
               onClick={() => setSelectedPeriod('weekly')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${selectedPeriod === 'weekly'
-                  ? 'bg-white text-sky-500 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-white text-sky-500 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
                 }`}
             >
               Weekly
@@ -143,8 +141,8 @@ const Earnings = () => {
             <button
               onClick={() => setSelectedPeriod('monthly')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${selectedPeriod === 'monthly'
-                  ? 'bg-white text-sky-500 shadow-sm'
-                  : 'text-gray-600 hover:text-gray-900'
+                ? 'bg-white text-sky-500 shadow-sm'
+                : 'text-gray-600 hover:text-gray-900'
                 }`}
             >
               Monthly
