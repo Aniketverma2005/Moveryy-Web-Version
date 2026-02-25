@@ -171,7 +171,7 @@ const Bookings = () => {
                 <p className="font-medium text-gray-900">{selectedBooking.distance}</p>
               </div>
             </div>
-            
+
             {/* Special Instructions */}
             <div className="mt-4 p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-400">
               <p className="text-sm text-gray-600">
