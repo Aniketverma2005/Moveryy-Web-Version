@@ -2,52 +2,70 @@ import React, { useState } from 'react';
 
 const Bookings = () => {
   const [activeTab, setActiveTab] = useState('Active');
+  const [selectedBooking, setSelectedBooking] = useState(null);
 
   // Sample booking data
   const bookings = {
     Active: [
       {
         id: 'ORD-2042',
-        pickup: 'Bandra Kurla Complex, Mumbai',
-        destination: 'Andheri West, Mumbai',
+        pickup: 'Sector 10, Gurugram',
+        destination: 'The Sapphire Mall, Gurugram',
         status: 'Assigned',
-        customerName: 'Rajesh Kumar',
+        customerName: 'Naman Chaudhary',
+        customerPhone: '+91 98765 43210',
         time: '2 min',
-        distance: '12.5 km'
+        distance: '12.5 km',
+        estimatedFare: '₹250',
+        pickupTime: '10:30 AM',
+        vehicleType: 'Sedan',
+        paymentMethod: 'Cash'
       }
     ],
     Completed: [
       {
         id: 'ORD-2041',
-        pickup: 'Powai, Mumbai',
-        destination: 'Goregaon East, Mumbai',
+        pickup: 'Sector 37,Gurugram',
+        destination: 'Iffco Chowk, Gurugram',
         status: 'Completed',
-        customerName: 'Priya Sharma',
+        customerName: 'Shruti Sharma',
+        customerPhone: '+91 87654 32109',
         time: '45 min',
         distance: '18.2 km',
-        earnings: '₹320'
+        earnings: '₹320',
+        completedTime: '9:45 AM',
+        vehicleType: 'Hatchback',
+        paymentMethod: 'UPI'
       },
       {
         id: 'ORD-2040',
-        pickup: 'Malad West, Mumbai',
-        destination: 'Borivali West, Mumbai',
+        pickup: 'GTB Nagar, Delhi',
+        destination: 'Rohini Sector 18, Delhi',
         status: 'Completed',
-        customerName: 'Amit Patel',
+        customerName: 'Amitansh Patel',
+        customerPhone: '+91 76543 21098',
         time: '25 min',
         distance: '8.7 km',
-        earnings: '₹180'
+        earnings: '₹180',
+        completedTime: '8:20 AM',
+        vehicleType: 'Sedan',
+        paymentMethod: 'Card'
       }
     ],
     Rejected: [
       {
         id: 'ORD-2039',
-        pickup: 'Thane West, Mumbai',
-        destination: 'Navi Mumbai',
+        pickup: 'Sector 16, Noida',
+        destination: 'Indirapuram, Ghaziabad',
         status: 'Rejected',
         customerName: 'Sneha Joshi',
+        customerPhone: '+91 65432 10987',
         time: '1 hour ago',
         distance: '22.1 km',
-        reason: 'Too far from current location'
+        reason: 'Too far from current location',
+        rejectedTime: '7:30 AM',
+        vehicleType: 'SUV',
+        paymentMethod: 'Cash'
       }
     ]
   };
@@ -71,13 +89,115 @@ const Bookings = () => {
       : 'px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50';
   };
 
+  // If a booking is selected, show detailed view
+  if (selectedBooking) {
+    return (
+      <div className="flex-1 bg-gray-50 min-h-screen">
+        <div className="p-6">
+          <div className="bg-white rounded-lg shadow-sm">
+            {/* Back Button */}
+            <div className="p-6 border-b border-gray-200">
+              <button
+                onClick={() => setSelectedBooking(null)}
+                className="flex items-center text-blue-600 hover:text-blue-800 mb-4"
+              >
+                <span className="mr-2">←</span> Back to Bookings
+              </button>
+              <h1 className="text-2xl font-bold text-gray-900">Booking Details - {selectedBooking.id}</h1>
+            </div>
+
+            {/* Detailed Booking Information */}
+            <div className="p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Customer Information */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Customer Information</h3>
+                  <div className="space-y-2">
+                    <p><span className="font-medium">Name:</span> {selectedBooking.customerName}</p>
+                    <p><span className="font-medium">Phone:</span> {selectedBooking.customerPhone}</p>
+                    <p><span className="font-medium">Payment Method:</span> {selectedBooking.paymentMethod}</p>
+                  </div>
+                </div>
+
+                {/* Trip Information */}
+                <div className="bg-gray-50 rounded-lg p-4">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Trip Information</h3>
+                  <div className="space-y-2">
+                    <p><span className="font-medium">Vehicle Type:</span> {selectedBooking.vehicleType}</p>
+                    <p><span className="font-medium">Distance:</span> {selectedBooking.distance}</p>
+                    <p><span className="font-medium">Status:</span> 
+                      <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(selectedBooking.status)}`}>
+                        {selectedBooking.status}
+                      </span>
+                    </p>
+                  </div>
+                </div>
+
+                {/* Route Details */}
+                <div className="md:col-span-2 bg-gray-50 rounded-lg p-4">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-3">Route Details</h3>
+                  <div className="space-y-4">
+                    <div className="flex items-center space-x-3">
+                      <div className="w-4 h-4 bg-green-500 rounded-full flex-shrink-0"></div>
+                      <div>
+                        <p className="font-medium text-gray-900">Pickup Location</p>
+                        <p className="text-gray-600">{selectedBooking.pickup}</p>
+                        {selectedBooking.pickupTime && <p className="text-sm text-gray-500">Time: {selectedBooking.pickupTime}</p>}
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-3 ml-2">
+                      <div className="w-0.5 h-8 bg-gray-300"></div>
+                    </div>
+                    
+                    <div className="flex items-center space-x-3">
+                      <div className="w-4 h-4 bg-red-500 rounded-full flex-shrink-0"></div>
+                      <div>
+                        <p className="font-medium text-gray-900">Destination</p>
+                        <p className="text-gray-600">{selectedBooking.destination}</p>
+                        {selectedBooking.completedTime && <p className="text-sm text-gray-500">Completed: {selectedBooking.completedTime}</p>}
+                        {selectedBooking.rejectedTime && <p className="text-sm text-gray-500">Rejected: {selectedBooking.rejectedTime}</p>}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Financial Information */}
+                {(selectedBooking.earnings || selectedBooking.estimatedFare) && (
+                  <div className="md:col-span-2 bg-green-50 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Financial Details</h3>
+                    <div className="space-y-2">
+                      {selectedBooking.earnings && (
+                        <p className="text-lg"><span className="font-medium">Earnings:</span> 
+                          <span className="text-green-600 font-bold ml-2">{selectedBooking.earnings}</span>
+                        </p>
+                      )}
+                      {selectedBooking.estimatedFare && (
+                        <p className="text-lg"><span className="font-medium">Estimated Fare:</span> 
+                          <span className="text-blue-600 font-bold ml-2">{selectedBooking.estimatedFare}</span>
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {/* Rejection Reason */}
+                {selectedBooking.reason && (
+                  <div className="md:col-span-2 bg-red-50 rounded-lg p-4">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">Rejection Details</h3>
+                    <p className="text-red-700">{selectedBooking.reason}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 bg-gray-50 min-h-screen">
-      {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <h1 className="text-xl font-semibold text-gray-900">Bookings</h1>
-      </div>
-
       {/* Content */}
       <div className="p-6">
         <div className="bg-white rounded-lg shadow-sm">
@@ -149,6 +269,16 @@ const Bookings = () => {
                       </div>
                     </div>
 
+                    {/* Open Link */}
+                    <div className="mt-3">
+                      <button
+                        onClick={() => setSelectedBooking(booking)}
+                        className="text-blue-600 hover:text-blue-800 text-sm underline bg-transparent border-none cursor-pointer"
+                      >
+                        Open
+                      </button>
+                    </div>
+
                     {/* Additional Info */}
                     <div className="mt-4 pt-3 border-t border-gray-100">
                       <div className="flex justify-between items-center">
@@ -164,7 +294,7 @@ const Bookings = () => {
                             </span>
                           )}
                         </div>
-                        
+
                         {activeTab === 'Active' && (
                           <div className="flex space-x-2">
                             <button className="px-3 py-1 text-xs font-medium text-red-600 bg-red-50 rounded-md hover:bg-red-100">
