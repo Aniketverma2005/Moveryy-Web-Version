@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 
 const Earnings = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('monthly');
@@ -37,7 +37,7 @@ const Earnings = () => {
             Earnings: ₹{payload[0].value.toLocaleString()}
           </p>
           {payload[0].payload.trips && (
-            <p className="text-blue-600">
+            <p className="text-sky-500">
               Trips: {payload[0].payload.trips}
             </p>
           )}
@@ -52,9 +52,17 @@ const Earnings = () => {
   return (
     <div className="p-6 max-w-7xl mx-auto bg-gray-50 min-h-screen">
       {/* Header Section */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Earnings Dashboard</h1>
-        <p className="text-gray-600 mt-2">Track your income, trips, and performance metrics</p>
+      <div className="mb-8 flex justify-between items-center">
+        <div className="flex items-center space-x-4">
+          <button className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center space-x-2">
+            <span>📊</span>
+            <span>Export</span>
+          </button>
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Earnings Dashboard</h1>
+            <p className="text-gray-600 mt-2">Track your income, trips, and performance metrics</p>
+          </div>
+        </div>
       </div>
 
       {/* Stats Cards */}
@@ -77,12 +85,12 @@ const Earnings = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Completed Trips</h3>
+              <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Completed Orders</h3>
               <p className="text-2xl font-bold text-gray-900 mt-2">{totalTripsThisMonth}</p>
-              <p className="text-sm text-blue-600 mt-1">+5 from last month</p>
+              <p className="text-sm text-sky-500 mt-1">+5 from last month</p>
             </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-              <span className="text-blue-600 text-xl">🚗</span>
+            <div className="w-12 h-12 bg-sky-100 rounded-full flex items-center justify-center">
+              <span className="text-sky-500 text-xl">🚗</span>
             </div>
           </div>
         </div>
@@ -105,9 +113,9 @@ const Earnings = () => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Driver Rating</h3>
+              <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Average Rating</h3>
               <p className="text-2xl font-bold text-gray-900 mt-2">4.8 ⭐</p>
-              <p className="text-sm text-yellow-600 mt-1">+0.1 from last month</p>
+              <p className="text-sm text-yellow-600 mt-1"></p>
             </div>
             <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
               <span className="text-yellow-600 text-xl">⭐</span>
@@ -119,27 +127,25 @@ const Earnings = () => {
       {/* Earnings Chart */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
         <div className="flex justify-between items-center mb-6">
-          <h3 className="text-xl font-bold text-gray-900">Earnings Overview</h3>
-          
+          <h3 className="text-xl font-bold text-gray-900">Monthly Summary</h3>
+
           {/* Period Selector */}
           <div className="flex bg-gray-100 rounded-lg p-1">
             <button
               onClick={() => setSelectedPeriod('weekly')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                selectedPeriod === 'weekly'
-                  ? 'bg-white text-blue-600 shadow-sm'
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${selectedPeriod === 'weekly'
+                  ? 'bg-white text-sky-500 shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
-              }`}
+                }`}
             >
               Weekly
             </button>
             <button
               onClick={() => setSelectedPeriod('monthly')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                selectedPeriod === 'monthly'
-                  ? 'bg-white text-blue-600 shadow-sm'
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${selectedPeriod === 'monthly'
+                  ? 'bg-white text-sky-500 shadow-sm'
                   : 'text-gray-600 hover:text-gray-900'
-              }`}
+                }`}
             >
               Monthly
             </button>
@@ -150,22 +156,22 @@ const Earnings = () => {
         <div className="h-80 w-full">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={currentData} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-              <XAxis 
-                dataKey={selectedPeriod === 'monthly' ? 'month' : 'week'} 
+              <XAxis
+                dataKey={selectedPeriod === 'monthly' ? 'month' : 'week'}
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: '#6B7280', fontSize: 12 }}
               />
-              <YAxis 
+              <YAxis
                 axisLine={false}
                 tickLine={false}
                 tick={{ fill: '#6B7280', fontSize: 12 }}
                 tickFormatter={(value) => `₹${value}`}
               />
               <Tooltip content={<CustomTooltip />} />
-              <Bar 
-                dataKey="amount" 
-                fill="#10B981" 
+              <Bar
+                dataKey="amount"
+                fill="#10B981"
                 radius={[6, 6, 0, 0]}
                 className="hover:opacity-80 transition-opacity"
               />
@@ -177,13 +183,13 @@ const Earnings = () => {
       {/* Recent Transactions */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <h3 className="text-xl font-bold text-gray-900 mb-6">Recent Transactions</h3>
-        
+
         <div className="space-y-4">
           {[
-            { id: 'ORD-2045', date: 'Today, 2:30 PM', amount: 180, status: 'Completed', customer: 'Rahul Sharma' },
-            { id: 'ORD-2044', date: 'Today, 11:15 AM', amount: 220, status: 'Completed', customer: 'Priya Singh' },
-            { id: 'ORD-2043', date: 'Yesterday, 6:45 PM', amount: 150, status: 'Completed', customer: 'Amit Kumar' },
-            { id: 'ORD-2042', date: 'Yesterday, 3:20 PM', amount: 280, status: 'Completed', customer: 'Sneha Patel' }
+            { id: 'ORD-2042', date: 'Today, 2:30 PM', amount: 180, status: 'Completed', customer: 'Naman Chaudhary' },
+            { id: 'ORD-2041', date: 'Today, 11:15 AM', amount: 220, status: 'Completed', customer: 'Shruti Sharma' },
+            { id: 'ORD-2040', date: 'Yesterday, 6:45 PM', amount: 150, status: 'Completed', customer: 'Amitansh Patel' },
+            { id: 'ORD-2039', date: 'Yesterday, 3:20 PM', amount: 280, status: 'Completed', customer: 'Sneha Joshil' }
           ].map((transaction) => (
             <div key={transaction.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
               <div className="flex items-center space-x-4">
@@ -206,7 +212,7 @@ const Earnings = () => {
         </div>
 
         <div className="mt-6 text-center">
-          <button className="text-blue-600 hover:text-blue-800 font-medium">
+          <button className="text-sky-500 hover:text-sky-600 font-medium">
             View All Transactions →
           </button>
         </div>
