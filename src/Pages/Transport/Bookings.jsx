@@ -11,7 +11,7 @@ const Bookings = () => {
         id: 'ORD-2042',
         pickup: 'Sector 10, Gurugram',
         dropoff: 'The Sapphire Mall, Gurugram',
-        status: 'Assigned',
+        status: 'Accepted',
         customerName: 'Naman Chaudhary',
         customerPhone: '+91 98765 43210',
         time: '2 min',
