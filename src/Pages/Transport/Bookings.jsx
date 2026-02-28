@@ -16,8 +16,8 @@ const Bookings = () => {
         customerPhone: '+91 98765 43210',
         time: '2 min',
         distance: '12.5 km',
-        estimatedFare: '₹250',
-        earnings: '₹250',
+        estimatedFare: '₹2500',
+        earnings: '₹2500',
         pickupTime: '10:30 AM',
         vehicleType: 'Sedan',
         paymentMethod: 'Cash',
@@ -37,7 +37,7 @@ const Bookings = () => {
         customerPhone: '+91 87654 32109',
         time: '45 min',
         distance: '18.2 km',
-        earnings: '₹320',
+        earnings: '₹3200',
         completedTime: '9:45 AM',
         vehicleType: 'Hatchback',
         paymentMethod: 'UPI'
@@ -51,7 +51,7 @@ const Bookings = () => {
         customerPhone: '+91 76543 21098',
         time: '25 min',
         distance: '8.7 km',
-        earnings: '₹180',
+        earnings: '₹1800',
         completedTime: '8:20 AM',
         vehicleType: 'Sedan',
         paymentMethod: 'Card'
@@ -78,7 +78,7 @@ const Bookings = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case 'Assigned':
-        return 'text-blue-600 bg-blue-50';
+        return 'text-blue-500 bg-blue-50';
       case 'Completed':
         return 'text-green-600 bg-green-50';
       case 'Rejected':
@@ -90,7 +90,7 @@ const Bookings = () => {
 
   const getTabStyle = (tab) => {
     return activeTab === tab
-      ? 'px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border-b-2 border-blue-600'
+      ? 'px-4 py-2 text-sm font-medium text-blue-500 bg-blue-50 border-b-2 border-blue-500'
       : 'px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50';
   };
 
@@ -102,7 +102,7 @@ const Bookings = () => {
           {/* Back Button */}
           <button
             onClick={() => setSelectedBooking(null)}
-            className="flex items-center text-blue-600 hover:text-blue-700 mb-6"
+            className="flex items-center text-blue-500 hover:text-blue-600 mb-6"
           >
             <span className="mr-2">←</span> Back to Bookings
           </button>
@@ -134,7 +134,7 @@ const Bookings = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 mb-1">Pickup</p>
-                  <p className="text-blue-600 font-medium">{selectedBooking.pickup}</p>
+                  <p className="text-blue-500 font-medium">{selectedBooking.pickup}</p>
                 </div>
               </div>
 
@@ -145,7 +145,7 @@ const Bookings = () => {
                 </div>
                 <div>
                   <p className="text-sm text-gray-500 mb-1">Drop-off</p>
-                  <p className="text-blue-600 font-medium">{selectedBooking.dropoff}</p>
+                  <p className="text-blue-500 font-medium">{selectedBooking.dropoff}</p>
                 </div>
               </div>
             </div>
@@ -182,16 +182,16 @@ const Bookings = () => {
 
           {/* Action Buttons */}
           <div className="space-y-3">
-            <button className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg font-medium text-lg hover:bg-blue-700 transition-colors shadow-sm">
+            <button className="w-full bg-blue-500 text-white py-4 px-6 rounded-lg font-medium text-lg hover:bg-blue-600 transition-colors shadow-sm">
               🚗 Arrived at Pickup
             </button>
-            <button className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg font-medium text-lg hover:bg-blue-700 transition-colors shadow-sm">
+            <button className="w-full bg-blue-500 text-white py-4 px-6 rounded-lg font-medium text-lg hover:bg-blue-600 transition-colors shadow-sm">
               🚀 Start Trip
             </button>
             <button className="w-full bg-red-400 text-white py-4 px-6 rounded-lg font-medium text-lg hover:bg-red-500 transition-colors shadow-sm">
               ❌ Cancel Trip
             </button>
-            <button className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg font-medium text-lg hover:bg-blue-700 transition-colors shadow-sm">
+            <button className="w-full bg-blue-500 text-white py-4 px-6 rounded-lg font-medium text-lg hover:bg-blue-600 transition-colors shadow-sm">
               ✅ Complete Trip
             </button>
           </div>
@@ -277,7 +277,7 @@ const Bookings = () => {
                     <div className="mt-3">
                       <button
                         onClick={() => setSelectedBooking(booking)}
-                        className="text-blue-600 hover:text-blue-700 text-sm underline bg-transparent border-none cursor-pointer"
+                        className="text-blue-500 hover:text-blue-600 text-sm underline bg-transparent border-none cursor-pointer"
                       >
                         Open
                       </button>
@@ -304,7 +304,7 @@ const Bookings = () => {
                             <button className="px-3 py-1 text-xs font-medium text-red-500 bg-red-50 rounded-md hover:bg-red-100">
                               Decline
                             </button>
-                            <button className="px-3 py-1 text-xs font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
+                            <button className="px-3 py-1 text-xs font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600">
                               Accept
                             </button>
                           </div>

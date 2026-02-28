@@ -57,7 +57,7 @@ const Earnings = () => {
           <h1 className="text-3xl font-bold text-gray-900">Earnings</h1>
           <p className="text-gray-600 mt-2">Track your income, trips, and performance metrics</p>
         </div>
-        <button className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-4 rounded-lg font-medium transition-colors flex items-center space-x-2 min-h-[3rem]">
+        <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-4 rounded-lg font-medium transition-colors flex items-center space-x-2 min-h-[3rem]">
           <span></span>
           <span>Export Statement</span>
         </button>
@@ -85,10 +85,10 @@ const Earnings = () => {
             <div>
               <h3 className="text-sm font-medium text-gray-500 uppercase tracking-wide">Completed Orders</h3>
               <p className="text-2xl font-bold text-gray-900 mt-2">{totalTripsThisMonth}</p>
-              <p className="text-sm text-blue-600 mt-1">+5 from last month</p>
+              <p className="text-sm text-blue-500 mt-1">+5 from last month</p>
             </div>
             <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-              <span className="text-blue-600 text-xl">🚗</span>
+              <span className="text-blue-500 text-xl">🚗</span>
             </div>
           </div>
         </div>
@@ -132,7 +132,7 @@ const Earnings = () => {
             <button
               onClick={() => setSelectedPeriod('weekly')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${selectedPeriod === 'weekly'
-                ? 'bg-white text-blue-600 shadow-sm'
+                ? 'bg-white text-blue-500 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
                 }`}
             >
@@ -141,7 +141,7 @@ const Earnings = () => {
             <button
               onClick={() => setSelectedPeriod('monthly')}
               className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${selectedPeriod === 'monthly'
-                ? 'bg-white text-blue-600 shadow-sm'
+                ? 'bg-white text-blue-500 shadow-sm'
                 : 'text-gray-600 hover:text-gray-900'
                 }`}
             >
@@ -184,10 +184,10 @@ const Earnings = () => {
 
         <div className="space-y-4">
           {[
-            { id: 'ORD-2042', date: 'Today, 2:30 PM', amount: 180, status: 'Completed', customer: 'Naman Chaudhary' },
-            { id: 'ORD-2041', date: 'Today, 11:15 AM', amount: 220, status: 'Completed', customer: 'Shruti Sharma' },
-            { id: 'ORD-2040', date: 'Yesterday, 6:45 PM', amount: 150, status: 'Completed', customer: 'Amitansh Patel' },
-            { id: 'ORD-2039', date: 'Yesterday, 3:20 PM', amount: 280, status: 'Completed', customer: 'Sneha Joshil' }
+            { id: 'ORD-2042', date: 'Today, 2:30 PM', amount: 1800, status: 'Completed', customer: 'Naman Chaudhary' },
+            { id: 'ORD-2041', date: 'Today, 11:15 AM', amount: 2200, status: 'Completed', customer: 'Shruti Sharma' },
+            { id: 'ORD-2040', date: 'Yesterday, 6:45 PM', amount: 1500, status: 'Completed', customer: 'Amitansh Patel' },
+            { id: 'ORD-2039', date: 'Yesterday, 3:20 PM', amount: 2800, status: 'Completed', customer: 'Sneha Joshil' }
           ].map((transaction) => (
             <div key={transaction.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
               <div className="flex items-center space-x-4">
@@ -210,7 +210,7 @@ const Earnings = () => {
         </div>
 
         <div className="mt-6 text-center">
-          <button className="text-blue-600 hover:text-blue-700 font-medium">
+          <button className="text-blue-500 hover:text-blue-600 font-medium">
             View All Transactions →
           </button>
         </div>
