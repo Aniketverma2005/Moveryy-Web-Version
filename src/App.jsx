@@ -28,6 +28,9 @@ import TransportEarnings from './Pages/Transport/Earnings.jsx';
 import TransportRatings from './Pages/Transport/Ratings.jsx';
 import TransportProfile from './Pages/Transport/Profile.jsx';
 
+// Auth Pages
+import Login from './Pages/Auth/Login.jsx';
+
 
 function App() {
   
@@ -35,6 +38,9 @@ function App() {
     <>
 
     <Routes>
+			{/* Auth Routes */}
+			<Route path="/login" element={<Login />} />
+
 			<Route path="/" element={<UserLayout />}> 
 				<Route index element={<Home />} />
 				<Route path="compare" element={<ComparePage />} />
