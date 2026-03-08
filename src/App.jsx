@@ -27,8 +27,6 @@ import TransportBookings from './Pages/Transport/Bookings.jsx';
 import TransportEarnings from './Pages/Transport/Earnings.jsx';
 import TransportRatings from './Pages/Transport/Ratings.jsx';
 import TransportProfile from './Pages/Transport/Profile.jsx';
-
-// Auth Pages
 import Login from './Pages/Auth/Login.jsx';
 import Signup from './Pages/Auth/Signup.jsx';
 import BusinessSignup from './Pages/Auth/BusinessSignup.jsx';
@@ -41,7 +39,6 @@ function App() {
     <>
 
     <Routes>
-			{/* Auth Routes */}
 			<Route path="/login" element={<Login />} />
 			<Route path="/signup" element={<Signup />} />
 			<Route path="/signup/business" element={<BusinessSignup />} />

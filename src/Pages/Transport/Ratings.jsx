@@ -3,17 +3,17 @@ import React, { useState, useEffect } from 'react';
 const Ratings = () => {
   // State for pending customer ratings
   const [customerRatings, setCustomerRatings] = useState({
-    'Priya Sharma': {
-      rating: 0,
-      comment: '',
+    'Priya Sharma': { 
+      rating: 0, 
+      comment: '', 
       orderId: 'ORD-2046',
       location: 'Sector 15, Gurugram → DLF Phase 2',
       isSubmitted: false,
       submittedAt: null
     },
-    'Rohit Gupta': {
-      rating: 0,
-      comment: '',
+    'Rohit Gupta': { 
+      rating: 0, 
+      comment: '', 
       orderId: 'ORD-2047',
       location: 'Connaught Place → Karol Bagh, Delhi',
       isSubmitted: false,
@@ -72,7 +72,7 @@ const Ratings = () => {
   // Star rating descriptions for better UX
   const ratingDescriptions = {
     1: 'Poor - Not satisfied',
-    2: 'Fair - Below expectations',
+    2: 'Fair - Below expectations', 
     3: 'Good - Met expectations',
     4: 'Very Good - Above expectations',
     5: 'Excellent - Outstanding service!'
@@ -88,7 +88,7 @@ const Ratings = () => {
         rating: newRating
       }
     }));
-
+    
     // Show brief feedback
     setShowSuccessMessage(`${newRating} star${newRating > 1 ? 's' : ''} selected for ${customer.split(' ')[0]}`);
     setTimeout(() => setShowSuccessMessage(''), 2000);
@@ -110,7 +110,7 @@ const Ratings = () => {
   // Submit rating with validation and feedback
   const handleSubmitRating = (customer) => {
     const customerData = customerRatings[customer];
-
+    
     if (customerData.rating === 0) {
       alert('Please select a star rating before submitting!');
       return;
@@ -132,25 +132,27 @@ const Ratings = () => {
   // Interactive star rendering with hover effects
   const renderInteractiveStars = (customer, currentRating) => {
     const customerData = customerRatings[customer];
-
+    
     return (
       <div className="flex flex-col items-end">
         <div className="flex space-x-1 mb-2">
           {[0, 1, 2, 3, 4].map((starIndex) => {
             const isActive = starIndex < currentRating;
             const isHovered = hoveredStar.customer === customer && starIndex <= hoveredStar.star;
-
+            
             return (
               <button
                 key={starIndex}
                 onClick={() => !customerData.isSubmitted && handleStarClick(customer, starIndex)}
                 onMouseEnter={() => !customerData.isSubmitted && setHoveredStar({ customer, star: starIndex })}
                 onMouseLeave={() => setHoveredStar({ customer: '', star: -1 })}
-                className={`text-2xl transition-all duration-200 ${customerData.isSubmitted
-                    ? 'cursor-default'
+                className={`text-2xl transition-all duration-200 ${
+                  customerData.isSubmitted 
+                    ? 'cursor-default' 
                     : 'cursor-pointer hover:scale-125 active:scale-110'
-                  } ${isActive || isHovered ? 'text-yellow-400' : 'text-gray-300'
-                  }`}
+                } ${
+                  isActive || isHovered ? 'text-yellow-400' : 'text-gray-300'
+                }`}
                 disabled={customerData.isSubmitted}
                 title={ratingDescriptions[starIndex + 1]}
               >
@@ -159,7 +161,7 @@ const Ratings = () => {
             );
           })}
         </div>
-
+        
         {/* Rating description */}
         {(currentRating > 0 || hoveredStar.customer === customer) && (
           <p className="text-xs text-gray-500 text-right">
@@ -194,7 +196,7 @@ const Ratings = () => {
     const today = new Date();
     const diffTime = Math.abs(today - date);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
+    
     if (diffDays === 1) return 'Yesterday';
     if (diffDays <= 7) return `${diffDays} days ago`;
     return dateStr;
@@ -214,14 +216,14 @@ const Ratings = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-              Driver Rating
+              Your Driver Rating
               <div className="ml-4 flex items-center bg-yellow-50 px-3 py-1 rounded-full">
                 <span className="text-yellow-500 text-2xl mr-2">★</span>
                 <span className="text-2xl font-bold text-gray-900">4.7</span>
                 <span className="text-sm text-gray-600 ml-2">(248 reviews)</span>
               </div>
             </h1>
-            <p className="text-gray-600 mt-2"></p>
+            <p className="text-gray-600 mt-2">Help us improve by rating your recent customers</p>
           </div>
         </div>
       </div>
@@ -234,7 +236,7 @@ const Ratings = () => {
             2 pending ratings
           </span>
         </div>
-
+        
         <div className="space-y-8">
           {Object.entries(customerRatings).map(([customerName, data], index) => (
             <div key={customerName} className={`${index === 0 ? 'border-b border-gray-100 pb-6' : ''}`}>
@@ -267,10 +269,11 @@ const Ratings = () => {
                   value={data.comment}
                   onChange={(e) => handleCommentChange(customerName, e.target.value)}
                   disabled={data.isSubmitted}
-                  className={`w-full p-4 border border-gray-300 rounded-lg resize-none h-24 text-sm transition-colors ${data.isSubmitted
-                      ? 'bg-gray-50 cursor-not-allowed'
+                  className={`w-full p-4 border border-gray-300 rounded-lg resize-none h-24 text-sm transition-colors ${
+                    data.isSubmitted 
+                      ? 'bg-gray-50 cursor-not-allowed' 
                       : 'focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
-                    }`}
+                  }`}
                 />
                 <div className="flex justify-between items-center mt-2">
                   <span className="text-xs text-gray-500">
@@ -292,12 +295,13 @@ const Ratings = () => {
                     <span className="font-medium">Rating Submitted</span>
                   </div>
                 ) : (
-                  <button
+                  <button 
                     onClick={() => handleSubmitRating(customerName)}
-                    className={`px-6 py-2 rounded-lg font-medium transition-all ${data.rating > 0
+                    className={`px-6 py-2 rounded-lg font-medium transition-all ${
+                      data.rating > 0
                         ? 'bg-blue-500 hover:bg-blue-600 text-white shadow-md hover:shadow-lg'
                         : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                      }`}
+                    }`}
                     disabled={data.rating === 0}
                   >
                     Submit Rating {data.rating > 0 && `(${data.rating} ★)`}
@@ -314,7 +318,7 @@ const Ratings = () => {
         <div className="flex justify-between items-center mb-6">
           <div>
             <h2 className="text-xl font-bold text-gray-900">Rating History</h2>
-            <p className="text-sm text-gray-600"></p>
+            <p className="text-sm text-gray-600">Your past customer feedback</p>
           </div>
           <div className="relative">
             <input
@@ -336,37 +340,37 @@ const Ratings = () => {
           {ratingHistory
             .filter(item => !filterDate || item.date.includes(filterDate))
             .map((item, index) => (
-              <div key={index} className="flex justify-between items-start p-5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-all hover:shadow-md">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-4 mb-3">
-                    <span className="font-semibold text-gray-900 bg-gray-100 px-3 py-1 rounded-full text-sm">
-                      {item.orderId}
-                    </span>
-                    <span className="text-gray-400">•</span>
-                    <span className="text-gray-600 font-medium">{formatDate(item.date)}</span>
-                    <span className="text-gray-400">•</span>
-                    <span className="text-xs text-gray-500 bg-blue-50 px-2 py-1 rounded">
-                      {item.location}
-                    </span>
+            <div key={index} className="flex justify-between items-start p-5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-all hover:shadow-md">
+              <div className="flex-1">
+                <div className="flex items-center space-x-4 mb-3">
+                  <span className="font-semibold text-gray-900 bg-gray-100 px-3 py-1 rounded-full text-sm">
+                    {item.orderId}
+                  </span>
+                  <span className="text-gray-400">•</span>
+                  <span className="text-gray-600 font-medium">{formatDate(item.date)}</span>
+                  <span className="text-gray-400">•</span>
+                  <span className="text-xs text-gray-500 bg-blue-50 px-2 py-1 rounded">
+                    {item.location}
+                  </span>
+                </div>
+                
+                <p className="text-lg font-medium text-gray-800 mb-2">{item.customerName}</p>
+                
+                {item.comment && (
+                  <div className="bg-gray-50 p-3 rounded-lg border-l-4 border-blue-200">
+                    <p className="text-sm text-gray-700 italic">"{item.comment}"</p>
                   </div>
-
-                  <p className="text-lg font-medium text-gray-800 mb-2">{item.customerName}</p>
-
-                  {item.comment && (
-                    <div className="bg-gray-50 p-3 rounded-lg border-l-4 border-blue-200">
-                      <p className="text-sm text-gray-700 italic">"{item.comment}"</p>
-                    </div>
-                  )}
-                </div>
-
-                <div className="ml-6 text-right">
-                  {renderHistoryStars(item.rating)}
-                  <p className="text-xs text-gray-500 mt-1">
-                    {item.rating >= 4 ? 'Great job! 👏' : item.rating >= 3 ? 'Good work 👍' : 'Room for improvement'}
-                  </p>
-                </div>
+                )}
               </div>
-            ))}
+              
+              <div className="ml-6 text-right">
+                {renderHistoryStars(item.rating)}
+                <p className="text-xs text-gray-500 mt-1">
+                  {item.rating >= 4 ? 'Great job! 👏' : item.rating >= 3 ? 'Good work 👍' : 'Room for improvement'}
+                </p>
+              </div>
+            </div>
+          ))}
         </div>
 
         {ratingHistory.filter(item => !filterDate || item.date.includes(filterDate)).length === 0 && (
