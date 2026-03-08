@@ -15,11 +15,9 @@ const Signup = () => {
 
     const handleContinue = () => {
         if (selectedAccountType === 'business') {
-            navigate('/transport');
+            navigate('/signup/business');
         } else if (selectedAccountType === 'admin') {
-            navigate('/admin');
-        } else {
-            navigate('/');
+            navigate('/signup/admin');
         }
     };
 
@@ -37,7 +35,7 @@ const Signup = () => {
                     <h1 className="text-5xl font-bold mb-6 leading-tight">
                         Join the Moveryy Community
                     </h1>
-                    
+
                     <p className="text-lg mb-12 opacity-90 leading-relaxed">
                         Whether you're a business owner or a delivery professional, Moveryy is your platform to succeed in the logistics industry.
                     </p>
@@ -95,25 +93,22 @@ const Signup = () => {
                             <label className="block text-sm font-medium text-gray-700 mb-4">
                                 Select your account type
                             </label>
-                            
+
                             <div className="space-y-3">
                                 {/* Business User Option */}
-                                <div 
+                                <div
                                     onClick={() => handleAccountTypeSelect('business')}
-                                    className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                                        selectedAccountType === 'business' 
-                                            ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-600' 
-                                            : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
-                                    }`}
+                                    className={`p-4 border rounded-lg cursor-pointer transition-all ${selectedAccountType === 'business'
+                                        ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-600'
+                                        : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                                        }`}
                                 >
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0">
-                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                                                selectedAccountType === 'business' ? 'bg-blue-100' : 'bg-gray-100'
-                                            }`}>
-                                                <svg className={`w-5 h-5 ${
-                                                    selectedAccountType === 'business' ? 'text-blue-600' : 'text-gray-600'
-                                                }`} fill="currentColor" viewBox="0 0 20 20">
+                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${selectedAccountType === 'business' ? 'bg-blue-100' : 'bg-gray-100'
+                                                }`}>
+                                                <svg className={`w-5 h-5 ${selectedAccountType === 'business' ? 'text-blue-600' : 'text-gray-600'
+                                                    }`} fill="currentColor" viewBox="0 0 20 20">
                                                     <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                                                 </svg>
                                             </div>
@@ -133,22 +128,19 @@ const Signup = () => {
                                 </div>
 
                                 {/* Administrator Option */}
-                                <div 
+                                <div
                                     onClick={() => handleAccountTypeSelect('admin')}
-                                    className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                                        selectedAccountType === 'admin' 
-                                            ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-600' 
-                                            : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
-                                    }`}
+                                    className={`p-4 border rounded-lg cursor-pointer transition-all ${selectedAccountType === 'admin'
+                                        ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-600'
+                                        : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
+                                        }`}
                                 >
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0">
-                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                                                selectedAccountType === 'admin' ? 'bg-green-100' : 'bg-gray-100'
-                                            }`}>
-                                                <svg className={`w-5 h-5 ${
-                                                    selectedAccountType === 'admin' ? 'text-green-600' : 'text-gray-600'
-                                                }`} fill="currentColor" viewBox="0 0 20 20">
+                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${selectedAccountType === 'admin' ? 'bg-green-100' : 'bg-gray-100'
+                                                }`}>
+                                                <svg className={`w-5 h-5 ${selectedAccountType === 'admin' ? 'text-green-600' : 'text-gray-600'
+                                                    }`} fill="currentColor" viewBox="0 0 20 20">
                                                     <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" clipRule="evenodd" />
                                                 </svg>
                                             </div>
@@ -173,11 +165,10 @@ const Signup = () => {
                         <button
                             onClick={handleContinue}
                             disabled={!selectedAccountType}
-                            className={`w-full py-3 px-4 rounded-md font-medium transition-colors ${
-                                selectedAccountType
-                                    ? 'bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2'
-                                    : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                            }`}
+                            className={`w-full py-3 px-4 rounded-md font-medium transition-colors ${selectedAccountType
+                                ? 'bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2'
+                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                                }`}
                         >
                             Continue
                         </button>
@@ -186,7 +177,7 @@ const Signup = () => {
                         <div className="text-center">
                             <span className="text-sm text-gray-600">
                                 Already have an account?{' '}
-                                <button 
+                                <button
                                     onClick={handleSignInClick}
                                     className="text-blue-600 hover:text-blue-700 font-medium"
                                 >
