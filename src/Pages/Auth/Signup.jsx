@@ -74,7 +74,7 @@ const Signup = () => {
             <div className="flex-1 bg-gray-50 p-12 flex items-center justify-center">
                 <div className="w-full max-w-md">
                     <div className="mb-8">
-                        <h2 className="text-3xl font-bold text-gray-900 mb-2">
+                        <h2 className="text-4xl font-bold text-gray-900 mb-2">
                             Create your account
                         </h2>
                         <p className="text-gray-600">
@@ -85,7 +85,7 @@ const Signup = () => {
                     <div className="space-y-6">
                         {/* Account Type Selection */}
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-4">
+                            <label className="block text-base font-medium text-gray-700 mb-4">
                                 Select your account type
                             </label>
 
@@ -93,19 +93,19 @@ const Signup = () => {
                                 {/* Business User Option */}
                                 <div
                                     onClick={() => handleAccountTypeSelect('business')}
-                                    className="p-4 border border-gray-300 rounded-lg cursor-pointer transition-all hover:border-gray-400 hover:bg-gray-50"
+                                    className="p-5 border border-gray-300 rounded-lg cursor-pointer transition-all hover:border-gray-400 hover:bg-gray-50"
                                 >
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0">
-                                            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                                                <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                                <svg className="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                                                 </svg>
                                             </div>
                                         </div>
-                                        <div className="ml-4">
-                                            <h3 className="text-sm font-medium text-gray-900">Business User</h3>
-                                            <p className="text-sm text-gray-600">Manage your delivery operations</p>
+                                        <div className="ml-5">
+                                            <h3 className="text-lg font-semibold text-gray-900">Business User</h3>
+                                            <p className="text-base text-gray-600">Manage your delivery operations</p>
                                         </div>
                                     </div>
                                 </div>
@@ -113,19 +113,19 @@ const Signup = () => {
                                 {/* Administrator Option */}
                                 <div
                                     onClick={() => handleAccountTypeSelect('admin')}
-                                    className="p-4 border border-gray-300 rounded-lg cursor-pointer transition-all hover:border-gray-400 hover:bg-gray-50"
+                                    className="p-5 border border-gray-300 rounded-lg cursor-pointer transition-all hover:border-gray-400 hover:bg-gray-50"
                                 >
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0">
-                                            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                                                <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                                <svg className="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" clipRule="evenodd" />
                                                 </svg>
                                             </div>
                                         </div>
-                                        <div className="ml-4">
-                                            <h3 className="text-sm font-medium text-gray-900">Administrator</h3>
-                                            <p className="text-sm text-gray-600">Manage teams and system settings</p>
+                                        <div className="ml-5">
+                                            <h3 className="text-lg font-semibold text-gray-900">Administrator</h3>
+                                            <p className="text-base text-gray-600">Manage teams and system settings</p>
                                         </div>
                                     </div>
                                 </div>
