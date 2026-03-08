@@ -6,7 +6,11 @@ const Signup = () => {
     const navigate = useNavigate();
 
     const handleAccountTypeSelect = (type) => {
-        setSelectedAccountType(type);
+        if (type === 'business') {
+            navigate('/signup/business');
+        } else if (type === 'admin') {
+            navigate('/signup/admin');
+        }
     };
 
     const handleSignInClick = () => {
@@ -98,17 +102,12 @@ const Signup = () => {
                                 {/* Business User Option */}
                                 <div
                                     onClick={() => handleAccountTypeSelect('business')}
-                                    className={`p-4 border rounded-lg cursor-pointer transition-all ${selectedAccountType === 'business'
-                                        ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-600'
-                                        : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
-                                        }`}
+                                    className="p-4 border border-gray-300 rounded-lg cursor-pointer transition-all hover:border-gray-400 hover:bg-gray-50"
                                 >
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0">
-                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${selectedAccountType === 'business' ? 'bg-blue-100' : 'bg-gray-100'
-                                                }`}>
-                                                <svg className={`w-5 h-5 ${selectedAccountType === 'business' ? 'text-blue-600' : 'text-gray-600'
-                                                    }`} fill="currentColor" viewBox="0 0 20 20">
+                                            <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                                                <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                                                 </svg>
                                             </div>
@@ -117,30 +116,18 @@ const Signup = () => {
                                             <h3 className="text-sm font-medium text-gray-900">Business User</h3>
                                             <p className="text-sm text-gray-600">Manage your delivery operations</p>
                                         </div>
-                                        {selectedAccountType === 'business' && (
-                                            <div className="ml-auto">
-                                                <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                                </svg>
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
 
                                 {/* Administrator Option */}
                                 <div
                                     onClick={() => handleAccountTypeSelect('admin')}
-                                    className={`p-4 border rounded-lg cursor-pointer transition-all ${selectedAccountType === 'admin'
-                                        ? 'border-blue-600 bg-blue-50 ring-2 ring-blue-600'
-                                        : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
-                                        }`}
+                                    className="p-4 border border-gray-300 rounded-lg cursor-pointer transition-all hover:border-gray-400 hover:bg-gray-50"
                                 >
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0">
-                                            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${selectedAccountType === 'admin' ? 'bg-green-100' : 'bg-gray-100'
-                                                }`}>
-                                                <svg className={`w-5 h-5 ${selectedAccountType === 'admin' ? 'text-green-600' : 'text-gray-600'
-                                                    }`} fill="currentColor" viewBox="0 0 20 20">
+                                            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                                                <svg className="w-5 h-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
                                                     <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z" clipRule="evenodd" />
                                                 </svg>
                                             </div>
@@ -149,13 +136,6 @@ const Signup = () => {
                                             <h3 className="text-sm font-medium text-gray-900">Administrator</h3>
                                             <p className="text-sm text-gray-600">Manage teams and system settings</p>
                                         </div>
-                                        {selectedAccountType === 'admin' && (
-                                            <div className="ml-auto">
-                                                <svg className="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                                                </svg>
-                                            </div>
-                                        )}
                                     </div>
                                 </div>
                             </div>
