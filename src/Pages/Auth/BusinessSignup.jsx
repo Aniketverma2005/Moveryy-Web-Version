@@ -132,7 +132,7 @@ const BusinessSignup = () => {
                                 type="text"
                                 required
                                 className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                                placeholder="John Doe"
+                                placeholder="Navi"
                                 value={formData.fullName}
                                 onChange={handleChange}
                             />
@@ -149,7 +149,7 @@ const BusinessSignup = () => {
                                 type="email"
                                 required
                                 className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
-                                placeholder="you@example.com"
+                                placeholder="navi@example.com"
                                 value={formData.email}
                                 onChange={handleChange}
                             />
