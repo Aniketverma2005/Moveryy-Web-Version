@@ -31,6 +31,8 @@ import TransportProfile from './Pages/Transport/Profile.jsx';
 // Auth Pages
 import Login from './Pages/Auth/Login.jsx';
 import Signup from './Pages/Auth/Signup.jsx';
+import BusinessSignup from './Pages/Auth/BusinessSignup.jsx';
+import AdminSignup from './Pages/Auth/AdminSignup.jsx';
 
 
 function App() {
@@ -42,6 +44,8 @@ function App() {
 			{/* Auth Routes */}
 			<Route path="/login" element={<Login />} />
 			<Route path="/signup" element={<Signup />} />
+			<Route path="/signup/business" element={<BusinessSignup />} />
+			<Route path="/signup/admin" element={<AdminSignup />} />
 
 			<Route path="/" element={<UserLayout />}> 
 				<Route index element={<Home />} />
