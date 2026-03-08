@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Signup = () => {
-    const [selectedAccountType, setSelectedAccountType] = useState('');
     const navigate = useNavigate();
 
     const handleAccountTypeSelect = (type) => {
@@ -17,14 +16,6 @@ const Signup = () => {
         navigate('/login');
     };
 
-    const handleContinue = () => {
-        if (selectedAccountType === 'business') {
-            navigate('/signup/business');
-        } else if (selectedAccountType === 'admin') {
-            navigate('/signup/admin');
-        }
-    };
-
     return (
         <div className="min-h-screen flex">
             {/* Left Side - Blue Section */}
@@ -35,7 +26,7 @@ const Signup = () => {
                 </div>
 
                 {/* Main Content */}
-                <div className="flex-1 flex flex-col justify-center -mt-72">
+                <div className="flex-1 flex flex-col justify-center -mt-80">
                     <h1 className="text-5xl font-bold mb-6 leading-tight">
                         Join the Moveryy Community
                     </h1>
@@ -83,7 +74,7 @@ const Signup = () => {
             <div className="flex-1 bg-gray-50 p-12 flex items-center justify-center">
                 <div className="w-full max-w-md">
                     <div className="mb-8">
-                        <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+                        <h2 className="text-3xl font-bold text-gray-900 mb-2">
                             Create your account
                         </h2>
                         <p className="text-gray-600">
@@ -140,18 +131,6 @@ const Signup = () => {
                                 </div>
                             </div>
                         </div>
-
-                        {/* Continue Button */}
-                        <button
-                            onClick={handleContinue}
-                            disabled={!selectedAccountType}
-                            className={`w-full py-3 px-4 rounded-md font-medium transition-colors ${selectedAccountType
-                                ? 'bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2'
-                                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                }`}
-                        >
-                            Continue
-                        </button>
 
                         {/* Sign In Link */}
                         <div className="text-center">
