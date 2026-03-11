@@ -1,4 +1,4 @@
-// tailwind.config.js
+// tailwind.config.js - Updated with #4285F4 blue color
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
@@ -18,8 +18,8 @@ module.exports = {
           300: '#80A9FF',
           400: '#4D7FFF',
           500: '#4285F4',
-          600: '#4285F4',
-          700: '#3367D6',
+          600: '#4285F4', // Primary blue color
+          700: '#3367D6', // Darker shade for hover states
           800: '#2952B8',
           900: '#1E3A8A',
         }

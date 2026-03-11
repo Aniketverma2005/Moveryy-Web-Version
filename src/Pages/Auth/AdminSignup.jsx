@@ -47,7 +47,13 @@ const AdminSignup = () => {
             <div className="flex-1 bg-blue-600 text-white p-12 flex flex-col justify-between">
                 {/* Logo */}
                 <div className="mb-4">
-                    <div className="w-12 h-12 bg-white rounded"></div>
+                    <div className="bg-white rounded-lg p-4 inline-block shadow-sm">
+                        <img 
+                            src="/logo.png" 
+                            alt="Moveryy Logo" 
+                            className="h-16 w-auto object-contain"
+                        />
+                    </div>
                 </div>
 
                 {/* Main Content */}
