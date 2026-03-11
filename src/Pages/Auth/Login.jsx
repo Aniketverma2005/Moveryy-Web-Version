@@ -26,7 +26,7 @@ const Login = () => {
     return (
         <div className="min-h-screen flex">
             {/* Left Side - Blue Section */}
-            <div className="flex-1 bg-[#195fa1] text-white p-12 flex flex-col justify-between">
+            <div className="flex-1 bg-[#4285F4] text-white p-12 flex flex-col justify-between">
                 {/* Logo */}
                 <div className="mb-20">
                     <div className="bg-white rounded-lg p-4 inline-block shadow-sm">
@@ -107,7 +107,7 @@ const Login = () => {
                                 name="email"
                                 type="email"
                                 required
-                                className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#195fa1] focus:border-transparent"
+                                className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4285F4] focus:border-transparent"
                                 placeholder="you@example.com"
                                 value={formData.email}
                                 onChange={handleChange}
@@ -120,7 +120,7 @@ const Login = () => {
                                 <label htmlFor="password" className="block text-sm font-medium text-gray-700">
                                     Password
                                 </label>
-                                <a href="#" className="text-sm text-[#195fa1] hover:text-[#144a7f]">
+                                <a href="#" className="text-sm text-[#4285F4] hover:text-[#3367D6]">
                                     Forgot password?
                                 </a>
                             </div>
@@ -129,7 +129,7 @@ const Login = () => {
                                 name="password"
                                 type="password"
                                 required
-                                className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#195fa1] focus:border-transparent"
+                                className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4285F4] focus:border-transparent"
                                 placeholder="••••••••"
                                 value={formData.password}
                                 onChange={handleChange}
@@ -142,7 +142,7 @@ const Login = () => {
                                 id="rememberMe"
                                 name="rememberMe"
                                 type="checkbox"
-                                className="h-4 w-4 text-[#195fa1] focus:ring-[#195fa1] border-gray-300 rounded"
+                                className="h-4 w-4 text-[#4285F4] focus:ring-[#4285F4] border-gray-300 rounded"
                                 checked={formData.rememberMe}
                                 onChange={handleChange}
                             />
@@ -154,7 +154,7 @@ const Login = () => {
                         {/* Sign In Button */}
                         <button
                             type="submit"
-                            className="w-full bg-[#195fa1] text-white py-3 px-4 rounded-md hover:bg-[#144a7f] focus:outline-none focus:ring-2 focus:ring-[#195fa1] focus:ring-offset-2 font-medium"
+                            className="w-full bg-[#4285F4] text-white py-3 px-4 rounded-md hover:bg-[#3367D6] focus:outline-none focus:ring-2 focus:ring-[#4285F4] focus:ring-offset-2 font-medium"
                         >
                             Sign in to your account
                         </button>
@@ -209,11 +209,7 @@ const Login = () => {
                         <div className="text-center">
                             <span className="text-sm text-gray-600">
                                 Don't have an account?{' '}
-<<<<<<< HEAD
-                                <a href="/signup" className="text-blue-600 hover:text-blue-500 font-medium">
-=======
-                                <a href="#" className="text-[#195fa1] hover:text-[#144a7f] font-medium">
->>>>>>> a099c10e02244a4d50a2947dadbacd1a608a7ddd
+                                <a href="#" className="text-[#4285F4] hover:text-[#3367D6] font-medium">
                                     Create one now
                                 </a>
                             </span>
@@ -223,9 +219,9 @@ const Login = () => {
                         <div className="text-center">
                             <p className="text-xs text-gray-500">
                                 By signing in, you agree to our{' '}
-                                <a href="#" className="text-[#195fa1] hover:text-[#144a7f]">Terms of Service</a>
+                                <a href="#" className="text-[#4285F4] hover:text-[#3367D6]">Terms of Service</a>
                                 {' '}and{' '}
-                                <a href="#" className="text-[#195fa1] hover:text-[#144a7f]">Privacy Policy</a>
+                                <a href="#" className="text-[#4285F4] hover:text-[#3367D6]">Privacy Policy</a>
                             </p>
                         </div>
                     </form>
