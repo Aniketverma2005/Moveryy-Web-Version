@@ -80,7 +80,7 @@ const Login = () => {
 
                 {/* Bottom Text */}
                 <div className="text-sm opacity-75">
-                    Trusted by 5000+ delivery partners worldwide
+                    Trusted by 4000+ delivery partners worldwide
                 </div>
             </div>
 
