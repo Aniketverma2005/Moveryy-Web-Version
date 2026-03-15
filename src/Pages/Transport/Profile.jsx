@@ -14,7 +14,7 @@ const Profile = () => {
             <span className="text-purple-600 text-2xl">👤</span>
           </div>
           <h3 className="text-lg font-semibold text-gray-800 mb-2">Driver Profile</h3>
-          <p className="text-gray-600">Your profile managemen interface will be implemented here.</p>
+          <p className="text-gray-600">Your profile management interface will be implemented here only.</p>
         </div>
       </div>
     </div>
