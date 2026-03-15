@@ -89,7 +89,7 @@ const Login = () => {
                 <div className="w-full max-w-md">
                     <div className="mb-8">
                         <h2 className="text-4xl font-bold text-gray-900 mb-2">
-                            Welcome
+                            Welcome back
                         </h2>
                         <p className="text-gray-600">
                             Sign in to manage your deliveries
