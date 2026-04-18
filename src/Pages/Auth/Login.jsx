@@ -30,9 +30,9 @@ const Login = () => {
                 {/* Logo */}
                 <div className="mb-20">
                     <div className="bg-white rounded-lg p-4 inline-block shadow-sm">
-                        <img 
-                            src="/logo.png" 
-                            alt="Moveryy Logo" 
+                        <img
+                            src="/logo.png"
+                            alt="Moveryy Logo"
                             className="h-16 w-auto object-contain"
                         />
                     </div>
