@@ -27,6 +27,10 @@ import TransportBookings from './Pages/Transport/Bookings.jsx';
 import TransportEarnings from './Pages/Transport/Earnings.jsx';
 import TransportRatings from './Pages/Transport/Ratings.jsx';
 import TransportProfile from './Pages/Transport/Profile.jsx';
+import Login from './Pages/Auth/Login.jsx';
+import Signup from './Pages/Auth/Signup.jsx';
+import BusinessSignup from './Pages/Auth/BusinessSignup.jsx';
+import AdminSignup from './Pages/Auth/AdminSignup.jsx';
 
 
 function App() {
@@ -35,6 +39,11 @@ function App() {
     <>
 
     <Routes>
+			<Route path="/login" element={<Login />} />
+			<Route path="/signup" element={<Signup />} />
+			<Route path="/signup/business" element={<BusinessSignup />} />
+			<Route path="/signup/admin" element={<AdminSignup />} />
+
 			<Route path="/" element={<UserLayout />}> 
 				<Route index element={<Home />} />
 				<Route path="compare" element={<ComparePage />} />

@@ -57,7 +57,7 @@ const Earnings = () => {
           <h1 className="text-3xl font-bold text-gray-900">Earnings</h1>
           <p className="text-gray-600 mt-2">Track your income, trips, and performance metrics</p>
         </div>
-        <button className="bg-blue-500 hover:bg-blue-600 text-white px-3 py-4 rounded-lg font-medium transition-colors flex items-center space-x-2 min-h-[3rem]">
+        <button className="bg-[#4285F4] hover:bg-[#3367D6] text-white px-3 py-4 rounded-lg font-medium transition-colors flex items-center space-x-2 min-h-[3rem]">
           <span></span>
           <span>Export Statement</span>
         </button>
