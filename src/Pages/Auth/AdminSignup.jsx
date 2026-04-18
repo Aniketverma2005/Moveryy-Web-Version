@@ -29,7 +29,6 @@ const AdminSignup = () => {
             alert('Please agree to the Terms of Service and Privacy Policy');
             return;
         }
-        // Navigate to admin dashboard after successful signup
         navigate('/admin');
     };
 
@@ -44,13 +43,13 @@ const AdminSignup = () => {
     return (
         <div className="min-h-screen flex">
             {/* Left Side - Blue Section */}
-            <div className="flex-1 bg-blue-600 text-white p-12 flex flex-col justify-between">
+            <div className="flex-1 bg-[#4285F4] text-white p-12 flex flex-col justify-between">
                 {/* Logo */}
                 <div className="mb-4">
                     <div className="bg-white rounded-lg p-4 inline-block shadow-sm">
-                        <img 
-                            src="/logo.png" 
-                            alt="Moveryy Logo" 
+                        <img
+                            src="/logo.png"
+                            alt="Moveryy Logo"
                             className="h-16 w-auto object-contain"
                         />
                     </div>
@@ -61,7 +60,7 @@ const AdminSignup = () => {
                     <h1 className="text-5xl font-bold mb-6 leading-tight">
                         Join the Moveryy Community
                     </h1>
-                    
+
                     <p className="text-lg mb-12 opacity-90 leading-relaxed">
                         Whether you're a business owner or a delivery professional, Moveryy is your platform to succeed in the logistics industry.
                     </p>
@@ -115,9 +114,9 @@ const AdminSignup = () => {
 
                     {/* Back to Role Selection */}
                     <div className="mb-6">
-                        <button 
+                        <button
                             onClick={handleBackToRoleSelection}
-                            className="flex items-center text-blue-600 hover:text-blue-700 text-sm font-medium"
+                            className="flex items-center text-[#4285F4] hover:text-[#3367D6] text-sm font-medium"
                         >
                             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -137,7 +136,7 @@ const AdminSignup = () => {
                                 name="fullName"
                                 type="text"
                                 required
-                                className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4285F4] focus:border-transparent"
                                 placeholder="Navi"
                                 value={formData.fullName}
                                 onChange={handleChange}
@@ -154,7 +153,7 @@ const AdminSignup = () => {
                                 name="email"
                                 type="email"
                                 required
-                                className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4285F4] focus:border-transparent"
                                 placeholder="navi@example.com"
                                 value={formData.email}
                                 onChange={handleChange}
@@ -171,7 +170,7 @@ const AdminSignup = () => {
                                 name="password"
                                 type="password"
                                 required
-                                className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4285F4] focus:border-transparent"
                                 placeholder="At least 8 characters"
                                 value={formData.password}
                                 onChange={handleChange}
@@ -189,7 +188,7 @@ const AdminSignup = () => {
                                 name="confirmPassword"
                                 type="password"
                                 required
-                                className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent"
+                                className="w-full px-3 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#4285F4] focus:border-transparent"
                                 placeholder="Confirm your password"
                                 value={formData.confirmPassword}
                                 onChange={handleChange}
@@ -203,35 +202,35 @@ const AdminSignup = () => {
                                 id="agreeToTerms"
                                 name="agreeToTerms"
                                 type="checkbox"
-                                className="h-4 w-4 text-blue-600 focus:ring-blue-600 border-gray-300 rounded mt-1"
+                                className="h-4 w-4 text-[#4285F4] focus:ring-[#4285F4] border-gray-300 rounded mt-1"
                                 checked={formData.agreeToTerms}
                                 onChange={handleChange}
                                 required
                             />
                             <label htmlFor="agreeToTerms" className="ml-3 block text-sm text-gray-700">
                                 I agree to the{' '}
-                                <a href="#" className="text-blue-600 hover:text-blue-700">Terms of Service</a>
+                                <a href="#" className="text-[#4285F4] hover:text-[#3367D6]">Terms of Service</a>
                                 {' '}and{' '}
-                                <a href="#" className="text-blue-600 hover:text-blue-700">Privacy Policy</a>
+                                <a href="#" className="text-[#4285F4] hover:text-[#3367D6]">Privacy Policy</a>
                             </label>
                         </div>
 
                         {/* Create Account Button */}
                         <button
                             type="submit"
-                            className="w-full bg-blue-600 text-white py-3 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 font-medium transition-colors"
+                            className="w-full bg-[#4285F4] text-white py-3 px-4 rounded-md hover:bg-[#3367D6] focus:outline-none focus:ring-2 focus:ring-[#4285F4] focus:ring-offset-2 font-medium transition-colors"
                         >
-                            Create User Account
+                            Create Admin Account
                         </button>
 
                         {/* Sign In Link */}
                         <div className="text-center">
                             <span className="text-sm text-gray-600">
                                 Already have an account?{' '}
-                                <button 
+                                <button
                                     type="button"
                                     onClick={handleSignInClick}
-                                    className="text-blue-600 hover:text-blue-700 font-medium"
+                                    className="text-[#4285F4] hover:text-[#3367D6] font-medium"
                                 >
                                     Sign in here
                                 </button>
