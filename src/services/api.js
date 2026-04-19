@@ -7,9 +7,9 @@
 
 import axios from 'axios';
 
-// API Configuration — BASE_URL is empty so Vite proxy forwards /api/* to localhost:8000
+// API Configuration — direct call to backend (CORS already allows localhost:5173)
 const API_CONFIG = {
-  BASE_URL: '',
+  BASE_URL: 'http://localhost:8000',
   TIMEOUT: 15000,
 };
 

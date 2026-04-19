@@ -1,10 +1,14 @@
 /**
  * Authentication Service
  *
- * Handles all authentication-related API calls including login, signup,
- * password reset, and user profile management.
+ * Correct backend endpoints (confirmed from backend routes):
+ *  POST /api/v1/users/signup    → register new user
+ *  POST /api/v1/users/login     → login
+ *  POST /api/v1/users/logout    → logout (requires token)
+ *  POST /api/v1/users/refresh-token → refresh access token
+ *  GET  /api/v1/users/user      → get current user (requires token)
  *
- * Validation rules (enforced by backend):
+ * Validation rules:
  *  - firstName / lastName  → required
  *  - email                 → valid format
  *  - password              → min 8 chars
@@ -18,11 +22,11 @@ import { api, TokenManager } from '../api';
 
 const validators = {
   firstName: (v) => v && v.trim().length > 0,
-  lastName:  (v) => v && v.trim().length > 0,
-  email:     (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
-  password:  (v) => v && v.length >= 8,
-  phone:     (v) => /^\+[1-9]\d{6,14}$/.test(v),
-  role:      (v) => ['admin', 'user', 'transport'].includes(v),
+  lastName: (v) => v && v.trim().length > 0,
+  email: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+  password: (v) => v && v.length >= 8,
+  phone: (v) => /^\+[1-9]\d{6,14}$/.test(v),
+  role: (v) => ['admin', 'user', 'transport'].includes(v),
 };
 
 const validate = (fields) => {
@@ -33,33 +37,38 @@ const validate = (fields) => {
     }
   });
   if (Object.keys(errors).length > 0) {
-    const err = new Error('Validation failed');
+    const err = new Error('Validation failed: ' + Object.values(errors).join(', '));
     err.validationErrors = errors;
     throw err;
   }
+};
+
+// Helper — extract user + token from any backend response shape
+const extractAuth = (response) => {
+  const token = response?.accessToken || response?.token || response?.data?.accessToken || response?.data?.token;
+  const refreshToken = response?.refreshToken || response?.data?.refreshToken;
+  const user = response?.user || response?.data?.user || response?.data;
+  return { token, refreshToken, user };
 };
 
 // ─── Auth Service ─────────────────────────────────────────────────────────────
 
 export const authService = {
 
-  // Login — payload: { email, password }
+  // ── Login ──────────────────────────────────────────────────────────────────
   login: async (credentials) => {
     try {
       validate({
-        email:    credentials.email,
+        email: credentials.email,
         password: credentials.password,
       });
 
       const response = await api.post('/api/v1/users/login', {
-        email:    credentials.email,
+        email: credentials.email.trim().toLowerCase(),
         password: credentials.password,
       });
 
-      // Handle both response shapes: { token } or { data: { token } }
-      const token       = response.token       || response.data?.token;
-      const refreshToken = response.refreshToken || response.data?.refreshToken;
-      const user        = response.user         || response.data?.user || response.data;
+      const { token, refreshToken, user } = extractAuth(response);
 
       if (token) {
         TokenManager.setToken(token);
@@ -68,108 +77,121 @@ export const authService = {
         console.log('✅ Login successful:', user?.email);
         return { token, user };
       } else {
-        throw new Error(response.message || 'Login failed — no token received');
+        throw new Error(response?.message || 'Login failed — no token received');
       }
     } catch (error) {
       console.error('❌ Login error:', error);
-      throw error;
+      throw error instanceof Error ? error : new Error(error?.message || 'Login failed');
     }
   },
 
-  // Business signup — role: 'user'
+  // ── Business Signup (role: user) ───────────────────────────────────────────
   signupBusiness: async (userData) => {
     try {
       validate({
         firstName: userData.firstName,
-        lastName:  userData.lastName,
-        email:     userData.email,
-        password:  userData.password,
-        phone:     userData.phone,
-        role:      'user',
+        lastName: userData.lastName,
+        email: userData.email,
+        password: userData.password,
+        phone: userData.phone,
       });
 
-      const response = await api.post('/api/v1/users/register', {
-        firstName:    userData.firstName.trim(),
-        lastName:     userData.lastName.trim(),
-        email:        userData.email.trim().toLowerCase(),
-        password:     userData.password,
-        phone:        userData.phone.trim(),
-        role:         'user',
-        agreeToTerms: userData.agreeToTerms,
+      // Correct endpoint: /api/v1/users/signup
+      const response = await api.post('/api/v1/users/signup', {
+        firstName: userData.firstName.trim(),
+        lastName: userData.lastName.trim(),
+        email: userData.email.trim().toLowerCase(),
+        password: userData.password,
+        phone: userData.phone.trim(),
+        role: 'user',
       });
 
-      const user = response.user || response.data?.user || response.data;
+      const { token, refreshToken, user } = extractAuth(response);
+      if (token) {
+        TokenManager.setToken(token);
+        if (refreshToken) TokenManager.setRefreshToken(refreshToken);
+        localStorage.setItem('moveryy_user', JSON.stringify(user));
+      }
+
       console.log('✅ Business signup successful:', userData.email);
-      return user;
+      return user || response;
     } catch (error) {
       console.error('❌ Business signup error:', error);
-      throw error;
+      throw error instanceof Error ? error : new Error(error?.message || 'Signup failed');
     }
   },
 
-  // Admin signup — role: 'admin'
+  // ── Admin Signup (role: admin) ─────────────────────────────────────────────
   signupAdmin: async (userData) => {
     try {
       validate({
         firstName: userData.firstName,
-        lastName:  userData.lastName,
-        email:     userData.email,
-        password:  userData.password,
-        phone:     userData.phone,
-        role:      'admin',
+        lastName: userData.lastName,
+        email: userData.email,
+        password: userData.password,
+        phone: userData.phone,
       });
 
-      const response = await api.post('/api/v1/users/register', {
-        firstName:    userData.firstName.trim(),
-        lastName:     userData.lastName.trim(),
-        email:        userData.email.trim().toLowerCase(),
-        password:     userData.password,
-        phone:        userData.phone.trim(),
-        role:         'admin',
-        agreeToTerms: userData.agreeToTerms,
+      const response = await api.post('/api/v1/users/signup', {
+        firstName: userData.firstName.trim(),
+        lastName: userData.lastName.trim(),
+        email: userData.email.trim().toLowerCase(),
+        password: userData.password,
+        phone: userData.phone.trim(),
+        role: 'admin',
       });
 
-      const user = response.user || response.data?.user || response.data;
+      const { token, refreshToken, user } = extractAuth(response);
+      if (token) {
+        TokenManager.setToken(token);
+        if (refreshToken) TokenManager.setRefreshToken(refreshToken);
+        localStorage.setItem('moveryy_user', JSON.stringify(user));
+      }
+
       console.log('✅ Admin signup successful:', userData.email);
-      return user;
+      return user || response;
     } catch (error) {
       console.error('❌ Admin signup error:', error);
-      throw error;
+      throw error instanceof Error ? error : new Error(error?.message || 'Signup failed');
     }
   },
 
-  // Transport signup — role: 'transport'
+  // ── Transport Signup (role: transport) ────────────────────────────────────
   signupTransport: async (userData) => {
     try {
       validate({
         firstName: userData.firstName,
-        lastName:  userData.lastName,
-        email:     userData.email,
-        password:  userData.password,
-        phone:     userData.phone,
-        role:      'transport',
+        lastName: userData.lastName,
+        email: userData.email,
+        password: userData.password,
+        phone: userData.phone,
       });
 
-      const response = await api.post('/api/v1/users/register', {
-        firstName:    userData.firstName.trim(),
-        lastName:     userData.lastName.trim(),
-        email:        userData.email.trim().toLowerCase(),
-        password:     userData.password,
-        phone:        userData.phone.trim(),
-        role:         'transport',
-        agreeToTerms: userData.agreeToTerms,
+      const response = await api.post('/api/v1/users/signup', {
+        firstName: userData.firstName.trim(),
+        lastName: userData.lastName.trim(),
+        email: userData.email.trim().toLowerCase(),
+        password: userData.password,
+        phone: userData.phone.trim(),
+        role: 'transport',
       });
 
-      const user = response.user || response.data?.user || response.data;
+      const { token, refreshToken, user } = extractAuth(response);
+      if (token) {
+        TokenManager.setToken(token);
+        if (refreshToken) TokenManager.setRefreshToken(refreshToken);
+        localStorage.setItem('moveryy_user', JSON.stringify(user));
+      }
+
       console.log('✅ Transport signup successful:', userData.email);
-      return user;
+      return user || response;
     } catch (error) {
       console.error('❌ Transport signup error:', error);
-      throw error;
+      throw error instanceof Error ? error : new Error(error?.message || 'Signup failed');
     }
   },
 
-  // Logout
+  // ── Logout ─────────────────────────────────────────────────────────────────
   logout: async () => {
     try {
       if (TokenManager.getToken()) {
@@ -185,12 +207,12 @@ export const authService = {
     }
   },
 
-  // Get current user from API
+  // ── Get Current User ───────────────────────────────────────────────────────
   getCurrentUser: async () => {
     try {
-      const response = await api.get('/api/v1/users/me');
-      const user = response.user || response.data?.user || response.data;
-      localStorage.setItem('moveryy_user', JSON.stringify(user));
+      const response = await api.get('/api/v1/users/user');
+      const user = response?.user || response?.data?.user || response?.data;
+      if (user) localStorage.setItem('moveryy_user', JSON.stringify(user));
       return user;
     } catch (error) {
       console.error('❌ Get current user error:', error);
@@ -198,73 +220,31 @@ export const authService = {
     }
   },
 
-  // Update profile
-  updateProfile: async (profileData) => {
+  // ── Refresh Token ──────────────────────────────────────────────────────────
+  refreshToken: async () => {
     try {
-      const response = await api.put('/api/v1/users/profile', profileData);
-      const user = response.user || response.data?.user || response.data;
-      localStorage.setItem('moveryy_user', JSON.stringify(user));
-      console.log('✅ Profile updated successfully');
-      return user;
+      const refreshToken = TokenManager.getRefreshToken();
+      if (!refreshToken) throw new Error('No refresh token available');
+      const response = await api.post('/api/v1/users/refresh-token', { refreshToken });
+      const { token } = extractAuth(response);
+      if (token) TokenManager.setToken(token);
+      return token;
     } catch (error) {
-      console.error('❌ Update profile error:', error);
+      console.error('❌ Refresh token error:', error);
       throw error;
     }
   },
 
-  // Forgot password
-  forgotPassword: async (email) => {
-    try {
-      validate({ email });
-      const response = await api.post('/api/v1/users/forgot-password', { email });
-      console.log('✅ Password reset email sent');
-      return response.data || response;
-    } catch (error) {
-      console.error('❌ Forgot password error:', error);
-      throw error;
-    }
-  },
-
-  // Reset password
-  resetPassword: async (token, newPassword) => {
-    try {
-      validate({ password: newPassword });
-      const response = await api.post('/api/v1/users/reset-password', {
-        token,
-        password: newPassword,
-      });
-      console.log('✅ Password reset successful');
-      return response.data || response;
-    } catch (error) {
-      console.error('❌ Reset password error:', error);
-      throw error;
-    }
-  },
-
-  // Verify email
-  verifyEmail: async (token) => {
-    try {
-      const response = await api.post('/api/v1/users/verify-email', { token });
-      console.log('✅ Email verified successfully');
-      return response.data || response;
-    } catch (error) {
-      console.error('❌ Email verification error:', error);
-      throw error;
-    }
-  },
-
-  // Check authentication status
+  // ── Helpers ────────────────────────────────────────────────────────────────
   isAuthenticated: () => {
     return !!(TokenManager.getToken() && localStorage.getItem('moveryy_user'));
   },
 
-  // Get stored user
   getStoredUser: () => {
     try {
       const userData = localStorage.getItem('moveryy_user');
       return userData ? JSON.parse(userData) : null;
-    } catch (error) {
-      console.error('❌ Error parsing stored user data:', error);
+    } catch {
       return null;
     }
   },
