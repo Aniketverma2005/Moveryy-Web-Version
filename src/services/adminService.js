@@ -31,7 +31,7 @@ export const adminService = {
         period,
         metrics: metrics.join(',')
       }).toString();
-      
+
       const response = await api.get(`/admin/analytics?${queryParams}`);
       if (response.success) {
         console.log('✅ Analytics data loaded');
@@ -53,7 +53,7 @@ export const adminService = {
         limit,
         ...filters
       }).toString();
-      
+
       const response = await api.get(`/admin/users?${queryParams}`);
       if (response.success) {
         console.log('✅ Users loaded:', response.data.users.length);
@@ -128,7 +128,7 @@ export const adminService = {
         limit,
         ...filters
       }).toString();
-      
+
       const response = await api.get(`/admin/bookings?${queryParams}`);
       if (response.success) {
         console.log('✅ All bookings loaded:', response.data.bookings.length);
@@ -185,7 +185,7 @@ export const adminService = {
         limit,
         ...filters
       }).toString();
-      
+
       const response = await api.get(`/admin/payments?${queryParams}`);
       if (response.success) {
         console.log('✅ Payments loaded:', response.data.payments.length);
@@ -226,7 +226,7 @@ export const adminService = {
         limit,
         ...filters
       }).toString();
-      
+
       const response = await api.get(`/admin/drivers?${queryParams}`);
       if (response.success) {
         console.log('✅ Drivers loaded:', response.data.drivers.length);
@@ -267,7 +267,7 @@ export const adminService = {
         limit,
         ...filters
       }).toString();
-      
+
       const response = await api.get(`/admin/reviews?${queryParams}`);
       if (response.success) {
         console.log('✅ Reviews loaded:', response.data.reviews.length);
@@ -420,11 +420,11 @@ export const adminService = {
         format,
         ...filters
       }).toString();
-      
+
       const response = await api.get(`/admin/export?${queryParams}`, {
         responseType: 'blob'
       });
-      
+
       console.log('✅ Data export completed:', dataType);
       return response;
     } catch (error) {

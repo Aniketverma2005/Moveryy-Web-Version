@@ -24,9 +24,9 @@ const Signup = () => {
                 {/* Logo */}
                 <div className="mb-20">
                     <div className="bg-white rounded-lg p-4 inline-block shadow-sm">
-                        <img 
+                        <img
                             src={logo}
-                            alt="Moveryy Logo" 
+                            alt="Moveryy Logo"
                             className="h-16 w-auto object-contain"
                         />
                     </div>
