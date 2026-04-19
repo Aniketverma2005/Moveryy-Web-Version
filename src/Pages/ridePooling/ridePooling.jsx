@@ -52,9 +52,9 @@ const RidePooling = () => {
             `}</style>
 
             {/* ── Navbar ─────────────────────────────────────────────── */}
-            <nav className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0 shadow-sm">
+            <nav className="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0 shadow-sm">
                 <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-                    <img src={logo} alt="Moveryy" className="h-8 w-auto object-contain" />
+                    <img src={logo} alt="Moveryy" className="h-14 w-auto object-contain" />
                 </div>
                 <div className="flex items-center gap-4">
                     <button onClick={() => navigate('/login')} className="text-sm text-gray-700 hover:text-[#4285F4] font-medium transition-colors">
@@ -68,7 +68,7 @@ const RidePooling = () => {
 
             {/* ── Body — tiny white border around the two-panel card ── */}
             <div className="flex-1 flex items-center justify-center p-3">
-                <div className="w-[96%] h-[calc(100vh-3.5rem-1.5rem)] flex rounded-2xl overflow-hidden shadow-2xl">
+                <div className="w-[96%] h-[calc(100vh-5rem-1.5rem)] flex rounded-2xl overflow-hidden shadow-2xl">
 
                     {/* ── LEFT — Blue-600 panel ──────────────────────── */}
                     <div className="w-1/2 bg-blue-600 relative overflow-hidden flex flex-col justify-between p-10">
