@@ -7,11 +7,10 @@
 
 import axios from 'axios';
 
-// API Configuration
+// API Configuration — BASE_URL is empty so Vite proxy forwards /api/* to localhost:8000
 const API_CONFIG = {
-  BASE_URL: import.meta.env.VITE_API_URL || 'http://localhost:8000',
-  TIMEOUT: 10000, // 10 seconds
-  RETRY_ATTEMPTS: 3,
+  BASE_URL: '',
+  TIMEOUT: 15000,
 };
 
 // Create axios instance with default configuration
@@ -41,10 +40,10 @@ apiClient.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-    
+
     // Add request timestamp for debugging
     config.metadata = { startTime: new Date() };
-    
+
     console.log(`🚀 API Request: ${config.method?.toUpperCase()} ${config.url}`);
     return config;
   },
@@ -60,26 +59,26 @@ apiClient.interceptors.response.use(
     // Calculate request duration
     const duration = new Date() - response.config.metadata.startTime;
     console.log(`✅ API Response: ${response.config.method?.toUpperCase()} ${response.config.url} (${duration}ms)`);
-    
+
     return response;
   },
   async (error) => {
     const originalRequest = error.config;
-    
+
     // Handle 401 Unauthorized - Token expired
     if (error.response?.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
-      
+
       try {
         const refreshToken = TokenManager.getRefreshToken();
         if (refreshToken) {
           const response = await axios.post(`${API_CONFIG.BASE_URL}/auth/refresh`, {
             refreshToken
           });
-          
+
           const { token } = response.data;
           TokenManager.setToken(token);
-          
+
           // Retry original request with new token
           originalRequest.headers.Authorization = `Bearer ${token}`;
           return apiClient(originalRequest);
@@ -91,14 +90,14 @@ apiClient.interceptors.response.use(
         window.location.href = '/login';
       }
     }
-    
+
     // Log error details
     console.error(`❌ API Error: ${error.config?.method?.toUpperCase()} ${error.config?.url}`, {
       status: error.response?.status,
       message: error.response?.data?.message || error.message,
       data: error.response?.data
     });
-    
+
     return Promise.reject(error);
   }
 );
@@ -191,22 +190,32 @@ const handleApiError = (error) => {
   };
 
   if (error.response) {
-    // Server responded with error status
+    // Server responded with an error status — surface the real message
     errorResponse.status = error.response.status;
-    errorResponse.message = error.response.data?.message || error.message;
+    errorResponse.message = error.response.data?.message
+      || error.response.data?.error
+      || error.response.data?.errors?.[0]?.msg
+      || error.message;
     errorResponse.code = error.response.data?.code || 'SERVER_ERROR';
-    errorResponse.details = error.response.data?.details || null;
+    errorResponse.details = error.response.data?.details
+      || error.response.data?.errors
+      || null;
   } else if (error.request) {
-    // Request made but no response received
-    errorResponse.message = 'Network error - please check your connection';
+    // Request was made but no response — backend is likely not running
+    errorResponse.message = 'Cannot reach the server. Make sure the backend is running on port 8000.';
     errorResponse.code = 'NETWORK_ERROR';
+    errorResponse.status = 0;
   } else {
-    // Something else happened
     errorResponse.message = error.message;
     errorResponse.code = 'REQUEST_ERROR';
   }
 
-  return errorResponse;
+  // Always throw an Error object so .message works in catch blocks
+  const err = new Error(errorResponse.message);
+  err.status = errorResponse.status;
+  err.code = errorResponse.code;
+  err.details = errorResponse.details;
+  return err;
 };
 
 // Export token manager for use in other files
