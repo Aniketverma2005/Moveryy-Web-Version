@@ -88,7 +88,7 @@ export const authService = {
         role:      'user',
       });
 
-      const response = await api.post('/api/v1/users/register', {
+      const response = await api.post('/api/v1/users/signup', {
         firstName:    userData.firstName.trim(),
         lastName:     userData.lastName.trim(),
         email:        userData.email.trim().toLowerCase(),
@@ -119,7 +119,7 @@ export const authService = {
         role:      'admin',
       });
 
-      const response = await api.post('/api/v1/users/register', {
+      const response = await api.post('/api/v1/users/signup', {
         firstName:    userData.firstName.trim(),
         lastName:     userData.lastName.trim(),
         email:        userData.email.trim().toLowerCase(),
@@ -138,136 +138,7 @@ export const authService = {
     }
   },
 
-  // Transport signup — role: 'transport'
-  signupTransport: async (userData) => {
-    try {
-      validate({
-        firstName: userData.firstName,
-        lastName:  userData.lastName,
-        email:     userData.email,
-        password:  userData.password,
-        phone:     userData.phone,
-        role:      'transport',
-      });
-
-      const response = await api.post('/api/v1/users/register', {
-        firstName:    userData.firstName.trim(),
-        lastName:     userData.lastName.trim(),
-        email:        userData.email.trim().toLowerCase(),
-        password:     userData.password,
-        phone:        userData.phone.trim(),
-        role:         'transport',
-        agreeToTerms: userData.agreeToTerms,
-      });
-
-      const user = response.user || response.data?.user || response.data;
-      console.log('✅ Transport signup successful:', userData.email);
-      return user;
-    } catch (error) {
-      console.error('❌ Transport signup error:', error);
-      throw error;
-    }
-  },
-
-  // Logout
-  logout: async () => {
-    try {
-      if (TokenManager.getToken()) {
-        await api.post('/api/v1/users/logout');
-      }
-    } catch (error) {
-      console.error('❌ Logout error:', error);
-    } finally {
-      TokenManager.removeToken();
-      TokenManager.removeRefreshToken();
-      localStorage.removeItem('moveryy_user');
-      console.log('✅ User logged out');
-    }
-  },
-
-  // Get current user from API
-  getCurrentUser: async () => {
-    try {
-      const response = await api.get('/api/v1/users/me');
-      const user = response.user || response.data?.user || response.data;
-      localStorage.setItem('moveryy_user', JSON.stringify(user));
-      return user;
-    } catch (error) {
-      console.error('❌ Get current user error:', error);
-      throw error;
-    }
-  },
-
-  // Update profile
-  updateProfile: async (profileData) => {
-    try {
-      const response = await api.put('/api/v1/users/profile', profileData);
-      const user = response.user || response.data?.user || response.data;
-      localStorage.setItem('moveryy_user', JSON.stringify(user));
-      console.log('✅ Profile updated successfully');
-      return user;
-    } catch (error) {
-      console.error('❌ Update profile error:', error);
-      throw error;
-    }
-  },
-
-  // Forgot password
-  forgotPassword: async (email) => {
-    try {
-      validate({ email });
-      const response = await api.post('/api/v1/users/forgot-password', { email });
-      console.log('✅ Password reset email sent');
-      return response.data || response;
-    } catch (error) {
-      console.error('❌ Forgot password error:', error);
-      throw error;
-    }
-  },
-
-  // Reset password
-  resetPassword: async (token, newPassword) => {
-    try {
-      validate({ password: newPassword });
-      const response = await api.post('/api/v1/users/reset-password', {
-        token,
-        password: newPassword,
-      });
-      console.log('✅ Password reset successful');
-      return response.data || response;
-    } catch (error) {
-      console.error('❌ Reset password error:', error);
-      throw error;
-    }
-  },
-
-  // Verify email
-  verifyEmail: async (token) => {
-    try {
-      const response = await api.post('/api/v1/users/verify-email', { token });
-      console.log('✅ Email verified successfully');
-      return response.data || response;
-    } catch (error) {
-      console.error('❌ Email verification error:', error);
-      throw error;
-    }
-  },
-
-  // Check authentication status
-  isAuthenticated: () => {
-    return !!(TokenManager.getToken() && localStorage.getItem('moveryy_user'));
-  },
-
-  // Get stored user
-  getStoredUser: () => {
-    try {
-      const userData = localStorage.getItem('moveryy_user');
-      return userData ? JSON.parse(userData) : null;
-    } catch (error) {
-      console.error('❌ Error parsing stored user data:', error);
-      return null;
-    }
-  },
+  
 };
 
 export default authService;

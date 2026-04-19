@@ -9,7 +9,7 @@
 export { api, TokenManager } from './api';
 
 // Authentication services
-export { authService } from './authService';
+export { authService } from './Auth/authService';
 
 // User services
 export { userService } from './userService';
