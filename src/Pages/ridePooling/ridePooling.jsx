@@ -30,14 +30,14 @@ const RidePooling = () => {
 
     const stats = [
         { value: '500+', label: 'Active Drivers' },
-        { value: '₹45K', label: 'Avg Monthly Earn' },
-        { value: '4.9★', label: 'Driver Rating' },
+        { value: '₹45K', label: 'Avg Monthly' },
+        { value: '4.9★', label: 'Rating' },
     ];
 
     return (
         <div className="min-h-screen flex flex-col font-sans">
 
-            {/* ── Navbar ─────────────────────────────────────────────────── */}
+            {/* ── Navbar ─────────────────────────────────────────────── */}
             <nav className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-8 sticky top-0 z-50 shadow-sm">
                 <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
                     <img src={logo} alt="Moveryy" className="h-8 w-auto object-contain" />
@@ -52,121 +52,115 @@ const RidePooling = () => {
                 </div>
             </nav>
 
-            {/* ── Main ───────────────────────────────────────────────────── */}
+            {/* ── Main ───────────────────────────────────────────────── */}
             <main className="flex flex-1">
 
-                {/* ── Left — Dark Blue Animated Panel ──────────────────── */}
-                <div className="hidden lg:flex w-[480px] flex-shrink-0 relative overflow-hidden flex-col justify-between p-10"
-                    style={{ background: 'linear-gradient(160deg, #0d1b4b 0%, #1a3a8f 45%, #2952c4 100%)' }}>
+                {/* ── Left — White bg with centered blue-600 square card ── */}
+                <div className="hidden lg:flex w-[480px] flex-shrink-0 bg-white items-center justify-center p-8">
 
-                    {/* Animated background blobs */}
-                    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                        {/* Large slow-rotating circle */}
-                        <div className="absolute -top-20 -left-20 w-80 h-80 rounded-full opacity-10"
-                            style={{ background: 'radial-gradient(circle, #60a5fa, transparent)', animation: 'spin 20s linear infinite' }} />
-                        {/* Floating orb 1 */}
-                        <div className="absolute top-1/4 right-8 w-24 h-24 rounded-full opacity-20"
-                            style={{ background: '#4285F4', animation: 'float1 6s ease-in-out infinite' }} />
-                        {/* Floating orb 2 */}
-                        <div className="absolute bottom-1/3 left-8 w-16 h-16 rounded-full opacity-15"
-                            style={{ background: '#60a5fa', animation: 'float2 8s ease-in-out infinite' }} />
-                        {/* Floating orb 3 */}
-                        <div className="absolute bottom-16 right-16 w-32 h-32 rounded-full opacity-10"
-                            style={{ background: 'radial-gradient(circle, #93c5fd, transparent)', animation: 'float1 10s ease-in-out infinite reverse' }} />
-                        {/* Grid dots pattern */}
-                        <div className="absolute inset-0 opacity-5"
-                            style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
-                    </div>
-
-                    {/* CSS keyframes injected inline */}
+                    {/* CSS animations */}
                     <style>{`
                         @keyframes float1 {
-                            0%, 100% { transform: translateY(0px) scale(1); }
-                            50% { transform: translateY(-20px) scale(1.05); }
+                            0%, 100% { transform: translateY(0px); }
+                            50% { transform: translateY(-14px); }
                         }
                         @keyframes float2 {
                             0%, 100% { transform: translateY(0px) translateX(0px); }
-                            33% { transform: translateY(-14px) translateX(8px); }
-                            66% { transform: translateY(8px) translateX(-6px); }
+                            33% { transform: translateY(-10px) translateX(6px); }
+                            66% { transform: translateY(6px) translateX(-5px); }
                         }
                         @keyframes fadeSlideUp {
-                            from { opacity: 0; transform: translateY(20px); }
-                            to { opacity: 1; transform: translateY(0); }
+                            from { opacity: 0; transform: translateY(16px); }
+                            to   { opacity: 1; transform: translateY(0); }
                         }
                         @keyframes pulse-ring {
-                            0% { transform: scale(1); opacity: 0.6; }
-                            100% { transform: scale(1.8); opacity: 0; }
+                            0%   { transform: scale(1); opacity: 0.5; }
+                            100% { transform: scale(1.9); opacity: 0; }
                         }
                     `}</style>
 
-                    {/* Logo */}
-                    <div className="relative z-10">
-                        <div className="bg-white rounded-xl p-3 inline-flex items-center gap-3 shadow-lg mb-10">
-                            <img src={logo} alt="Moveryy" className="h-10 w-auto object-contain" />
+                    {/* ── Blue-600 square card ── */}
+                    <div className="relative w-full aspect-square max-w-[380px] bg-blue-600 rounded-2xl overflow-hidden flex flex-col justify-between p-8 shadow-2xl">
+
+                        {/* Animated background blobs inside card */}
+                        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                            <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full opacity-20"
+                                style={{ background: 'radial-gradient(circle, #93c5fd, transparent)', animation: 'float1 7s ease-in-out infinite' }} />
+                            <div className="absolute bottom-10 -left-8 w-36 h-36 rounded-full opacity-15"
+                                style={{ background: 'radial-gradient(circle, #bfdbfe, transparent)', animation: 'float2 9s ease-in-out infinite' }} />
+                            <div className="absolute inset-0 opacity-5"
+                                style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '24px 24px' }} />
                         </div>
 
-                        {/* Heading */}
-                        <h1 className="text-4xl font-extrabold text-white leading-tight mb-4"
-                            style={{ animation: 'fadeSlideUp 0.6s ease both' }}>
-                            Fast, Reliable<br />
-                            <span className="text-blue-300">Delivery Management</span>
-                        </h1>
-                        <p className="text-blue-100 text-base opacity-85 mb-10 leading-relaxed"
-                            style={{ animation: 'fadeSlideUp 0.7s ease both' }}>
-                            Join thousands of delivery professionals using Moveryy to streamline their logistics and grow their business.
-                        </p>
+                        {/* Top — Logo inside card */}
+                        <div className="relative z-10">
+                            <div className="bg-white rounded-xl p-3 inline-block shadow-md mb-6">
+                                <img src={logo} alt="Moveryy" className="h-10 w-auto object-contain" />
+                            </div>
 
-                        {/* Feature bullets */}
-                        <div className="space-y-4" style={{ animation: 'fadeSlideUp 0.8s ease both' }}>
-                            {[
-                                { icon: <MdFlashOn size={16} />, text: 'Real-time tracking and updates' },
-                                { icon: <MdOutlineGpsFixed size={16} />, text: 'Optimize your routes and save time' },
-                                { icon: <MdShield size={16} />, text: 'Grow your delivery business with us' },
-                            ].map(({ icon, text }) => (
-                                <div key={text} className="flex items-center gap-3">
-                                    <div className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center text-white flex-shrink-0">
-                                        {icon}
+                            {/* Heading */}
+                            <h1 className="text-2xl font-extrabold text-white leading-tight mb-3"
+                                style={{ animation: 'fadeSlideUp 0.5s ease both' }}>
+                                Fast, Reliable<br />
+                                <span className="text-blue-200">Delivery Management</span>
+                            </h1>
+                            <p className="text-blue-100 text-xs leading-relaxed mb-5 opacity-90"
+                                style={{ animation: 'fadeSlideUp 0.65s ease both' }}>
+                                Join thousands of delivery professionals using Moveryy to grow their business.
+                            </p>
+
+                            {/* Feature bullets */}
+                            <div className="space-y-2.5" style={{ animation: 'fadeSlideUp 0.8s ease both' }}>
+                                {[
+                                    { icon: <MdFlashOn size={13} />, text: 'Real-time tracking and updates' },
+                                    { icon: <MdOutlineGpsFixed size={13} />, text: 'Optimize your routes and save time' },
+                                    { icon: <MdShield size={13} />, text: 'Grow your delivery business with us' },
+                                ].map(({ icon, text }) => (
+                                    <div key={text} className="flex items-center gap-2.5">
+                                        <div className="w-5 h-5 rounded-full bg-white/20 flex items-center justify-center text-white flex-shrink-0">
+                                            {icon}
+                                        </div>
+                                        <span className="text-blue-100 text-xs font-medium">{text}</span>
                                     </div>
-                                    <span className="text-blue-100 text-sm font-medium">{text}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Stats row */}
-                    <div className="relative z-10">
-                        {/* Floating truck icon */}
-                        <div className="flex items-center gap-2 mb-6">
-                            <div className="relative">
-                                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                                    <MdLocalShipping size={22} className="text-white" />
-                                </div>
-                                <div className="absolute inset-0 rounded-full border-2 border-white/30"
-                                    style={{ animation: 'pulse-ring 2s ease-out infinite' }} />
-                            </div>
-                            <div className="flex items-center gap-1">
-                                {[1, 2, 3, 4, 5].map(i => (
-                                    <MdStar key={i} size={14} className="text-yellow-400" />
                                 ))}
-                                <span className="text-white text-xs ml-1 opacity-80">Top rated platform</span>
                             </div>
                         </div>
 
-                        {/* Stats */}
-                        <div className="grid grid-cols-3 gap-3">
-                            {stats.map(({ value, label }) => (
-                                <div key={label} className="bg-white/10 backdrop-blur-sm rounded-xl p-3 border border-white/10">
-                                    <p className="text-white font-extrabold text-lg leading-none">{value}</p>
-                                    <p className="text-blue-200 text-xs mt-1 opacity-80">{label}</p>
+                        {/* Bottom — Stats + truck */}
+                        <div className="relative z-10">
+                            {/* Pulsing truck */}
+                            <div className="flex items-center gap-2 mb-4">
+                                <div className="relative">
+                                    <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center">
+                                        <MdLocalShipping size={18} className="text-white" />
+                                    </div>
+                                    <div className="absolute inset-0 rounded-full border-2 border-white/40"
+                                        style={{ animation: 'pulse-ring 2s ease-out infinite' }} />
                                 </div>
-                            ))}
-                        </div>
+                                <div className="flex items-center gap-0.5">
+                                    {[1, 2, 3, 4, 5].map(i => <MdStar key={i} size={12} className="text-yellow-300" />)}
+                                    <span className="text-white text-xs ml-1 opacity-75">Top rated</span>
+                                </div>
+                            </div>
 
-                        <p className="text-blue-300 text-xs mt-6 opacity-60">Trusted by 500+ delivery partners worldwide</p>
+                            {/* Stats */}
+                            <div className="grid grid-cols-3 gap-2">
+                                {stats.map(({ value, label }) => (
+                                    <div key={label} className="bg-white/15 backdrop-blur-sm rounded-xl p-2.5 border border-white/10 text-center">
+                                        <p className="text-white font-extrabold text-base leading-none">{value}</p>
+                                        <p className="text-blue-200 text-[10px] mt-1 opacity-80">{label}</p>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <p className="text-blue-300 text-[10px] mt-4 opacity-60 text-center">
+                                Trusted by 500+ delivery partners worldwide
+                            </p>
+                        </div>
                     </div>
                 </div>
 
-                {/* ── Right — Form Panel ────────────────────────────────── */}
+                {/* ── Right — Form Panel ──────────────────────────────── */}
                 <div className="flex-1 bg-gray-50 flex items-center justify-center p-6">
                     <div className="max-w-md w-full bg-white p-10 rounded-2xl shadow-sm border border-gray-100">
                         <h2 className="text-2xl font-bold text-gray-900 mb-1">Ready to start earning?</h2>
@@ -205,7 +199,7 @@ const RidePooling = () => {
                             Already a driver? Sign In
                         </button>
 
-                        {/* Features grid */}
+                        {/* Features */}
                         <div className="mt-8 pt-6 border-t border-gray-100">
                             <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-4">Available Features</p>
                             <div className="grid grid-cols-2 gap-3">
