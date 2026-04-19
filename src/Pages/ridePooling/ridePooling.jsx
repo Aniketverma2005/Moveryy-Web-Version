@@ -263,25 +263,16 @@ const RidePooling = () => {
                             </div>
                         </div>
 
-                        {/* ── Bottom — stats + pulsing truck ── */}
+                        {/* ── Bottom — stats + stars ── */}
                         <div className="relative z-10 animate-fadeSlideUp-4">
-                            {/* Pulsing truck with double ring */}
-                            <div className="flex items-center gap-3 mb-5">
-                                <div className="relative">
-                                    <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center z-10 relative">
-                                        <MdLocalShipping size={24} className="text-white" />
-                                    </div>
-                                    <div className="absolute inset-0 rounded-full border-2 border-white/50"
-                                        style={{ animation: 'pulse-ring 2s ease-out infinite' }} />
-                                    <div className="absolute inset-0 rounded-full border border-white/30"
-                                        style={{ animation: 'pulse-ring2 2s 0.5s ease-out infinite' }} />
-                                </div>
+                            {/* Stars row — no truck */}
+                            <div className="flex items-center gap-2 mb-5">
                                 <div className="flex items-center gap-1">
                                     {[1, 2, 3, 4, 5].map(i => (
-                                        <MdStar key={i} size={14} className="text-yellow-300"
+                                        <MdStar key={i} size={16} className="text-yellow-300"
                                             style={{ animation: `popIn 0.4s ${0.1 * i}s ease both` }} />
                                     ))}
-                                    <span className="text-white text-xs ml-1 opacity-80">Top rated platform</span>
+                                    <span className="text-white text-sm ml-2 opacity-80 font-medium">Top rated platform</span>
                                 </div>
                             </div>
 
