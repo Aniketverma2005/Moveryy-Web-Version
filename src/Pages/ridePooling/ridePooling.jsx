@@ -71,12 +71,6 @@ const RidePooling = () => {
                     100% { transform: scale(2.8); opacity: 0; }
                 }
 
-                /* ── Shimmer on stat cards ── */
-                @keyframes shimmer {
-                    0%   { background-position: -200% center; }
-                    100% { background-position: 200% center; }
-                }
-
                 /* ── Rotating ring ── */
                 @keyframes spin-slow {
                     from { transform: rotate(0deg); }
@@ -89,7 +83,7 @@ const RidePooling = () => {
                     50% { transform: translateX(5px); }
                 }
 
-                /* ── Step number count-up feel ── */
+                /* ── Step number pop ── */
                 @keyframes popIn {
                     0%   { transform: scale(0.5); opacity: 0; }
                     70%  { transform: scale(1.15); }
@@ -108,6 +102,21 @@ const RidePooling = () => {
                     50%      { opacity: 0; }
                 }
 
+                /* ── Logo truck drive across navbar ── */
+                @keyframes drive-across {
+                    0%   { transform: translateX(-120px); opacity: 0; }
+                    15%  { opacity: 1; }
+                    80%  { transform: translateX(0px); opacity: 1; }
+                    100% { transform: translateX(0px); opacity: 1; }
+                }
+
+                /* ── Buttons pop in from right ── */
+                @keyframes pop-from-right {
+                    0%   { transform: translateX(60px) scale(0.8); opacity: 0; }
+                    70%  { transform: translateX(-4px) scale(1.05); opacity: 1; }
+                    100% { transform: translateX(0) scale(1); opacity: 1; }
+                }
+
                 .animate-fadeSlideUp-1 { animation: fadeSlideUp 0.5s ease both; }
                 .animate-fadeSlideUp-2 { animation: fadeSlideUp 0.65s 0.1s ease both; }
                 .animate-fadeSlideUp-3 { animation: fadeSlideUp 0.7s 0.2s ease both; }
@@ -119,18 +128,29 @@ const RidePooling = () => {
                 .animate-fadeIn { animation: fadeIn 0.8s 0.5s ease both; }
                 .bounce-arrow { animation: bounce-x 1.2s ease-in-out infinite; }
                 .glow-btn { animation: glow-pulse 2s ease-in-out infinite; }
+                .logo-drive { animation: drive-across 1.2s cubic-bezier(0.22,1,0.36,1) both; }
+                .btn-pop-1 { animation: pop-from-right 0.5s 1.0s cubic-bezier(0.22,1,0.36,1) both; }
+                .btn-pop-2 { animation: pop-from-right 0.5s 1.15s cubic-bezier(0.22,1,0.36,1) both; }
             `}</style>
 
             {/* ── Navbar ─────────────────────────────────────────────── */}
-            <nav className="h-20 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0 shadow-sm">
-                <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-                    <img src={logo} alt="Moveryy" className="h-14 w-auto object-contain" />
+            <nav className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0 shadow-sm overflow-hidden">
+                {/* Logo drives in from left → settles top-left */}
+                <div className="logo-drive flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+                    <img src={logo} alt="Moveryy" className="h-10 w-auto object-contain" />
                 </div>
+                {/* Buttons pop in from right */}
                 <div className="flex items-center gap-4">
-                    <button onClick={() => navigate('/login')} className="text-sm text-gray-700 hover:text-[#4285F4] font-medium transition-colors">
+                    <button
+                        onClick={() => navigate('/login')}
+                        className="btn-pop-1 text-sm text-gray-700 hover:text-[#4285F4] font-medium transition-colors"
+                    >
                         Sign In
                     </button>
-                    <button onClick={() => navigate('/signup')} className="bg-[#4285F4] hover:bg-[#3367D6] text-white text-sm font-semibold px-5 py-2 rounded-lg shadow transition-all active:scale-95">
+                    <button
+                        onClick={() => navigate('/signup')}
+                        className="btn-pop-2 bg-[#4285F4] hover:bg-[#3367D6] text-white text-sm font-semibold px-5 py-2 rounded-lg shadow transition-all active:scale-95"
+                    >
                         Get Started
                     </button>
                 </div>
@@ -138,7 +158,7 @@ const RidePooling = () => {
 
             {/* ── Body ───────────────────────────────────────────────── */}
             <div className="flex-1 flex items-center justify-center p-3">
-                <div className="w-[96%] h-[calc(100vh-5rem-1.5rem)] flex rounded-2xl overflow-hidden shadow-2xl">
+                <div className="w-[96%] h-[calc(100vh-4rem-1.5rem)] flex rounded-2xl overflow-hidden shadow-2xl">
 
                     {/* ══════════════════════════════════════════════════
                         LEFT — Blue-600 animated panel
@@ -172,7 +192,7 @@ const RidePooling = () => {
                                 Fast, Reliable<br />
                                 <span className="text-blue-200">
                                     Delivery Management
-                                    <span style={{ animation: 'blink 1s step-end infinite', marginLeft: '2px' }}>|</span>
+                                    <span style={{ animation: 'blink 1s step-end infinite', marginLeft: '2px' }}></span>
                                 </span>
                             </h1>
                             <p className="text-blue-100 text-base leading-relaxed mb-8 opacity-90 max-w-sm animate-fadeSlideUp-2">
