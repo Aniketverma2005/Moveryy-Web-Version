@@ -17,10 +17,10 @@ const RidePooling = () => {
     const [phase, setPhase] = useState(0);
 
     useEffect(() => {
-        // Phase 0 → 1: truck pushes logo to right (3.5s — slow professional drive)
+        // Phase 0 → 1: logo does first full pass L→R and exits (3.5s)
         const t1 = setTimeout(() => setPhase(1), 3500);
-        // Phase 1 → 2: logo slides back to left (2.0s later — elegant return)
-        const t2 = setTimeout(() => setPhase(2), 5700);
+        // Phase 1 → 2: logo re-enters from left and stops at position (2.5s later)
+        const t2 = setTimeout(() => setPhase(2), 6200);
         return () => { clearTimeout(t1); clearTimeout(t2); };
     }, []);
 
@@ -117,21 +117,22 @@ const RidePooling = () => {
                     50%      { opacity: 0; }
                 }
 
-                /* ── Truck pushes logo left→right across full navbar ── */
+                /* ── Phase 0: Logo drives full pass L→R and exits ── */
                 @keyframes push-right {
                     0%   { transform: translateX(-160px); }
                     100% { transform: translateX(calc(100vw + 160px)); }
+                }
+                /* ── Phase 1: Logo re-enters from left, stops at position ── */
+                @keyframes enter-and-stop {
+                    0%   { transform: translateX(-160px); opacity: 0.6; }
+                    60%  { transform: translateX(8px); opacity: 1; }
+                    80%  { transform: translateX(-3px); }
+                    100% { transform: translateX(0px); opacity: 1; }
                 }
                 /* ── Truck road bounce ── */
                 @keyframes truck-bounce {
                     0%, 100% { transform: translateY(0px); }
                     50%      { transform: translateY(-3px); }
-                }
-                /* ── Logo slides back from right → settles left ── */
-                @keyframes slide-back {
-                    0%   { transform: translateX(calc(100vw)); opacity: 0.3; }
-                    60%  { transform: translateX(-8px); opacity: 1; }
-                    100% { transform: translateX(0px); opacity: 1; }
                 }
                 /* ── Buttons pop in from right ── */
                 @keyframes pop-from-right {
@@ -166,12 +167,14 @@ const RidePooling = () => {
                     </div>
                 )}
 
-                {/* ── PHASE 1: Logo slides back from right → left ── */}
+                {/* ── PHASE 1: Logo re-enters from left → stops at position ── */}
                 {phase === 1 && (
                     <div className="flex items-center gap-2 cursor-pointer"
-                        style={{ animation: 'slide-back 1.8s cubic-bezier(0.16,1,0.3,1) both' }}
+                        style={{ animation: 'enter-and-stop 2.5s cubic-bezier(0.16,1,0.3,1) both' }}
                         onClick={() => navigate('/')}>
-                        <img src={logo} alt="Moveryy" className="h-12 w-auto object-contain" />
+                        <div style={{ animation: 'truck-bounce 0.6s ease-in-out infinite' }}>
+                            <img src={logo} alt="Moveryy" className="h-12 w-auto object-contain" />
+                        </div>
                     </div>
                 )}
 
@@ -261,10 +264,19 @@ const RidePooling = () => {
                             </div>
                         </div>
 
-                        {/* ── Bottom — stats + stars ── */}
+                        {/* ── Bottom — stats + pulsing truck ── */}
                         <div className="relative z-10 animate-fadeSlideUp-4">
-                            {/* Stars row — no truck */}
-                            <div className="flex items-center gap-2 mb-5">
+                            {/* Pulsing truck with double ring */}
+                            <div className="flex items-center gap-3 mb-5">
+                                <div className="relative">
+                                    <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center z-10 relative">
+                                        <MdLocalShipping size={24} className="text-white" />
+                                    </div>
+                                    <div className="absolute inset-0 rounded-full border-2 border-white/50"
+                                        style={{ animation: 'pulse-ring 2s ease-out infinite' }} />
+                                    <div className="absolute inset-0 rounded-full border border-white/30"
+                                        style={{ animation: 'pulse-ring2 2s 0.5s ease-out infinite' }} />
+                                </div>
                                 <div className="flex items-center gap-1">
                                     {[1, 2, 3, 4, 5].map(i => (
                                         <MdStar key={i} size={16} className="text-yellow-300"
