@@ -17,10 +17,10 @@ const RidePooling = () => {
     const [phase, setPhase] = useState(0);
 
     useEffect(() => {
-        // Phase 0 → 1: truck pushes logo to right (1.6s)
-        const t1 = setTimeout(() => setPhase(1), 1600);
-        // Phase 1 → 2: logo slides back to left (1.0s later)
-        const t2 = setTimeout(() => setPhase(2), 2700);
+        // Phase 0 → 1: truck pushes logo to right (3.5s — slow professional drive)
+        const t1 = setTimeout(() => setPhase(1), 3500);
+        // Phase 1 → 2: logo slides back to left (2.0s later — elegant return)
+        const t2 = setTimeout(() => setPhase(2), 5700);
         return () => { clearTimeout(t1); clearTimeout(t2); };
     }, []);
 
@@ -159,9 +159,9 @@ const RidePooling = () => {
                 {/* ── PHASE 0: Truck pushes logo from left → right ── */}
                 {phase === 0 && (
                     <div className="absolute inset-0 flex items-center px-8 pointer-events-none"
-                        style={{ animation: 'push-right 1.5s cubic-bezier(0.4,0,0.2,1) both' }}>
+                        style={{ animation: 'push-right 3.4s linear both' }}>
                         {/* Truck icon bouncing on road */}
-                        <div style={{ animation: 'truck-bounce 0.3s ease-in-out infinite' }}>
+                        <div style={{ animation: 'truck-bounce 0.6s ease-in-out infinite' }}>
                             <MdLocalShipping size={32} className="text-[#4285F4] mr-3 flex-shrink-0" />
                         </div>
                         <img src={logo} alt="Moveryy" className="h-12 w-auto object-contain" />
@@ -171,7 +171,7 @@ const RidePooling = () => {
                 {/* ── PHASE 1: Logo slides back from right → left ── */}
                 {phase === 1 && (
                     <div className="flex items-center gap-2 cursor-pointer"
-                        style={{ animation: 'slide-back 0.9s cubic-bezier(0.22,1,0.36,1) both' }}
+                        style={{ animation: 'slide-back 1.8s cubic-bezier(0.16,1,0.3,1) both' }}
                         onClick={() => navigate('/')}>
                         <img src={logo} alt="Moveryy" className="h-12 w-auto object-contain" />
                     </div>
@@ -188,12 +188,12 @@ const RidePooling = () => {
                         <div className="flex items-center gap-4">
                             <button onClick={() => navigate('/login')}
                                 className="text-sm text-gray-700 hover:text-[#4285F4] font-medium transition-colors"
-                                style={{ animation: 'pop-from-right 0.45s 0s cubic-bezier(0.22,1,0.36,1) both' }}>
+                                style={{ animation: 'pop-from-right 0.7s 0s cubic-bezier(0.16,1,0.3,1) both' }}>
                                 Sign In
                             </button>
                             <button onClick={() => navigate('/signup')}
                                 className="bg-[#4285F4] hover:bg-[#3367D6] text-white text-sm font-semibold px-5 py-2 rounded-lg shadow transition-all active:scale-95"
-                                style={{ animation: 'pop-from-right 0.45s 0.12s cubic-bezier(0.22,1,0.36,1) both' }}>
+                                style={{ animation: 'pop-from-right 0.7s 0.18s cubic-bezier(0.16,1,0.3,1) both' }}>
                                 Get Started
                             </button>
                         </div>
