@@ -32,7 +32,6 @@ import Signup from './Pages/Auth/Signup.jsx';
 import BusinessSignup from './Pages/Auth/BusinessSignup.jsx';
 import AdminSignup from './Pages/Auth/AdminSignup.jsx';
 import RidePooling from "./Pages/ridePooling/ridePooling.jsx";
-
 function App() {
 
 	return (
@@ -45,15 +44,16 @@ function App() {
 				<Route path="/signup/admin" element={<AdminSignup />} />
 				<Route path="/ride-pooling" element={<RidePooling />} />
 
-				<Route path="/" element={<UserLayout />}>
-					<Route index element={<Home />} />
-					<Route path="compare" element={<ComparePage />} />
-					<Route path="service/:id" element={<ServiceDetail />} />
-					<Route path="bookings" element={<BookingsPage />} />
-					<Route path="house-moving" element={<MoverSearchPage />} />
-					<Route path="/car-moving" element={<CarTransportSearchPage />} />
-					<Route path="/office-shifting" element={<OfficeRelocationSearchPage />} />
-				</Route>
+			<Route path="/" element={<UserLayout />}>
+                <Route index element={<Home />} />
+                <Route path="ride-pooling" element={<RidePooling />} /> {/* Moved and fixed here */}
+                <Route path="compare" element={<ComparePage />} />
+                <Route path="service/:id" element={<ServiceDetail />} />
+                <Route path="bookings" element={<BookingsPage />} />
+                <Route path="house-moving" element={<MoverSearchPage />} />
+                <Route path="car-moving" element={<CarTransportSearchPage />} /> {/* Removed leading slash */}
+                <Route path="office-shifting" element={<OfficeRelocationSearchPage />} /> {/* Removed leading slash */}
+            </Route>
 
 				<Route path="/admin/" element={<AdminLayout />}>
 					<Route index element={<Dashboard />} />
