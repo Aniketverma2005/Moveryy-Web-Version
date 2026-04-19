@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import authService from '../../services/Auth/authService';
+import authService from '../../services/authService folder/authService';
 import logo from '../../assets/logo2.png';
 
 // ── Field defined OUTSIDE component so React doesn't remount it on every render
@@ -62,7 +62,7 @@ const AdminSignup = () => {
                 password: formData.password,
                 agreeToTerms: formData.agreeToTerms,
             });
-            navigate('/login');
+            navigate('/admin');  // → Admin dashboard
         } catch (err) {
             setApiError(err?.message || 'Signup failed. Please try again.');
         } finally {
