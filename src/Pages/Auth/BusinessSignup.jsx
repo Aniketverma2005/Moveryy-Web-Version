@@ -62,7 +62,7 @@ const BusinessSignup = () => {
                 password: formData.password,
                 agreeToTerms: formData.agreeToTerms,
             });
-            navigate('/');  // → User home (Welcome page)
+            navigate('/transport');  // → Transport dashboard (Welcome Navi page)
         } catch (err) {
             setApiError(err?.message || 'Signup failed. Please try again.');
         } finally {

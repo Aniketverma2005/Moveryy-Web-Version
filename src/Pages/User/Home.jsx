@@ -7,10 +7,10 @@ import { Link } from 'react-router-dom';
 
 // --- Data Structures (Example Data) ---
 const services = [
-  { icon: <MdOutlineHome size={36} className="text-blue-600" />, title: 'House Moving', description: 'Complete household relocation',path:"/house-moving" },
-  { icon: <MdOutlineDirectionsCar size={36} className="text-green-600" />, title: 'Car Moving', description: 'Safe vehicle transportation',path:"/car-moving" },
-  { icon: <MdOutlineBusinessCenter size={36} className="text-purple-600" />, title: 'Office Shifting', description: 'Commercial relocation services' ,path:"/office-shifting"},
-  { icon: <MdOutlineInventory2 size={36} className="text-orange-600" />, title: 'Storage', description: 'Secure storage solutions',path:"" },
+  { icon: <MdOutlineHome size={36} className="text-blue-600" />, title: 'House Moving', description: 'Complete household relocation', path: "/house-moving" },
+  { icon: <MdOutlineDirectionsCar size={36} className="text-green-600" />, title: 'Car Moving', description: 'Safe vehicle transportation', path: "/car-moving" },
+  { icon: <MdOutlineBusinessCenter size={36} className="text-purple-600" />, title: 'Office Shifting', description: 'Commercial relocation services', path: "/office-shifting" },
+  { icon: <MdOutlineInventory2 size={36} className="text-orange-600" />, title: 'Storage', description: 'Secure storage solutions', path: "" },
 ];
 
 const recentSearches = [
@@ -67,9 +67,20 @@ const MoverCard = ({ mover }) => (
 // --- Main Component ---
 
 const HomePage = () => {
+  // Get logged-in user's name from localStorage
+  const storedUser = (() => {
+    try { return JSON.parse(localStorage.getItem('moveryy_user')); } catch { return null; }
+  })();
+  const userName = storedUser?.firstName || storedUser?.name || 'there';
+
   return (
     <div className="bg-gray-100 min-h-screen p-6 font-inter">
-      
+
+      {/* Welcome Banner */}
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Welcome, {userName} 👋</h1>
+        <p className="text-gray-500 text-sm mt-1">Where would you like to move today?</p>
+      </div>
       {/* Services Section
       <div className="mb-8">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">Services</h2>
@@ -79,21 +90,21 @@ const HomePage = () => {
           ))}
         </div> */}
 
-        {/* Services Section */}
-<div className="mb-8">
-  <h2 className="text-xl font-semibold text-gray-800 mb-4">Services</h2>
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    {services.map((service, index) => (
-      <Link to={`${service.path}`} key={index}>
-        <ServiceCard {...service} />
-      </Link>
-    ))}
-  </div>
-{/* </div> */}
+      {/* Services Section */}
+      <div className="mb-8">
+        <h2 className="text-xl font-semibold text-gray-800 mb-4">Services</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {services.map((service, index) => (
+            <Link to={`${service.path}`} key={index}>
+              <ServiceCard {...service} />
+            </Link>
+          ))}
+        </div>
+        {/* </div> */}
 
 
 
-       
+
 
 
 
