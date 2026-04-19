@@ -1,235 +1,252 @@
 /**
  * Authentication Service
- * 
- * Handles all authentication-related API calls including login, signup,
- * password reset, and user profile management.
+ *
+ * Backend endpoints (confirmed from backend routes):
+ *  POST /api/v1/users/signup        → register new user
+ *  POST /api/v1/users/login         → login
+ *  POST /api/v1/users/logout        → logout (requires token)
+ *  POST /api/v1/users/refresh-token → refresh access token
+ *  GET  /api/v1/users/user          → get current user (requires token)
+ *
+ * Validation rules:
+ *  - firstName / lastName → required
+ *  - email                → valid format
+ *  - password             → min 8 chars
+ *  - phone                → international format (+[country][number], 7–15 digits)
+ *  - role                 → one of: admin | user | transport
  */
 
 import { api, TokenManager } from './api';
 
+// ─── Validators ──────────────────────────────────────────────────────────────
+
+const validators = {
+    firstName: (v) => v && v.trim().length > 0,
+    lastName: (v) => v && v.trim().length > 0,
+    email: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v),
+    password: (v) => v && v.length >= 8,
+    phone: (v) => /^\+[1-9]\d{6,14}$/.test(v),
+    role: (v) => ['admin', 'user', 'transport'].includes(v),
+};
+
+const validate = (fields) => {
+    const errors = {};
+    Object.entries(fields).forEach(([key, value]) => {
+        if (validators[key] && !validators[key](value)) {
+            errors[key] = `Invalid ${key}`;
+        }
+    });
+    if (Object.keys(errors).length > 0) {
+        const err = new Error('Validation failed: ' + Object.values(errors).join(', '));
+        err.validationErrors = errors;
+        throw err;
+    }
+};
+
+// Helper — extract user + token from any backend response shape
+const extractAuth = (response) => {
+    const token = response?.accessToken || response?.token || response?.data?.accessToken || response?.data?.token;
+    const refreshToken = response?.refreshToken || response?.data?.refreshToken;
+    const user = response?.user || response?.data?.user || response?.data;
+    return { token, refreshToken, user };
+};
+
+// ─── Auth Service ─────────────────────────────────────────────────────────────
+
 export const authService = {
-  // User login - Authenticate user and issue JWT
-  login: async (credentials) => {
-    try {
-      const response = await api.post('/api/v1/users/login', {
-        email: credentials.email,
-        password: credentials.password,
-        rememberMe: credentials.rememberMe || false,
-      });
 
-      if (response.success && response.data.token) {
-        TokenManager.setToken(response.data.token);
-        if (response.data.refreshToken) {
-          TokenManager.setRefreshToken(response.data.refreshToken);
+    // ── Login ──────────────────────────────────────────────────────────────────
+    login: async (credentials) => {
+        try {
+            validate({
+                email: credentials.email,
+                password: credentials.password,
+            });
+
+            const response = await api.post('/api/v1/users/login', {
+                email: credentials.email.trim().toLowerCase(),
+                password: credentials.password,
+            });
+
+            const { token, refreshToken, user } = extractAuth(response);
+
+            if (token) {
+                TokenManager.setToken(token);
+                if (refreshToken) TokenManager.setRefreshToken(refreshToken);
+                localStorage.setItem('moveryy_user', JSON.stringify(user));
+                console.log('✅ Login successful:', user?.email);
+                return { token, user };
+            } else {
+                throw new Error(response?.message || 'Login failed — no token received');
+            }
+        } catch (error) {
+            console.error('❌ Login error:', error);
+            throw error instanceof Error ? error : new Error(error?.message || 'Login failed');
         }
+    },
 
-        // Store user data
-        localStorage.setItem('moveryy_user', JSON.stringify(response.data.user));
+    // ── Business Signup (role: user) ───────────────────────────────────────────
+    signupBusiness: async (userData) => {
+        try {
+            validate({
+                firstName: userData.firstName,
+                lastName: userData.lastName,
+                email: userData.email,
+                password: userData.password,
+                phone: userData.phone,
+            });
 
-        console.log('✅ Login successful:', response.data.user.email);
-        return response.data;
-      } else {
-        throw new Error(response.message || 'Login failed');
-      }
-    } catch (error) {
-      console.error('❌ Login error:', error);
-      throw error;
-    }
-  },
+            const response = await api.post('/api/v1/users/signup', {
+                firstName: userData.firstName.trim(),
+                lastName: userData.lastName.trim(),
+                email: userData.email.trim().toLowerCase(),
+                password: userData.password,
+                phone: userData.phone.trim(),
+                role: 'user',
+            });
 
-  // User signup - Business
-  signupBusiness: async (userData) => {
-    try {
-      const response = await api.post('/auth/signup/business', {
-        fullName: userData.fullName,
-        email: userData.email,
-        password: userData.password,
-        confirmPassword: userData.confirmPassword,
-        accountType: 'business',
-        agreeToTerms: userData.agreeToTerms,
-      });
+            const { token, refreshToken, user } = extractAuth(response);
+            if (token) {
+                TokenManager.setToken(token);
+                if (refreshToken) TokenManager.setRefreshToken(refreshToken);
+                localStorage.setItem('moveryy_user', JSON.stringify(user));
+            }
 
-      if (response.success) {
-        console.log('✅ Business signup successful:', userData.email);
-        return response.data;
-      } else {
-        throw new Error(response.message || 'Signup failed');
-      }
-    } catch (error) {
-      console.error('❌ Business signup error:', error);
-      throw error;
-    }
-  },
-
-  // User signup - Admin
-  signupAdmin: async (userData) => {
-    try {
-      const response = await api.post('/auth/signup/admin', {
-        fullName: userData.fullName,
-        email: userData.email,
-        password: userData.password,
-        confirmPassword: userData.confirmPassword,
-        accountType: 'admin',
-        agreeToTerms: userData.agreeToTerms,
-      });
-
-      if (response.success) {
-        console.log('✅ Admin signup successful:', userData.email);
-        return response.data;
-      } else {
-        throw new Error(response.message || 'Signup failed');
-      }
-    } catch (error) {
-      console.error('❌ Admin signup error:', error);
-      throw error;
-    }
-  },
-
-  // Logout - Logout user
-  logout: async () => {
-    try {
-      const token = TokenManager.getToken();
-      if (token) {
-        await api.post('/api/v1/users/logout');
-      }
-    } catch (error) {
-      console.error('❌ Logout error:', error);
-    } finally {
-      // Clear local storage regardless of API call success
-      TokenManager.removeToken();
-      TokenManager.removeRefreshToken();
-      localStorage.removeItem('moveryy_user');
-      console.log('✅ User logged out');
-    }
-  },
-
-  // Switch active organization (admin only)
-  switchOrganization: async (organizationId) => {
-    try {
-      const response = await api.post('/api/v1/organizations/switch', {
-        organizationId: organizationId
-      });
-
-      if (response.success) {
-        // Update stored user data with new organization context
-        const currentUser = authService.getStoredUser();
-        if (currentUser) {
-          currentUser.activeOrganization = response.data.organization;
-          localStorage.setItem('moveryy_user', JSON.stringify(currentUser));
+            console.log('✅ Business signup successful:', userData.email);
+            return user || response;
+        } catch (error) {
+            console.error('❌ Business signup error:', error);
+            throw error instanceof Error ? error : new Error(error?.message || 'Signup failed');
         }
+    },
 
-        console.log('✅ Organization switched successfully:', organizationId);
-        return response.data;
-      } else {
-        throw new Error(response.message || 'Failed to switch organization');
-      }
-    } catch (error) {
-      console.error('❌ Switch organization error:', error);
-      throw error;
-    }
-  },
+    // ── Admin Signup (role: admin) ─────────────────────────────────────────────
+    signupAdmin: async (userData) => {
+        try {
+            validate({
+                firstName: userData.firstName,
+                lastName: userData.lastName,
+                email: userData.email,
+                password: userData.password,
+                phone: userData.phone,
+            });
 
-  // Get current user profile (for auth purposes only)
-  getCurrentUser: async () => {
-    try {
-      const response = await api.get('/auth/me');
-      if (response.success) {
-        localStorage.setItem('moveryy_user', JSON.stringify(response.data));
-        return response.data;
-      } else {
-        throw new Error(response.message || 'Failed to get user profile');
-      }
-    } catch (error) {
-      console.error('❌ Get current user error:', error);
-      throw error;
-    }
-  },
+            const response = await api.post('/api/v1/users/signup', {
+                firstName: userData.firstName.trim(),
+                lastName: userData.lastName.trim(),
+                email: userData.email.trim().toLowerCase(),
+                password: userData.password,
+                phone: userData.phone.trim(),
+                role: 'admin',
+            });
 
-  // Update user profile (auth-related profile updates)
-  updateProfile: async (profileData) => {
-    try {
-      const response = await api.put('/auth/profile', profileData);
-      if (response.success) {
-        localStorage.setItem('moveryy_user', JSON.stringify(response.data));
-        console.log('✅ Profile updated successfully');
-        return response.data;
-      } else {
-        throw new Error(response.message || 'Failed to update profile');
-      }
-    } catch (error) {
-      console.error('❌ Update profile error:', error);
-      throw error;
-    }
-  },
+            const { token, refreshToken, user } = extractAuth(response);
+            if (token) {
+                TokenManager.setToken(token);
+                if (refreshToken) TokenManager.setRefreshToken(refreshToken);
+                localStorage.setItem('moveryy_user', JSON.stringify(user));
+            }
 
-  // Forgot password
-  forgotPassword: async (email) => {
-    try {
-      const response = await api.post('/auth/forgot-password', { email });
-      if (response.success) {
-        console.log('✅ Password reset email sent');
-        return response.data;
-      } else {
-        throw new Error(response.message || 'Failed to send reset email');
-      }
-    } catch (error) {
-      console.error('❌ Forgot password error:', error);
-      throw error;
-    }
-  },
+            console.log('✅ Admin signup successful:', userData.email);
+            return user || response;
+        } catch (error) {
+            console.error('❌ Admin signup error:', error);
+            throw error instanceof Error ? error : new Error(error?.message || 'Signup failed');
+        }
+    },
 
-  // Reset password
-  resetPassword: async (token, newPassword) => {
-    try {
-      const response = await api.post('/auth/reset-password', {
-        token,
-        password: newPassword,
-      });
-      if (response.success) {
-        console.log('✅ Password reset successful');
-        return response.data;
-      } else {
-        throw new Error(response.message || 'Failed to reset password');
-      }
-    } catch (error) {
-      console.error('❌ Reset password error:', error);
-      throw error;
-    }
-  },
+    // ── Transport Signup (role: transport) ────────────────────────────────────
+    signupTransport: async (userData) => {
+        try {
+            validate({
+                firstName: userData.firstName,
+                lastName: userData.lastName,
+                email: userData.email,
+                password: userData.password,
+                phone: userData.phone,
+            });
 
-  // Verify email
-  verifyEmail: async (token) => {
-    try {
-      const response = await api.post('/auth/verify-email', { token });
-      if (response.success) {
-        console.log('✅ Email verified successfully');
-        return response.data;
-      } else {
-        throw new Error(response.message || 'Failed to verify email');
-      }
-    } catch (error) {
-      console.error('❌ Email verification error:', error);
-      throw error;
-    }
-  },
+            const response = await api.post('/api/v1/users/signup', {
+                firstName: userData.firstName.trim(),
+                lastName: userData.lastName.trim(),
+                email: userData.email.trim().toLowerCase(),
+                password: userData.password,
+                phone: userData.phone.trim(),
+                role: 'transport',
+            });
 
-  // Check if user is authenticated
-  isAuthenticated: () => {
-    const token = TokenManager.getToken();
-    const user = localStorage.getItem('moveryy_user');
-    return !!(token && user);
-  },
+            const { token, refreshToken, user } = extractAuth(response);
+            if (token) {
+                TokenManager.setToken(token);
+                if (refreshToken) TokenManager.setRefreshToken(refreshToken);
+                localStorage.setItem('moveryy_user', JSON.stringify(user));
+            }
 
-  // Get stored user data
-  getStoredUser: () => {
-    try {
-      const userData = localStorage.getItem('moveryy_user');
-      return userData ? JSON.parse(userData) : null;
-    } catch (error) {
-      console.error('❌ Error parsing stored user data:', error);
-      return null;
-    }
-  },
+            console.log('✅ Transport signup successful:', userData.email);
+            return user || response;
+        } catch (error) {
+            console.error('❌ Transport signup error:', error);
+            throw error instanceof Error ? error : new Error(error?.message || 'Signup failed');
+        }
+    },
+
+    // ── Logout ─────────────────────────────────────────────────────────────────
+    logout: async () => {
+        try {
+            if (TokenManager.getToken()) {
+                await api.post('/api/v1/users/logout');
+            }
+        } catch (error) {
+            console.error('❌ Logout error:', error);
+        } finally {
+            TokenManager.removeToken();
+            TokenManager.removeRefreshToken();
+            localStorage.removeItem('moveryy_user');
+            console.log('✅ User logged out');
+        }
+    },
+
+    // ── Get Current User ───────────────────────────────────────────────────────
+    getCurrentUser: async () => {
+        try {
+            const response = await api.get('/api/v1/users/user');
+            const user = response?.user || response?.data?.user || response?.data;
+            if (user) localStorage.setItem('moveryy_user', JSON.stringify(user));
+            return user;
+        } catch (error) {
+            console.error('❌ Get current user error:', error);
+            throw error;
+        }
+    },
+
+    // ── Refresh Token ──────────────────────────────────────────────────────────
+    refreshToken: async () => {
+        try {
+            const refreshToken = TokenManager.getRefreshToken();
+            if (!refreshToken) throw new Error('No refresh token available');
+            const response = await api.post('/api/v1/users/refresh-token', { refreshToken });
+            const { token } = extractAuth(response);
+            if (token) TokenManager.setToken(token);
+            return token;
+        } catch (error) {
+            console.error('❌ Refresh token error:', error);
+            throw error;
+        }
+    },
+
+    // ── Helpers ────────────────────────────────────────────────────────────────
+    isAuthenticated: () => {
+        return !!(TokenManager.getToken() && localStorage.getItem('moveryy_user'));
+    },
+
+    getStoredUser: () => {
+        try {
+            const userData = localStorage.getItem('moveryy_user');
+            return userData ? JSON.parse(userData) : null;
+        } catch {
+            return null;
+        }
+    },
 };
 
 export default authService;

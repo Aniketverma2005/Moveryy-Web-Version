@@ -22,7 +22,7 @@ const AdminSignup = () => {
     const validate = () => {
         const newErrors = {};
         if (!formData.firstName.trim()) newErrors.firstName = 'First name is required';
-        if (!formData.lastName.trim())  newErrors.lastName  = 'Last name is required';
+        if (!formData.lastName.trim()) newErrors.lastName = 'Last name is required';
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) newErrors.email = 'Valid email required';
         if (!/^\+[1-9]\d{6,14}$/.test(formData.phone)) newErrors.phone = 'Use international format e.g. +919876543210';
         if (formData.password.length < 8) newErrors.password = 'Minimum 8 characters';
@@ -39,11 +39,11 @@ const AdminSignup = () => {
         setApiError('');
         try {
             await authService.signupAdmin({
-                firstName:    formData.firstName,
-                lastName:     formData.lastName,
-                email:        formData.email,
-                phone:        formData.phone,
-                password:     formData.password,
+                firstName: formData.firstName,
+                lastName: formData.lastName,
+                email: formData.email,
+                phone: formData.phone,
+                password: formData.password,
                 agreeToTerms: formData.agreeToTerms,
             });
             navigate('/admin');
@@ -122,11 +122,11 @@ const AdminSignup = () => {
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
                             <Field id="firstName" label="First name" placeholder="John" error={errors.firstName} />
-                            <Field id="lastName"  label="Last name"  placeholder="Doe"  error={errors.lastName} />
+                            <Field id="lastName" label="Last name" placeholder="Doe" error={errors.lastName} />
                         </div>
-                        <Field id="email"    label="Email address"  type="email"    placeholder="you@example.com"      error={errors.email} />
-                        <Field id="phone"    label="Phone number"   type="tel"      placeholder="+919876543210"         error={errors.phone} />
-                        <Field id="password" label="Password"       type="password" placeholder="At least 8 characters" error={errors.password} />
+                        <Field id="email" label="Email address" type="email" placeholder="you@example.com" error={errors.email} />
+                        <Field id="phone" label="Phone number" type="tel" placeholder="+919876543210" error={errors.phone} />
+                        <Field id="password" label="Password" type="password" placeholder="At least 8 characters" error={errors.password} />
                         <Field id="confirmPassword" label="Confirm password" type="password" placeholder="Confirm your password" error={errors.confirmPassword} />
 
                         <div className="flex items-start">
