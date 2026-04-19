@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import logo from '../../assets/logo2.png';
 
 const Signup = () => {
     const navigate = useNavigate();
@@ -21,10 +22,10 @@ const Signup = () => {
             {/* Left Side - Blue Section */}
             <div className="flex-1 bg-blue-600 text-white p-12 flex flex-col justify-between">
                 {/* Logo */}
-                <div className="mb-4">
+                <div className="mb-20">
                     <div className="bg-white rounded-lg p-4 inline-block shadow-sm">
                         <img 
-                            src="/logo.png" 
+                            src={logo}
                             alt="Moveryy Logo" 
                             className="h-16 w-auto object-contain"
                         />
@@ -32,7 +33,7 @@ const Signup = () => {
                 </div>
 
                 {/* Main Content */}
-                <div className="flex-1 flex flex-col justify-center -mt-80">
+                <div className="flex-1 flex flex-col justify-center -mt-62">
                     <h1 className="text-5xl font-bold mb-6 leading-tight">
                         Join the Moveryy Community
                     </h1>

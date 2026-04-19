@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import authService from '../../services/authentication folder/authService';
+import authService from '../../services/Auth/authService';
+import logo from '../../assets/logo2.png';
 
 const Login = () => {
     const [formData, setFormData] = useState({ email: '', password: '', rememberMe: false });
@@ -37,10 +38,10 @@ const Login = () => {
     return (
         <div className="min-h-screen flex">
             {/* Left Side */}
-            <div className="flex-1 bg-[#4285F4] text-white p-12 flex flex-col justify-between">
+            <div className="flex-1 bg-blue-600 text-white p-12 flex flex-col justify-between">
                 <div className="mb-20">
                     <div className="bg-white rounded-lg p-4 inline-block shadow-sm">
-                        <img src="/logo.png" alt="Moveryy Logo" className="h-16 w-auto object-contain" />
+                        <img src={logo} alt="Moveryy Logo" className="h-16 w-auto object-contain" />
                     </div>
                 </div>
                 <div className="flex-1 flex flex-col justify-center -mt-72">
@@ -54,7 +55,7 @@ const Login = () => {
                         {['Real-time tracking and updates', 'Optimize your routes and save time', 'Grow your delivery business with us'].map((text) => (
                             <div key={text} className="flex items-center">
                                 <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
-                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <svg className="w-4 h-4" fill="tick" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                     </svg>
                                 </div>
@@ -114,7 +115,7 @@ const Login = () => {
                         <div className="flex items-center">
                             <input
                                 id="rememberMe" name="rememberMe" type="checkbox"
-                                className="h-4 w-4 text-[#4285F4] focus:ring-[#4285F4] border-gray-300 rounded"
+                                className="h-4 w-4 text-blue-600 focus:ring- border-gray-300 rounded"
                                 checked={formData.rememberMe}
                                 onChange={handleChange}
                             />
