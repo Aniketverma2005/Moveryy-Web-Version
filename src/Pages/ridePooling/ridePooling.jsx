@@ -160,11 +160,9 @@ const RidePooling = () => {
                 {phase === 0 && (
                     <div className="absolute inset-0 flex items-center px-8 pointer-events-none"
                         style={{ animation: 'push-right 3.4s linear both' }}>
-                        {/* Truck icon bouncing on road */}
                         <div style={{ animation: 'truck-bounce 0.6s ease-in-out infinite' }}>
-                            <MdLocalShipping size={32} className="text-[#4285F4] mr-3 flex-shrink-0" />
+                            <img src={logo} alt="Moveryy" className="h-12 w-auto object-contain" />
                         </div>
-                        <img src={logo} alt="Moveryy" className="h-12 w-auto object-contain" />
                     </div>
                 )}
 
