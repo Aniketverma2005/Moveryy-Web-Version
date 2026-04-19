@@ -3,6 +3,21 @@ import { useNavigate } from 'react-router-dom';
 import authService from '../../services/Auth/authService';
 import logo from '../../assets/logo2.png';
 
+// ── Field defined OUTSIDE component so React doesn't remount it on every render
+const Field = ({ id, label, type = 'text', placeholder, error, value, onChange }) => (
+    <div>
+        <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
+        <input
+            id={id} name={id} type={type} required
+            className={`w-full px-3 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#4285F4] focus:border-transparent ${error ? 'border-red-400' : 'border-gray-300'}`}
+            placeholder={placeholder}
+            value={value}
+            onChange={onChange}
+        />
+        {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
+    </div>
+);
+
 const AdminSignup = () => {
     const [formData, setFormData] = useState({
         firstName: '', lastName: '', email: '',
@@ -15,8 +30,8 @@ const AdminSignup = () => {
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
-        setFormData({ ...formData, [name]: type === 'checkbox' ? checked : value });
-        if (errors[name]) setErrors({ ...errors, [name]: '' });
+        setFormData(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+        if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
         if (apiError) setApiError('');
     };
 
@@ -55,24 +70,10 @@ const AdminSignup = () => {
         }
     };
 
-    const Field = ({ id, label, type = 'text', placeholder, error }) => (
-        <div>
-            <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-2">{label}</label>
-            <input
-                id={id} name={id} type={type} required
-                className={`w-full px-3 py-3 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#4285F4] focus:border-transparent ${error ? 'border-red-400' : 'border-gray-300'}`}
-                placeholder={placeholder}
-                value={formData[id]}
-                onChange={handleChange}
-            />
-            {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
-        </div>
-    );
-
     return (
         <div className="min-h-screen flex">
             {/* Left Side */}
-            <div className="flex-1 bg-blue-600 text-white p-12 flex flex-col justify-between">
+            <div className="flex-1 bg-[#4285F4] text-white p-12 flex flex-col justify-between">
                 <div className="mb-4">
                     <div className="bg-white rounded-lg p-4 inline-block shadow-sm">
                         <img src={logo} alt="Moveryy Logo" className="h-16 w-auto object-contain" />
@@ -87,7 +88,7 @@ const AdminSignup = () => {
                         {['Easy account setup in minutes', 'Secure and reliable platform', '24/7 customer support'].map((text) => (
                             <div key={text} className="flex items-center">
                                 <div className="w-6 h-6 bg-white bg-opacity-20 rounded-full flex items-center justify-center mr-4">
-                                    <svg className="w-4 h-4" fill="tick" viewBox="0 0 20 20">
+                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                                     </svg>
                                 </div>
@@ -122,19 +123,19 @@ const AdminSignup = () => {
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div className="grid grid-cols-2 gap-4">
-                            <Field id="firstName" label="First name" placeholder="John" error={errors.firstName} />
-                            <Field id="lastName" label="Last name" placeholder="Doe" error={errors.lastName} />
+                            <Field id="firstName" label="First name" placeholder="John" error={errors.firstName} value={formData.firstName} onChange={handleChange} />
+                            <Field id="lastName" label="Last name" placeholder="Doe" error={errors.lastName} value={formData.lastName} onChange={handleChange} />
                         </div>
-                        <Field id="email" label="Email address" type="email" placeholder="you@example.com" error={errors.email} />
-                        <Field id="phone" label="Phone number" type="tel" placeholder="+919876543210" error={errors.phone} />
-                        <Field id="password" label="Password" type="password" placeholder="At least 8 characters" error={errors.password} />
-                        <Field id="confirmPassword" label="Confirm password" type="password" placeholder="Confirm your password" error={errors.confirmPassword} />
+                        <Field id="email" label="Email address" type="email" placeholder="you@example.com" error={errors.email} value={formData.email} onChange={handleChange} />
+                        <Field id="phone" label="Phone number" type="tel" placeholder="+919876543210" error={errors.phone} value={formData.phone} onChange={handleChange} />
+                        <Field id="password" label="Password" type="password" placeholder="At least 8 characters" error={errors.password} value={formData.password} onChange={handleChange} />
+                        <Field id="confirmPassword" label="Confirm password" type="password" placeholder="Confirm your password" error={errors.confirmPassword} value={formData.confirmPassword} onChange={handleChange} />
 
                         <div className="flex items-start">
                             <input
                                 id="agreeToTerms" name="agreeToTerms" type="checkbox"
                                 className="h-4 w-4 text-[#4285F4] focus:ring-[#4285F4] border-gray-300 rounded mt-1"
-                                checked={formData.agreeToTerms} onChange={handleChange} required
+                                checked={formData.agreeToTerms} onChange={handleChange}
                             />
                             <label htmlFor="agreeToTerms" className="ml-3 block text-sm text-gray-700">
                                 I agree to the{' '}
