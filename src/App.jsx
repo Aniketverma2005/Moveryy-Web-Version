@@ -31,8 +31,7 @@ import Login from './Pages/Auth/Login.jsx';
 import Signup from './Pages/Auth/Signup.jsx';
 import BusinessSignup from './Pages/Auth/BusinessSignup.jsx';
 import AdminSignup from './Pages/Auth/AdminSignup.jsx';
-import RidePooling from './Pages/Ride Pooling/ridePooling.jsx';
-
+import RidePooling from "./Pages/ridePooling/ridePooling.jsx";
 
 function App() {
 
