@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import { MdArrowForward, MdOutlineNotifications, MdOutlineGpsFixed, MdOutlineTrendingUp, MdOutlineHeadsetMic } from 'react-icons/md';
 
-const RidePooling = () => {
+const ridePooling = () => {
     const navigate = useNavigate();
 
     const steps = [
