@@ -1,14 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import {
-    MdArrowForward,
-    MdOutlineNotifications,
-    MdOutlineGpsFixed,
-    MdOutlineTrendingUp,
-    MdOutlineHeadsetMic,
-    MdLocalShipping,
-    MdStar,
-    MdFlashOn,
-    MdShield,
+    MdArrowForward, MdOutlineNotifications, MdOutlineGpsFixed,
+    MdOutlineTrendingUp, MdOutlineHeadsetMic, MdLocalShipping,
+    MdStar, MdFlashOn, MdShield,
 } from 'react-icons/md';
 import logo from '../../assets/logo2.png';
 
@@ -35,7 +29,8 @@ const RidePooling = () => {
     ];
 
     return (
-        <>
+        <div className="min-h-screen bg-white flex flex-col">
+
             <style>{`
                 @keyframes float1 {
                     0%, 100% { transform: translateY(0px); }
@@ -56,13 +51,26 @@ const RidePooling = () => {
                 }
             `}</style>
 
-            {/* Full page white background, tiny padding all around */}
-            <div className="min-h-screen bg-white flex items-center justify-center p-3">
+            {/* ── Navbar ─────────────────────────────────────────────── */}
+            <nav className="h-14 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0 shadow-sm">
+                <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
+                    <img src={logo} alt="Moveryy" className="h-8 w-auto object-contain" />
+                </div>
+                <div className="flex items-center gap-4">
+                    <button onClick={() => navigate('/login')} className="text-sm text-gray-700 hover:text-[#4285F4] font-medium transition-colors">
+                        Sign In
+                    </button>
+                    <button onClick={() => navigate('/signup')} className="bg-[#4285F4] hover:bg-[#3367D6] text-white text-sm font-semibold px-5 py-2 rounded-lg shadow transition-all active:scale-95">
+                        Get Started
+                    </button>
+                </div>
+            </nav>
 
-                {/* Outer container — 96% width, 94% height, flex row */}
-                <div className="w-[96%] h-[94vh] flex rounded-2xl overflow-hidden shadow-2xl">
+            {/* ── Body — tiny white border around the two-panel card ── */}
+            <div className="flex-1 flex items-center justify-center p-3">
+                <div className="w-[96%] h-[calc(100vh-3.5rem-1.5rem)] flex rounded-2xl overflow-hidden shadow-2xl">
 
-                    {/* ── LEFT — Blue-600 square card ─────────────────── */}
+                    {/* ── LEFT — Blue-600 panel ──────────────────────── */}
                     <div className="w-1/2 bg-blue-600 relative overflow-hidden flex flex-col justify-between p-10">
 
                         {/* Animated blobs */}
@@ -73,18 +81,13 @@ const RidePooling = () => {
                                 style={{ background: 'radial-gradient(circle, #bfdbfe, transparent)', animation: 'float2 9s ease-in-out infinite' }} />
                             <div className="absolute top-1/2 right-1/4 w-40 h-40 rounded-full opacity-10"
                                 style={{ background: 'radial-gradient(circle, #dbeafe, transparent)', animation: 'float1 11s ease-in-out infinite reverse' }} />
-                            {/* Dot grid */}
                             <div className="absolute inset-0 opacity-[0.06]"
                                 style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
                         </div>
 
-                        {/* Top — Logo inside card */}
+                        {/* Top — heading only, no logo */}
                         <div className="relative z-10" style={{ animation: 'fadeSlideUp 0.4s ease both' }}>
-                            <div className="bg-white rounded-xl p-3 inline-block shadow-lg mb-8">
-                                <img src={logo} alt="Moveryy" className="h-12 w-auto object-contain" />
-                            </div>
-
-                            <h1 className="text-4xl font-extrabold text-white leading-tight mb-4">
+                            <h1 className="text-6xl font-extrabold text-white leading-tight mb-5">
                                 Fast, Reliable<br />
                                 <span className="text-blue-200">Delivery Management</span>
                             </h1>
@@ -109,7 +112,7 @@ const RidePooling = () => {
                             </div>
                         </div>
 
-                        {/* Bottom — Stats + pulsing truck */}
+                        {/* Bottom — stats + pulsing truck */}
                         <div className="relative z-10" style={{ animation: 'fadeSlideUp 0.8s ease both' }}>
                             <div className="flex items-center gap-3 mb-5">
                                 <div className="relative">
@@ -140,7 +143,7 @@ const RidePooling = () => {
                         </div>
                     </div>
 
-                    {/* ── RIGHT — Signup info panel ────────────────────── */}
+                    {/* ── RIGHT — Signup info panel ──────────────────── */}
                     <div className="w-1/2 bg-gray-50 flex items-center justify-center p-10 overflow-y-auto">
                         <div className="w-full max-w-lg">
                             <h2 className="text-3xl font-bold text-gray-900 mb-2">Ready to start earning?</h2>
@@ -196,7 +199,7 @@ const RidePooling = () => {
 
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 
