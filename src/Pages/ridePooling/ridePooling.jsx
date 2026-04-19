@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
 import {
     MdArrowForward, MdOutlineNotifications, MdOutlineGpsFixed,
     MdOutlineTrendingUp, MdOutlineHeadsetMic, MdLocalShipping,
@@ -8,6 +9,20 @@ import logo from '../../assets/logo2.png';
 
 const RidePooling = () => {
     const navigate = useNavigate();
+
+    // Animation sequence phases:
+    // 0 = truck+logo drive from left → right (pushing across)
+    // 1 = truck exits right, logo slides back from right → left (settles top-left)
+    // 2 = logo settled, buttons pop in
+    const [phase, setPhase] = useState(0);
+
+    useEffect(() => {
+        // Phase 0 → 1: truck pushes logo to right (1.6s)
+        const t1 = setTimeout(() => setPhase(1), 1600);
+        // Phase 1 → 2: logo slides back to left (1.0s later)
+        const t2 = setTimeout(() => setPhase(2), 2700);
+        return () => { clearTimeout(t1); clearTimeout(t2); };
+    }, []);
 
     const steps = [
         { number: 1, title: 'Driver Registration', description: 'Complete your profile with personal and license information' },
@@ -102,14 +117,22 @@ const RidePooling = () => {
                     50%      { opacity: 0; }
                 }
 
-                /* ── Logo truck drive across navbar ── */
-                @keyframes drive-across {
-                    0%   { transform: translateX(-120px); opacity: 0; }
-                    15%  { opacity: 1; }
-                    80%  { transform: translateX(0px); opacity: 1; }
+                /* ── Truck pushes logo left→right across full navbar ── */
+                @keyframes push-right {
+                    0%   { transform: translateX(-160px); }
+                    100% { transform: translateX(calc(100vw + 160px)); }
+                }
+                /* ── Truck road bounce ── */
+                @keyframes truck-bounce {
+                    0%, 100% { transform: translateY(0px); }
+                    50%      { transform: translateY(-3px); }
+                }
+                /* ── Logo slides back from right → settles left ── */
+                @keyframes slide-back {
+                    0%   { transform: translateX(calc(100vw)); opacity: 0.3; }
+                    60%  { transform: translateX(-8px); opacity: 1; }
                     100% { transform: translateX(0px); opacity: 1; }
                 }
-
                 /* ── Buttons pop in from right ── */
                 @keyframes pop-from-right {
                     0%   { transform: translateX(60px) scale(0.8); opacity: 0; }
@@ -128,32 +151,54 @@ const RidePooling = () => {
                 .animate-fadeIn { animation: fadeIn 0.8s 0.5s ease both; }
                 .bounce-arrow { animation: bounce-x 1.2s ease-in-out infinite; }
                 .glow-btn { animation: glow-pulse 2s ease-in-out infinite; }
-                .logo-drive { animation: drive-across 1.2s cubic-bezier(0.22,1,0.36,1) both; }
-                .btn-pop-1 { animation: pop-from-right 0.5s 1.0s cubic-bezier(0.22,1,0.36,1) both; }
-                .btn-pop-2 { animation: pop-from-right 0.5s 1.15s cubic-bezier(0.22,1,0.36,1) both; }
             `}</style>
 
             {/* ── Navbar ─────────────────────────────────────────────── */}
-            <nav className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0 shadow-sm overflow-hidden">
-                {/* Logo drives in from left → settles top-left */}
-                <div className="logo-drive flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-                    <img src={logo} alt="Moveryy" className="h-10 w-auto object-contain" />
-                </div>
-                {/* Buttons pop in from right */}
-                <div className="flex items-center gap-4">
-                    <button
-                        onClick={() => navigate('/login')}
-                        className="btn-pop-1 text-sm text-gray-700 hover:text-[#4285F4] font-medium transition-colors"
-                    >
-                        Sign In
-                    </button>
-                    <button
-                        onClick={() => navigate('/signup')}
-                        className="btn-pop-2 bg-[#4285F4] hover:bg-[#3367D6] text-white text-sm font-semibold px-5 py-2 rounded-lg shadow transition-all active:scale-95"
-                    >
-                        Get Started
-                    </button>
-                </div>
+            <nav className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0 shadow-sm overflow-hidden relative">
+
+                {/* ── PHASE 0: Truck pushes logo from left → right ── */}
+                {phase === 0 && (
+                    <div className="absolute inset-0 flex items-center px-8 pointer-events-none"
+                        style={{ animation: 'push-right 1.5s cubic-bezier(0.4,0,0.2,1) both' }}>
+                        {/* Truck icon bouncing on road */}
+                        <div style={{ animation: 'truck-bounce 0.3s ease-in-out infinite' }}>
+                            <MdLocalShipping size={32} className="text-[#4285F4] mr-3 flex-shrink-0" />
+                        </div>
+                        <img src={logo} alt="Moveryy" className="h-12 w-auto object-contain" />
+                    </div>
+                )}
+
+                {/* ── PHASE 1: Logo slides back from right → left ── */}
+                {phase === 1 && (
+                    <div className="flex items-center gap-2 cursor-pointer"
+                        style={{ animation: 'slide-back 0.9s cubic-bezier(0.22,1,0.36,1) both' }}
+                        onClick={() => navigate('/')}>
+                        <img src={logo} alt="Moveryy" className="h-12 w-auto object-contain" />
+                    </div>
+                )}
+
+                {/* ── PHASE 2: Logo settled + buttons pop in ── */}
+                {phase === 2 && (
+                    <>
+                        <div className="flex items-center gap-2 cursor-pointer"
+                            style={{ animation: 'fadeIn 0.2s ease both' }}
+                            onClick={() => navigate('/')}>
+                            <img src={logo} alt="Moveryy" className="h-12 w-auto object-contain" />
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <button onClick={() => navigate('/login')}
+                                className="text-sm text-gray-700 hover:text-[#4285F4] font-medium transition-colors"
+                                style={{ animation: 'pop-from-right 0.45s 0s cubic-bezier(0.22,1,0.36,1) both' }}>
+                                Sign In
+                            </button>
+                            <button onClick={() => navigate('/signup')}
+                                className="bg-[#4285F4] hover:bg-[#3367D6] text-white text-sm font-semibold px-5 py-2 rounded-lg shadow transition-all active:scale-95"
+                                style={{ animation: 'pop-from-right 0.45s 0.12s cubic-bezier(0.22,1,0.36,1) both' }}>
+                                Get Started
+                            </button>
+                        </div>
+                    </>
+                )}
             </nav>
 
             {/* ── Body ───────────────────────────────────────────────── */}
