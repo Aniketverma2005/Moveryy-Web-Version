@@ -192,11 +192,33 @@ const handleApiError = (error) => {
   if (error.response) {
     // Server responded with an error status — surface the real message
     errorResponse.status = error.response.status;
-    errorResponse.message = error.response.data?.message
-      || error.response.data?.error
-      || error.response.data?.errors?.[0]?.msg
-      || error.message;
-    errorResponse.code = error.response.data?.code || 'SERVER_ERROR';
+
+    // Handle specific status codes with friendly messages
+    if (error.response.status === 409) {
+      errorResponse.message = 'An account with this email already exists. Please sign in instead.';
+      errorResponse.code = 'EMAIL_EXISTS';
+    } else if (error.response.status === 400) {
+      errorResponse.message = error.response.data?.message
+        || error.response.data?.error
+        || error.response.data?.errors?.[0]?.msg
+        || 'Invalid data. Please check your inputs.';
+      errorResponse.code = 'VALIDATION_ERROR';
+    } else if (error.response.status === 401) {
+      errorResponse.message = 'Invalid email or password.';
+      errorResponse.code = 'UNAUTHORIZED';
+    } else if (error.response.status === 403) {
+      errorResponse.message = 'You do not have permission to perform this action.';
+      errorResponse.code = 'FORBIDDEN';
+    } else if (error.response.status >= 500) {
+      errorResponse.message = 'Server error. Please try again later.';
+      errorResponse.code = 'SERVER_ERROR';
+    } else {
+      errorResponse.message = error.response.data?.message
+        || error.response.data?.error
+        || error.response.data?.errors?.[0]?.msg
+        || error.message;
+      errorResponse.code = error.response.data?.code || 'SERVER_ERROR';
+    }
     errorResponse.details = error.response.data?.details
       || error.response.data?.errors
       || null;
