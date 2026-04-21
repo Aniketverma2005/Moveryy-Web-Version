@@ -191,7 +191,7 @@ const RidePooling = () => {
 
                             {/* CTA */}
                             <button
-                                onClick={() => navigate('/signup/business')}
+                                onClick={() => navigate('/ride-pooling/register')}
                                 className="w-full bg-[#4285F4] hover:bg-[#3367D6] text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 transition-colors duration-200 shadow-md hover:shadow-lg mb-3 fade-up-4 text-base"
                             >
                                 Create Driver Account

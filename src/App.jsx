@@ -32,6 +32,7 @@ import Signup from './Pages/Auth/Signup.jsx';
 import BusinessSignup from './Pages/Auth/BusinessSignup.jsx';
 import AdminSignup from './Pages/Auth/AdminSignup.jsx';
 import RidePooling from "./Pages/ridePooling/ridePooling.jsx";
+import LoginRide from "./Pages/ridePooling/loginride.jsx";
 function App() {
 
 	return (
@@ -43,6 +44,7 @@ function App() {
 				<Route path="/signup/business" element={<BusinessSignup />} />
 				<Route path="/signup/admin" element={<AdminSignup />} />
 				<Route path="/ride-pooling" element={<RidePooling />} />
+				<Route path="/ride-pooling/register" element={<LoginRide />} />
 
 				<Route path="/" element={<UserLayout />}>
 					<Route index element={<Home />} />
