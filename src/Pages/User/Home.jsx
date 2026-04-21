@@ -78,7 +78,9 @@ const HomePage = () => {
 
       {/* Welcome Banner */}
       <div className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Welcome, {userName} 👋</h1>
+        <h1 className="text-2xl font-bold text-gray-800">
+          Welcome, {userName ? userName.charAt(0).toUpperCase() + userName.slice(1) : "Guest"} 👋
+        </h1>
         <p className="text-gray-500 text-sm mt-1">Where would you like to move today?</p>
       </div>
       {/* Services Section
