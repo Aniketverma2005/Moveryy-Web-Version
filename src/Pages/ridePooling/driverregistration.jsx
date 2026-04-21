@@ -98,7 +98,7 @@ const DriverRegistration = () => {
     const handleNext = () => {
         if (step === 1 && validateStep1()) setStep(2);
         if (step === 2 && validateStep2()) setStep(3);
-        if (step === 3 && validateStep3()) navigate('/transport');
+        if (step === 3 && validateStep3()) navigate('/ride-pooling/vehicle');
     };
     const handlePrev = () => step > 1 ? setStep(s => s - 1) : navigate('/ride-pooling');
 

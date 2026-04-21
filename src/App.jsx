@@ -33,6 +33,7 @@ import BusinessSignup from './Pages/Auth/BusinessSignup.jsx';
 import AdminSignup from './Pages/Auth/AdminSignup.jsx';
 import RidePooling from "./Pages/ridePooling/ridePooling.jsx";
 import DriverRegistration from "./Pages/ridePooling/driverregistration.jsx";
+import VehicleRegistration from "./Pages/ridePooling/vehicleregistration.jsx";
 function App() {
 
 	return (
@@ -45,6 +46,7 @@ function App() {
 				<Route path="/signup/admin" element={<AdminSignup />} />
 				<Route path="/ride-pooling" element={<RidePooling />} />
 				<Route path="/ride-pooling/register" element={<DriverRegistration />} />
+				<Route path="/ride-pooling/vehicle" element={<VehicleRegistration />} />
 
 				<Route path="/" element={<UserLayout />}>
 					<Route index element={<Home />} />
