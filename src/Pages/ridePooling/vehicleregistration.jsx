@@ -24,8 +24,8 @@ const StepIndicator = ({ current }) => (
         {[1, 2, 3].map((s, i) => (
             <div key={s} className="flex items-center gap-2">
                 <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all ${s < current ? 'bg-[#4285F4] border-[#4285F4] text-white' :
-                        s === current ? 'bg-[#4285F4] border-[#4285F4] text-white' :
-                            'bg-white border-gray-300 text-gray-400'
+                    s === current ? 'bg-[#4285F4] border-[#4285F4] text-white' :
+                        'bg-white border-gray-300 text-gray-400'
                     }`}>
                     {s < current ? <MdCheckCircle size={16} /> : s}
                 </div>
@@ -82,7 +82,7 @@ const VehicleRegistration = () => {
     };
 
     const handleSubmit = () => {
-        if (validate()) navigate('/transport');
+        if (validate()) navigate('/ride-pooling/complete');
     };
 
     return (
