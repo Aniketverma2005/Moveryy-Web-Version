@@ -13,7 +13,9 @@ const CompleteRegistration = () => {
     const storedUser = (() => {
         try { return JSON.parse(localStorage.getItem('moveryy_user')); } catch { return null; }
     })();
-    const firstName = storedUser?.firstName || 'Rakshit';
+    const firstName = storedUser?.firstName
+        ? storedUser.firstName.charAt(0).toUpperCase() + storedUser.firstName.slice(1)
+        : 'Rakshit';
 
     const stats = [
         { label: 'Total Earnings', value: '$0.00', sub: 'This month', icon: <MdAttachMoney size={26} className="text-green-500" /> },
@@ -87,8 +89,8 @@ const CompleteRegistration = () => {
                     {navButtons.map(({ icon, label, primary, onClick }) => (
                         <button key={label} onClick={onClick}
                             className={`flex items-center justify-center gap-2.5 py-4 px-5 rounded-xl text-base font-semibold transition-all border ${primary
-                                    ? 'bg-[#4285F4] hover:bg-[#3367D6] text-white border-[#4285F4] shadow-sm'
-                                    : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-200'
+                                ? 'bg-[#4285F4] hover:bg-[#3367D6] text-white border-[#4285F4] shadow-sm'
+                                : 'bg-white hover:bg-gray-50 text-gray-700 border-gray-200'
                                 }`}>
                             {icon} {label}
                         </button>
