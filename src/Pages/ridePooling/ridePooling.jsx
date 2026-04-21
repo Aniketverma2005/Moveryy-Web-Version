@@ -100,27 +100,27 @@ const RidePooling = () => {
 
                         {/* Top content */}
                         <div className="relative z-10">
-                            <h1 className="text-5xl font-bold text-white leading-snug mb-5 fade-up">
+                            <h1 className="text-6xl font-bold text-white leading-snug mb-5 fade-up">
                                 Fast, Reliable<br />
                                 <span className="text-blue-200 font-extrabold">Delivery Management</span>
                             </h1>
-                            <p className="text-blue-100 text-[15px] leading-relaxed mb-10 opacity-85 max-w-xs fade-up-2">
+                            <p className="text-blue-100 text-lg leading-relaxed mb-10 opacity-85 max-w-xs fade-up-2">
                                 Join thousands of delivery professionals using Moveryy to streamline logistics and grow their business.
                             </p>
 
                             {/* Feature bullets */}
                             <div className="space-y-5 fade-up-3">
                                 {[
-                                    { icon: <MdFlashOn size={15} />, text: 'Real-time tracking and updates' },
-                                    { icon: <MdOutlineGpsFixed size={15} />, text: 'Optimize your routes and save time' },
-                                    { icon: <MdShield size={15} />, text: 'Grow your delivery business with us' },
+                                    { icon: <MdFlashOn size={17} />, text: 'Real-time tracking and updates' },
+                                    { icon: <MdOutlineGpsFixed size={17} />, text: 'Optimize your routes and save time' },
+                                    { icon: <MdShield size={17} />, text: 'Grow your delivery business with us' },
                                 ].map(({ icon, text }) => (
                                     <div key={text} className="flex items-center gap-3">
-                                        <div className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center text-white flex-shrink-0">
+                                        <div className="w-8 h-8 rounded-full bg-white/15 flex items-center justify-center text-white flex-shrink-0">
                                             {icon}
                                         </div>
-                                        <span className="text-blue-100 text-sm">{text}</span>
-                                        <MdCheckCircle size={13} className="text-blue-300 ml-auto opacity-60" />
+                                        <span className="text-blue-100 text-base">{text}</span>
+                                        <MdCheckCircle size={15} className="text-blue-300 ml-auto opacity-60" />
                                     </div>
                                 ))}
                             </div>
@@ -141,7 +141,7 @@ const RidePooling = () => {
                                     {[1, 2, 3, 4, 5].map(i => (
                                         <MdStar key={i} size={13} className="text-yellow-300" />
                                     ))}
-                                    <span className="text-white text-xs ml-2 opacity-75">Top rated platform</span>
+                                    <span className="text-white text-sm ml-2 opacity-75">Top rated platform</span>
                                 </div>
                             </div>
 
@@ -150,13 +150,13 @@ const RidePooling = () => {
                                 {stats.map(({ value, label }) => (
                                     <div key={label}
                                         className="bg-white/10 rounded-xl p-4 border border-white/10 text-center hover:bg-white/20 transition-colors duration-300">
-                                        <p className="text-white font-bold text-xl leading-none">{value}</p>
-                                        <p className="text-blue-200 text-xs mt-2 opacity-75">{label}</p>
+                                        <p className="text-white font-bold text-2xl leading-none">{value}</p>
+                                        <p className="text-blue-200 text-sm mt-2 opacity-75">{label}</p>
                                     </div>
                                 ))}
                             </div>
 
-                            <p className="text-blue-300 text-xs mt-5 opacity-50 text-center">
+                            <p className="text-blue-300 text-sm mt-5 opacity-50 text-center">
                                 Trusted by 500+ delivery partners worldwide
                             </p>
                         </div>
@@ -166,10 +166,10 @@ const RidePooling = () => {
                     <div className="w-1/2 bg-white flex items-center justify-center p-12 overflow-y-auto">
                         <div className="w-full max-w-md">
 
-                            <h2 className="text-2xl font-bold text-gray-900 mb-2 fade-up">
+                            <h2 className="text-3xl font-bold text-gray-900 mb-2 fade-up">
                                 Ready to start earning?
                             </h2>
-                            <p className="text-gray-400 text-sm mb-10 leading-relaxed fade-up-2">
+                            <p className="text-gray-400 text-base mb-10 leading-relaxed fade-up-2">
                                 Complete your driver profile and vehicle registration to unlock all features and start accepting deliveries.
                             </p>
 
@@ -178,12 +178,12 @@ const RidePooling = () => {
                                 {steps.map((step) => (
                                     <div key={step.number}
                                         className="flex items-start gap-4 p-4 rounded-xl hover:bg-gray-50 transition-colors duration-200 group cursor-default">
-                                        <div className="w-9 h-9 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-[#4285F4] group-hover:border-[#4285F4] transition-all duration-300">
-                                            <span className="text-sm font-bold text-[#4285F4] group-hover:text-white transition-colors">{step.number}</span>
+                                        <div className="w-10 h-10 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-[#4285F4] group-hover:border-[#4285F4] transition-all duration-300">
+                                            <span className="text-base font-bold text-[#4285F4] group-hover:text-white transition-colors">{step.number}</span>
                                         </div>
                                         <div className="flex-1 pt-0.5">
-                                            <p className="text-sm font-semibold text-gray-800 group-hover:text-[#4285F4] transition-colors duration-200">{step.title}</p>
-                                            <p className="text-xs text-gray-400 mt-1 leading-relaxed">{step.description}</p>
+                                            <p className="text-base font-semibold text-gray-800 group-hover:text-[#4285F4] transition-colors duration-200">{step.title}</p>
+                                            <p className="text-sm text-gray-400 mt-1 leading-relaxed">{step.description}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -192,28 +192,28 @@ const RidePooling = () => {
                             {/* CTA */}
                             <button
                                 onClick={() => navigate('/signup/business')}
-                                className="w-full bg-[#4285F4] hover:bg-[#3367D6] text-white font-semibold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-colors duration-200 shadow-md hover:shadow-lg mb-3 fade-up-4"
+                                className="w-full bg-[#4285F4] hover:bg-[#3367D6] text-white font-semibold py-4 rounded-xl flex items-center justify-center gap-2 transition-colors duration-200 shadow-md hover:shadow-lg mb-3 fade-up-4 text-base"
                             >
                                 Create Driver Account
-                                <span className="bounce-arrow"><MdArrowForward size={20} /></span>
+                                <span className="bounce-arrow"><MdArrowForward size={22} /></span>
                             </button>
 
                             <button
                                 onClick={() => navigate('/login')}
-                                className="w-full border border-gray-200 hover:border-[#4285F4] text-gray-500 hover:text-[#4285F4] font-medium py-3 rounded-xl text-sm transition-all duration-200 hover:bg-blue-50"
+                                className="w-full border border-gray-200 hover:border-[#4285F4] text-gray-500 hover:text-[#4285F4] font-medium py-3.5 rounded-xl text-base transition-all duration-200 hover:bg-blue-50"
                             >
                                 Already a driver? Sign In
                             </button>
 
                             {/* Features */}
                             <div className="mt-10 pt-6 border-t border-gray-100">
-                                <p className="text-[11px] font-semibold text-gray-300 uppercase tracking-widest mb-4">Available Features</p>
+                                <p className="text-xs font-semibold text-gray-300 uppercase tracking-widest mb-4">Available Features</p>
                                 <div className="grid grid-cols-2 gap-2">
                                     {features.map((f) => (
                                         <div key={f.label}
-                                            className="flex items-center gap-2.5 p-2.5 rounded-lg hover:bg-blue-50 transition-colors duration-200 cursor-default">
+                                            className="flex items-center gap-2.5 p-3 rounded-lg hover:bg-blue-50 transition-colors duration-200 cursor-default">
                                             {f.icon}
-                                            <span className="text-xs font-medium text-gray-500">{f.label}</span>
+                                            <span className="text-sm font-medium text-gray-500">{f.label}</span>
                                         </div>
                                     ))}
                                 </div>
