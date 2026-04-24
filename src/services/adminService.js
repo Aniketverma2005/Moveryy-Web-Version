@@ -8,6 +8,73 @@
 import { api } from './api';
 
 export const adminService = {
+  // ── Organization Registration (POST /api/v1/organizations/create) ──────────
+  createOrganization: async (orgData) => {
+    try {
+      const response = await api.post('/api/v1/organizations/create', {
+        name: orgData.name.trim(),
+        businessAddress: orgData.businessAddress.trim(),
+        taxId: orgData.taxId.trim(),
+        industryType: orgData.industryType,
+        phone: orgData.phone?.trim(),
+        email: orgData.email?.trim().toLowerCase(),
+        website: orgData.website?.trim() || undefined,
+      });
+      const org = response?.organization || response?.data?.organization || response?.data;
+      console.log('✅ Organization created:', org?.name);
+      return org;
+    } catch (error) {
+      console.error('❌ Create organization error:', error);
+      throw error instanceof Error ? error : new Error(error?.message || 'Failed to create organization');
+    }
+  },
+
+  // ── Get all organizations (GET /api/v1/organizations/all) ────────────────
+  getAllOrganizations: async () => {
+    try {
+      const response = await api.get('/api/v1/organizations/all');
+      return response?.organizations || response?.data?.organizations || response?.data || [];
+    } catch (error) {
+      console.error('❌ Get organizations error:', error);
+      throw error;
+    }
+  },
+
+  // ── Update organization (PATCH /api/v1/organizations/update) ────────────
+  updateOrganization: async (orgData) => {
+    try {
+      const response = await api.patch('/api/v1/organizations/update', orgData);
+      return response?.organization || response?.data?.organization || response?.data;
+    } catch (error) {
+      console.error('❌ Update organization error:', error);
+      throw error;
+    }
+  },
+
+  // ── Delete organization (DELETE /api/v1/organizations/{organizationId}) ──
+  deleteOrganization: async (organizationId) => {
+    try {
+      const response = await api.delete(`/api/v1/organizations/${organizationId}`);
+      console.log('✅ Organization deleted:', organizationId);
+      return response?.data || response;
+    } catch (error) {
+      console.error('❌ Delete organization error:', error);
+      throw error;
+    }
+  },
+
+  // ── Switch active organization (POST /api/v1/organizations/switch) ───────
+  switchOrganization: async (organizationId) => {
+    try {
+      const response = await api.post('/api/v1/organizations/switch', { organizationId });
+      console.log('✅ Organization switched:', organizationId);
+      return response?.data || response;
+    } catch (error) {
+      console.error('❌ Switch organization error:', error);
+      throw error;
+    }
+  },
+
   // Get admin dashboard data
   getDashboardData: async () => {
     try {

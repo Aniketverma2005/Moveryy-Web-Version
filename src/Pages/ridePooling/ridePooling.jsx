@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import {
     MdArrowForward, MdOutlineNotifications, MdOutlineGpsFixed,
-    MdOutlineTrendingUp, MdOutlineHeadsetMic, MdLocalShipping,
+    MdOutlineTrendingUp, MdOutlineHeadsetMic,
     MdStar, MdFlashOn, MdShield, MdCheckCircle,
 } from 'react-icons/md';
 import logo from '../../assets/logo2.png';
@@ -126,23 +126,14 @@ const RidePooling = () => {
                             </div>
                         </div>
 
-                        {/* Bottom — pulsing truck + stats */}
+                        {/* Bottom — stats */}
                         <div className="relative z-10 fade-up-4">
-                            {/* Truck with single pulse ring */}
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="relative flex-shrink-0">
-                                    <div className="w-11 h-11 rounded-full bg-white/15 flex items-center justify-center">
-                                        <MdLocalShipping size={22} className="text-white" />
-                                    </div>
-                                    <div className="absolute inset-0 rounded-full border border-white/40"
-                                        style={{ animation: 'pulse-ring 2.5s ease-out infinite' }} />
-                                </div>
-                                <div className="flex items-center gap-1">
-                                    {[1, 2, 3, 4, 5].map(i => (
-                                        <MdStar key={i} size={13} className="text-yellow-300" />
-                                    ))}
-                                    <span className="text-white text-sm ml-2 opacity-75">Top rated platform</span>
-                                </div>
+                            {/* Stars row */}
+                            <div className="flex items-center gap-1 mb-6">
+                                {[1, 2, 3, 4, 5].map(i => (
+                                    <MdStar key={i} size={16} className="text-yellow-300" />
+                                ))}
+                                <span className="text-white text-sm ml-2 opacity-75">Top rated platform</span>
                             </div>
 
                             {/* Stat cards */}

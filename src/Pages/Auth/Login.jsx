@@ -25,9 +25,24 @@ const Login = () => {
                 password: formData.password,
             });
             const role = result?.user?.role;
-            if (role === 'admin') navigate('/admin');
-            else if (role === 'transport') navigate('/transport');
-            else navigate('/');
+            const hasOrganization = result?.user?.hasOrganization
+                ?? result?.user?.organization
+                ?? result?.user?.organizationId
+                ?? false;
+
+            if (role === 'user') {
+                navigate('/');
+            } else if (role === 'admin') {
+                if (hasOrganization) {
+                    navigate('/admin');           // /admin/dashboard
+                } else {
+                    navigate('/admin/register-organization');
+                }
+            } else if (role === 'transport') {
+                navigate('/transport');
+            } else {
+                navigate('/');
+            }
         } catch (err) {
             setError(err?.message || 'Invalid email or password. Please try again.');
         } finally {
