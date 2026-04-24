@@ -73,7 +73,7 @@ const AdminSignup = () => {
     return (
         <div className="min-h-screen flex">
             {/* Left Side */}
-            <div className="flex-1 bg-[#4285F4] text-white p-12 flex flex-col justify-between">
+            <div className="flex-1 bg-blue-600 text-white p-12 flex flex-col justify-between">
                 <div className="mb-4">
                     <div className="bg-white rounded-lg p-4 inline-block shadow-sm">
                         <img src={logo} alt="Moveryy Logo" className="h-16 w-auto object-contain" />
