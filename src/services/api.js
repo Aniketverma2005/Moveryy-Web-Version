@@ -7,9 +7,10 @@
 
 import axios from 'axios';
 
-// API Configuration — direct call to backend (CORS already allows localhost:5173)
+// API Configuration — empty BASE_URL routes through Vite proxy → localhost:8000
+// This ensures cookies work correctly (same origin via proxy)
 const API_CONFIG = {
-  BASE_URL: 'http://localhost:8000',
+  BASE_URL: '',  // Use Vite proxy: /api/* → http://localhost:8000/api/*
   TIMEOUT: 15000,
 };
 

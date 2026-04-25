@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import authService from '../../services/authentication folder/authService';
+import authService from '../../services/authService folder/authService';
+import { api } from '../../services/api';
 import logo from '../../assets/logo2.png';
 
 const Login = () => {
@@ -11,64 +12,73 @@ const Login = () => {
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
-        setFormData({ ...formData, [name]: type === 'checkbox' ? checked : value });
+        setFormData(p => ({ ...p, [name]: type === 'checkbox' ? checked : value }));
         if (error) setError('');
+    };
+
+    // ── Redirect based on role ────────────────────────────────────────────────
+    const redirectByRole = async (user) => {
+        const role = user?.role;
+
+        if (role === 'user') {
+            navigate('/');
+            return;
+        }
+
+        if (role === 'admin') {
+            // Check if organization exists
+            const hasOrgInUser =
+                user?.hasOrganization === true ||
+                !!user?.organization ||
+                !!user?.organizationId ||
+                !!user?.Organization;
+
+            if (hasOrgInUser) {
+                navigate('/admin');
+                return;
+            }
+
+            // Verify via API: GET /api/v1/organizations/all
+            try {
+                const orgRes = await api.get('/api/v1/organizations/all');
+                const orgs = orgRes?.organizations || orgRes?.data?.organizations || orgRes?.data || [];
+                const hasOrg = Array.isArray(orgs) ? orgs.length > 0 : !!orgs;
+                navigate(hasOrg ? '/admin' : '/admin/register-organization');
+            } catch {
+                // Can't verify — send to org registration to be safe
+                navigate('/admin/register-organization');
+            }
+            return;
+        }
+
+        if (role === 'transport') {
+            navigate('/transport');
+            return;
+        }
+
+        // Unknown role — go to user dashboard as default
+        navigate('/');
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setLoading(true);
+
         try {
-            // Step 1: POST /api/v1/users/login
             const result = await authService.login({
                 email: formData.email,
                 password: formData.password,
             });
 
             const user = result?.user;
-            const role = user?.role;
 
-            if (role === 'user') {
-                // ── User → User Dashboard ──────────────────────────────
-                navigate('/');
-
-            } else if (role === 'admin') {
-                // ── Admin → check organization ─────────────────────────
-                // Check from login response first (fastest)
-                const hasOrgFromLogin =
-                    user?.hasOrganization === true ||
-                    !!user?.organization ||
-                    !!user?.organizationId ||
-                    !!user?.Organization;
-
-                if (hasOrgFromLogin) {
-                    navigate('/admin');
-                } else {
-                    // Double-check by calling GET /api/v1/organizations/all
-                    try {
-                        const { api } = await import('../../services/api');
-                        const orgResponse = await api.get('/api/v1/organizations/all');
-                        const orgs = orgResponse?.organizations
-                            || orgResponse?.data?.organizations
-                            || orgResponse?.data
-                            || [];
-                        const hasOrg = Array.isArray(orgs) ? orgs.length > 0 : !!orgs;
-                        navigate(hasOrg ? '/admin' : '/admin/register-organization');
-                    } catch {
-                        // If org check fails, send to org registration to be safe
-                        navigate('/admin/register-organization');
-                    }
-                }
-
-            } else if (role === 'transport') {
-                // ── Transport → Driver Dashboard ───────────────────────
-                navigate('/transport');
-
-            } else {
-                // Fallback
-                navigate('/');
+            if (!user || !user.role) {
+                setError('Login succeeded but user data is missing. Please try again.');
+                return;
             }
+
+            await redirectByRole(user);
 
         } catch (err) {
             setError(err?.message || 'Invalid email or password. Please try again.');
@@ -80,7 +90,7 @@ const Login = () => {
     return (
         <div className="min-h-screen flex">
             {/* Left Side */}
-            <div className="flex-1 bg-blue-600 text-white p-12 flex flex-col justify-between">
+            <div className="flex-1 bg-[#4285F4] text-white p-12 flex flex-col justify-between">
                 <div className="mb-20">
                     <div className="bg-white rounded-lg p-4 inline-block shadow-sm">
                         <img src={logo} alt="Moveryy Logo" className="h-16 w-auto object-contain" />
@@ -117,7 +127,6 @@ const Login = () => {
                         <p className="text-gray-600">Sign in to manage your deliveries</p>
                     </div>
 
-                    {/* Error Banner */}
                     {error && (
                         <div className="mb-4 p-3 bg-red-50 border border-red-300 rounded-md">
                             <p className="text-sm text-red-700">{error}</p>
