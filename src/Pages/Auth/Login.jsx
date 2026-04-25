@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../../services/authentication folder/authService';
 import logo from '../../assets/logo2.png';
@@ -20,29 +20,56 @@ const Login = () => {
         setError('');
         setLoading(true);
         try {
+            // Step 1: POST /api/v1/users/login
             const result = await authService.login({
                 email: formData.email,
                 password: formData.password,
             });
-            const role = result?.user?.role;
-            const hasOrganization = result?.user?.hasOrganization
-                ?? result?.user?.organization
-                ?? result?.user?.organizationId
-                ?? false;
+
+            const user = result?.user;
+            const role = user?.role;
 
             if (role === 'user') {
+                // ── User → User Dashboard ──────────────────────────────
                 navigate('/');
+
             } else if (role === 'admin') {
-                if (hasOrganization) {
-                    navigate('/admin');           // /admin/dashboard
+                // ── Admin → check organization ─────────────────────────
+                // Check from login response first (fastest)
+                const hasOrgFromLogin =
+                    user?.hasOrganization === true ||
+                    !!user?.organization ||
+                    !!user?.organizationId ||
+                    !!user?.Organization;
+
+                if (hasOrgFromLogin) {
+                    navigate('/admin');
                 } else {
-                    navigate('/admin/register-organization');
+                    // Double-check by calling GET /api/v1/organizations/all
+                    try {
+                        const { api } = await import('../../services/api');
+                        const orgResponse = await api.get('/api/v1/organizations/all');
+                        const orgs = orgResponse?.organizations
+                            || orgResponse?.data?.organizations
+                            || orgResponse?.data
+                            || [];
+                        const hasOrg = Array.isArray(orgs) ? orgs.length > 0 : !!orgs;
+                        navigate(hasOrg ? '/admin' : '/admin/register-organization');
+                    } catch {
+                        // If org check fails, send to org registration to be safe
+                        navigate('/admin/register-organization');
+                    }
                 }
+
             } else if (role === 'transport') {
+                // ── Transport → Driver Dashboard ───────────────────────
                 navigate('/transport');
+
             } else {
+                // Fallback
                 navigate('/');
             }
+
         } catch (err) {
             setError(err?.message || 'Invalid email or password. Please try again.');
         } finally {
@@ -142,7 +169,12 @@ const Login = () => {
                             disabled={loading}
                             className="w-full bg-[#4285F4] text-white py-3 px-4 rounded-md hover:bg-[#3367D6] focus:outline-none focus:ring-2 focus:ring-[#4285F4] focus:ring-offset-2 font-medium disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
                         >
-                            {loading ? 'Signing in...' : 'Sign in to your account'}
+                            {loading ? (
+                                <span className="flex items-center justify-center gap-2">
+                                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                    Signing in...
+                                </span>
+                            ) : 'Sign in to your account'}
                         </button>
 
                         <div className="relative my-6">
