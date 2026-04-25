@@ -44,10 +44,33 @@ const validate = (fields) => {
 };
 
 // Helper — extract user + token from any backend response shape
+// The backend may return tokens in different locations:
+// Shape 1: { accessToken, refreshToken, user }
+// Shape 2: { token, user }
+// Shape 3: { data: { accessToken, user } }
+// Shape 4: Token in httpOnly cookie (token = null, but user exists)
 const extractAuth = (response) => {
-    const token = response?.accessToken || response?.token || response?.data?.accessToken || response?.data?.token;
-    const refreshToken = response?.refreshToken || response?.data?.refreshToken;
-    const user = response?.user || response?.data?.user || response?.data;
+    const token =
+        response?.accessToken ||
+        response?.token ||
+        response?.data?.accessToken ||
+        response?.data?.token ||
+        response?.jwt ||
+        response?.data?.jwt ||
+        null;
+
+    const refreshToken =
+        response?.refreshToken ||
+        response?.data?.refreshToken ||
+        null;
+
+    // User can be nested in different places
+    const user =
+        response?.user ||
+        response?.data?.user ||
+        (response?.data && typeof response.data === 'object' && !Array.isArray(response.data) && response.data?.email ? response.data : null) ||
+        null;
+
     return { token, refreshToken, user };
 };
 
@@ -70,14 +93,28 @@ export const authService = {
 
             const { token, refreshToken, user } = extractAuth(response);
 
+            // Store token if present (some backends use httpOnly cookies instead)
             if (token) {
                 TokenManager.setToken(token);
-                if (refreshToken) TokenManager.setRefreshToken(refreshToken);
-                localStorage.setItem('moveryy_user', JSON.stringify(user));
-                console.log('✅ Login successful:', user?.email);
-                return { token, user };
+            }
+            if (refreshToken) {
+                TokenManager.setRefreshToken(refreshToken);
+            }
+
+            // We need at least a user object to proceed
+            if (user || token) {
+                const userToStore = user || {};
+                localStorage.setItem('moveryy_user', JSON.stringify(userToStore));
+                console.log('✅ Login successful:', userToStore?.email || credentials.email);
+                return { token, user: userToStore };
             } else {
-                throw new Error(response?.message || 'Login failed — no token received');
+                // Last resort: if response has success flag, treat as logged in
+                const isSuccess = response?.success === true || response?.status === 'success';
+                if (isSuccess) {
+                    console.log('✅ Login successful (cookie-based auth)');
+                    return { token: null, user: {} };
+                }
+                throw new Error(response?.message || 'Login failed — no token or user received');
             }
         } catch (error) {
             console.error('❌ Login error:', error);
