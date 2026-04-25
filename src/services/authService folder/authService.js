@@ -48,7 +48,7 @@ const validate = (fields) => {
 // Shape 1: { accessToken, refreshToken, user }
 // Shape 2: { token, user }
 // Shape 3: { data: { accessToken, user } }
-// Shape 4: Token in httpOnly cookie (token = null, but user exists)
+// Shape 4: Token in httpOnly cookie — token is null but user exists + message = success
 const extractAuth = (response) => {
     const token =
         response?.accessToken ||
@@ -64,14 +64,17 @@ const extractAuth = (response) => {
         response?.data?.refreshToken ||
         null;
 
-    // User can be nested in different places
     const user =
         response?.user ||
         response?.data?.user ||
         (response?.data && typeof response.data === 'object' && !Array.isArray(response.data) && response.data?.email ? response.data : null) ||
         null;
 
-    return { token, refreshToken, user };
+    // Detect cookie-based auth: backend sends user but no token in body
+    // In this case the JWT is stored in an httpOnly cookie automatically
+    const isCookieAuth = !token && !!user;
+
+    return { token, refreshToken, user, isCookieAuth };
 };
 
 // ─── Auth Service ─────────────────────────────────────────────────────────────
@@ -91,31 +94,56 @@ export const authService = {
                 password: credentials.password,
             });
 
-            const { token, refreshToken, user } = extractAuth(response);
+            const { token, refreshToken, user, isCookieAuth } = extractAuth(response);
 
-            // Store token if present (some backends use httpOnly cookies instead)
-            if (token) {
-                TokenManager.setToken(token);
-            }
-            if (refreshToken) {
-                TokenManager.setRefreshToken(refreshToken);
+            // Store token if present
+            if (token) TokenManager.setToken(token);
+            if (refreshToken) TokenManager.setRefreshToken(refreshToken);
+
+            // ── Case 1: Got user + token in response ──────────────────
+            if (user && (user.role || user.email)) {
+                localStorage.setItem('moveryy_user', JSON.stringify(user));
+                console.log('✅ Login successful (body):', user?.email);
+                return { token, user };
             }
 
-            // We need at least a user object to proceed
-            if (user || token) {
-                const userToStore = user || {};
-                localStorage.setItem('moveryy_user', JSON.stringify(userToStore));
-                console.log('✅ Login successful:', userToStore?.email || credentials.email);
-                return { token, user: userToStore };
-            } else {
-                // Last resort: if response has success flag, treat as logged in
-                const isSuccess = response?.success === true || response?.status === 'success';
-                if (isSuccess) {
-                    console.log('✅ Login successful (cookie-based auth)');
-                    return { token: null, user: {} };
+            // ── Case 2: Cookie-based / message-only response ──────────
+            // Backend set httpOnly cookie, now fetch user profile
+            const isSuccess =
+                isCookieAuth ||
+                token ||
+                response?.success === true ||
+                response?.status === 'success' ||
+                (typeof response?.message === 'string' &&
+                    response.message.toLowerCase().includes('success'));
+
+            if (isSuccess) {
+                console.log('✅ Login accepted, fetching user profile...');
+                try {
+                    const profileRes = await api.get('/api/v1/users/user');
+                    const fetchedUser =
+                        profileRes?.user ||
+                        profileRes?.data?.user ||
+                        profileRes?.data ||
+                        null;
+
+                    if (fetchedUser && (fetchedUser.role || fetchedUser.email)) {
+                        localStorage.setItem('moveryy_user', JSON.stringify(fetchedUser));
+                        console.log('✅ User profile fetched:', fetchedUser?.email);
+                        return { token: token || null, user: fetchedUser };
+                    }
+                } catch (profileErr) {
+                    console.warn('⚠️ Profile fetch failed, using email fallback:', profileErr?.message);
                 }
-                throw new Error(response?.message || 'Login failed — no token or user received');
+
+                // Absolute fallback — store minimal user so redirect works
+                const fallbackUser = { email: credentials.email, role: 'user' };
+                localStorage.setItem('moveryy_user', JSON.stringify(fallbackUser));
+                return { token: null, user: fallbackUser };
             }
+
+            throw new Error(response?.message || 'Login failed — unexpected response from server');
+
         } catch (error) {
             console.error('❌ Login error:', error);
             throw error instanceof Error ? error : new Error(error?.message || 'Login failed');

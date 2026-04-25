@@ -17,6 +17,7 @@ const API_CONFIG = {
 const apiClient = axios.create({
   baseURL: API_CONFIG.BASE_URL,
   timeout: API_CONFIG.TIMEOUT,
+  withCredentials: true, // Required for httpOnly cookie-based auth
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
