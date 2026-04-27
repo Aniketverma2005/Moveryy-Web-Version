@@ -131,7 +131,7 @@ const HomePage = () => {
   ];
 
   return (
-    <div className="bg-white min-h-screen px-10 py-10 font-sans">
+    <div className="bg-white min-h-screen px-8 py-8 font-sans">
 
       {/* ── Welcome ── */}
       <motion.div initial={{ opacity: 0, y: -12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}
