@@ -98,7 +98,7 @@ const TableRow = ({ bookingId, customer, route, date, status, amount, index }) =
 
 // ── Skeleton ──────────────────────────────────────────────────────────────────
 const Skeleton = () => (
-  <div className="p-6 space-y-6 animate-pulse">
+  <div className="px-4 sm:px-6 lg:px-8 py-6 space-y-6 animate-pulse">
     <div className="h-7 w-40 bg-gray-200 rounded-lg" />
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {[1, 2, 3, 4].map(i => <div key={i} className="h-32 bg-gray-200 rounded-2xl" />)}
@@ -125,7 +125,7 @@ const DashboardPage = () => {
   if (error) return <div className="p-8 text-red-500 text-center">{error}</div>;
 
   return (
-    <div className="bg-slate-50 min-h-screen px-4 sm:px-6 lg:px-8 py-6">
+    <div className="px-4 sm:px-6 lg:px-8 py-6">
 
       {/* Header */}
       <motion.div
