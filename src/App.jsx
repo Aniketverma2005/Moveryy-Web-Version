@@ -31,6 +31,7 @@ import Login from './Pages/Auth/Login.jsx';
 import Signup from './Pages/Auth/Signup.jsx';
 import BusinessSignup from './Pages/Auth/BusinessSignup.jsx';
 import AdminSignup from './Pages/Auth/AdminSignup.jsx';
+import VerifyOtp from './Pages/Auth/VerifyOtp.jsx';
 import RidePooling from "./Pages/ridePooling/ridePooling.jsx";
 import DriverRegistration from "./Pages/ridePooling/driverregistration.jsx";
 import VehicleRegistration from "./Pages/ridePooling/vehicleregistration.jsx";
@@ -46,6 +47,7 @@ function App() {
 				<Route path="/signup" element={<Signup />} />
 				<Route path="/signup/business" element={<BusinessSignup />} />
 				<Route path="/signup/admin" element={<AdminSignup />} />
+				<Route path="/verify-otp" element={<VerifyOtp />} />
 				<Route path="/admin/register-organization" element={<OrgRegistration />} />
 				<Route path="/ride-pooling" element={<RidePooling />} />
 				<Route path="/ride-pooling/register" element={<DriverRegistration />} />

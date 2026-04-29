@@ -299,7 +299,41 @@ export const authService = {
         }
     },
 
-    // ── Helpers ────────────────────────────────────────────────────────────────
+    // ── Verify OTP — POST /api/v1/users/verify-otp ────────────────────────────
+    // Body: { email, otp }
+    // 200: { statusCode: 200, success: true, message: "Email verified successfully!", data: { userId, email } }
+    // 400: Invalid or expired OTP
+    verifyOtp: async (email, otp) => {
+        try {
+            const response = await api.post('/api/v1/users/verify-otp', {
+                email: email.trim().toLowerCase(),
+                otp: otp.trim(),
+            });
+            console.log('✅ OTP verified:', email);
+            return response?.data || response;
+        } catch (error) {
+            console.error('❌ OTP verification error:', error);
+            throw error instanceof Error ? error : new Error(error?.message || 'OTP verification failed');
+        }
+    },
+
+    // ── Resend OTP — POST /api/v1/users/resend-otp ────────────────────────────
+    // Body: { email }
+    // 200: { statusCode: 200, success: true, message: "OTP sent to your email", data: {} }
+    // 400: User already verified or invalid email
+    // 404: No pending registration found for this email
+    resendOtp: async (email) => {
+        try {
+            const response = await api.post('/api/v1/users/resend-otp', {
+                email: email.trim().toLowerCase(),
+            });
+            console.log('✅ OTP resent to:', email);
+            return response?.data || response;
+        } catch (error) {
+            console.error('❌ Resend OTP error:', error);
+            throw error instanceof Error ? error : new Error(error?.message || 'Failed to resend OTP');
+        }
+    },
     isAuthenticated: () => {
         return !!(TokenManager.getToken() && localStorage.getItem('moveryy_user'));
     },

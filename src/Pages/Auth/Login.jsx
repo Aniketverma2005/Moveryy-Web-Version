@@ -90,7 +90,8 @@ const Login = () => {
     return (
         <div className="min-h-screen flex">
             {/* Left Side */}
-            <div className="flex-1 bg-[#4285F4] text-white p-12 flex flex-col justify-between">
+            <div className="flex-1 bg-[#1a3a6b] text-white p-12 flex flex-col justify-between"
+                style={{ background: 'linear-gradient(160deg, #0f2a52 0%, #1e4080 50%, #2563eb 100%)' }}>
                 <div className="mb-20">
                     <div className="bg-white rounded-lg p-4 inline-block shadow-sm">
                         <img src={logo} alt="Moveryy Logo" className="h-16 w-auto object-contain" />

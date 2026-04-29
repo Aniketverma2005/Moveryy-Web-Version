@@ -62,7 +62,7 @@ const AdminSignup = () => {
                 password: formData.password,
                 agreeToTerms: formData.agreeToTerms,
             });
-            navigate('/admin');  // → Admin dashboard
+            navigate('/verify-otp', { state: { email: formData.email, redirectTo: '/admin' } });  // → Admin dashboard
         } catch (err) {
             setApiError(err?.message || 'Signup failed. Please try again.');
         } finally {
