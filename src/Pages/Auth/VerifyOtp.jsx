@@ -81,8 +81,7 @@ const VerifyOtp = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
-            style={{ background: 'linear-gradient(135deg, #0f2a52 0%, #1e4080 40%, #2563eb 100%)' }}>
+        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden bg-blue-600">
 
             {/* ── Animated background blobs ── */}
             <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -147,7 +146,7 @@ const VerifyOtp = () => {
                             background: 'rgba(255,255,255,0.18)',
                             backdropFilter: 'blur(16px)',
                             WebkitBackdropFilter: 'blur(16px)',
-                            border: '2px solid rgba(255,255,255,0.4)',
+                            border: '2px solid #ffffff', // Changed to pure white border
                             borderRadius: '50%',
                             display: 'flex', alignItems: 'center', justifyContent: 'center',
                             boxShadow: '0 8px 32px rgba(37,99,235,0.4), inset 0 1px 0 rgba(255,255,255,0.3)',
@@ -172,7 +171,8 @@ const VerifyOtp = () => {
 
                 {/* OTP boxes */}
                 <div className="mb-2">
-                    <p className="text-white/80 text-xs font-semibold mb-3 uppercase tracking-wider">Enter OTP Code</p>
+                    {/* Changed text to pure white */}
+                    <p className="text-white text-xs font-semibold mb-3 uppercase tracking-wider">Enter OTP Code</p>
                     <div className="flex gap-2 justify-between" onPaste={handlePaste}>
                         {otp.map((digit, i) => (
                             <motion.input
@@ -190,11 +190,11 @@ const VerifyOtp = () => {
                                     width: 44, height: 52,
                                     textAlign: 'center',
                                     fontSize: 20, fontWeight: 700,
-                                    background: digit ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.1)',
+                                    background: '#ffffff', // Changed to solid white background
                                     backdropFilter: 'blur(8px)',
-                                    border: digit ? '2px solid rgba(255,255,255,0.7)' : '2px solid rgba(255,255,255,0.3)',
+                                    border: digit ? '2px solid #ffffff' : '2px solid rgba(255,255,255,0.6)',
                                     borderRadius: 12,
-                                    color: 'white',
+                                    color: '#1e40af', // Changed text to blue so it is visible on white background
                                     outline: 'none',
                                     transition: 'all 0.15s',
                                     boxShadow: digit ? '0 4px 16px rgba(37,99,235,0.3)' : 'none',
@@ -241,7 +241,7 @@ const VerifyOtp = () => {
                     whileTap={{ scale: 0.97 }}
                     className="w-full font-extrabold py-3.5 rounded-xl tracking-widest text-sm uppercase mb-4 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     style={{
-                        background: 'rgba(255,255,255,0.95)',
+                        background: '#ffffff', // Changed to pure white background
                         color: '#1e40af',
                         boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
                     }}
@@ -260,7 +260,8 @@ const VerifyOtp = () => {
                     <button
                         onClick={handleResend}
                         disabled={resending || timer > 0}
-                        className={`text-sm font-bold transition-colors ${timer > 0 ? 'text-white/40 cursor-not-allowed' : 'text-white hover:text-blue-200 cursor-pointer'
+                        // Changed hover state to text-white
+                        className={`text-sm font-bold transition-colors ${timer > 0 ? 'text-white/50 cursor-not-allowed' : 'text-white hover:text-white cursor-pointer'
                             }`}
                     >
                         {resending ? 'Sending...' : 'Resend'}
