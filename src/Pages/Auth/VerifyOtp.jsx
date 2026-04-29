@@ -1,15 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { MdOutlineEmail, MdArrowBack, MdOutlineInfo, MdOutlineTimer } from 'react-icons/md';
 import authService from '../../services/authService folder/authService';
 
 const OTP_LENGTH = 6;
-const OTP_EXPIRY = 300; // 5 minutes
+const OTP_EXPIRY = 300;
 
 const VerifyOtp = () => {
     const navigate = useNavigate();
     const location = useLocation();
-
     const email = location.state?.email || '';
     const redirectTo = location.state?.redirectTo || '/';
 
@@ -19,10 +19,8 @@ const VerifyOtp = () => {
     const [resending, setResending] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
-
     const inputRefs = useRef([]);
 
-    // Countdown
     useEffect(() => {
         if (timer <= 0) return;
         const id = setInterval(() => setTimer(t => t - 1), 1000);
@@ -83,42 +81,101 @@ const VerifyOtp = () => {
     };
 
     return (
-        // Light gray page background matching the screenshot
-        <div className="min-h-screen bg-slate-200 flex items-center justify-center p-4">
-            <div className="w-full max-w-sm">
+        <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden"
+            style={{ background: 'linear-gradient(135deg, #0f2a52 0%, #1e4080 40%, #2563eb 100%)' }}>
 
-                {/* Back button */}
-                <button
-                    onClick={() => navigate(-1)}
-                    className="w-10 h-10 bg-white border border-gray-300 rounded-lg flex items-center justify-center mb-6 hover:bg-gray-50 transition-colors shadow-sm"
-                >
-                    <MdArrowBack size={20} className="text-gray-700" />
-                </button>
+            {/* ── Animated background blobs ── */}
+            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                <motion.div
+                    animate={{ scale: [1, 1.15, 1], opacity: [0.15, 0.25, 0.15] }}
+                    transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
+                    className="absolute -top-24 -left-24 w-96 h-96 rounded-full"
+                    style={{ background: 'radial-gradient(circle, #60a5fa, transparent)' }}
+                />
+                <motion.div
+                    animate={{ scale: [1, 1.2, 1], opacity: [0.1, 0.2, 0.1] }}
+                    transition={{ duration: 10, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
+                    className="absolute -bottom-20 -right-20 w-80 h-80 rounded-full"
+                    style={{ background: 'radial-gradient(circle, #93c5fd, transparent)' }}
+                />
+                <div className="absolute inset-0 opacity-[0.04]"
+                    style={{ backgroundImage: 'radial-gradient(circle, #fff 1px, transparent 1px)', backgroundSize: '28px 28px' }} />
+            </div>
 
-                {/* Email icon */}
-                <div className="flex justify-center mb-5">
-                    <div className="w-24 h-24 bg-white border-2 border-gray-200 rounded-2xl flex items-center justify-center shadow-sm">
-                        <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
-                            <MdOutlineEmail size={36} className="text-blue-600" />
+            {/* ── Back button ── */}
+            <button
+                onClick={() => navigate(-1)}
+                className="absolute top-6 left-6 w-10 h-10 bg-white/20 backdrop-blur-sm border border-white/30 rounded-xl flex items-center justify-center hover:bg-white/30 transition-colors z-10"
+            >
+                <MdArrowBack size={20} className="text-white" />
+            </button>
+
+            {/* ── Glassmorphism card ── */}
+            <motion.div
+                initial={{ opacity: 0, y: 40, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ type: 'spring', stiffness: 200, damping: 22 }}
+                className="relative w-full max-w-sm z-10"
+                style={{
+                    background: 'rgba(255,255,255,0.12)',
+                    backdropFilter: 'blur(20px)',
+                    WebkitBackdropFilter: 'blur(20px)',
+                    border: '1px solid rgba(255,255,255,0.25)',
+                    borderRadius: '28px',
+                    boxShadow: '0 24px 64px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2)',
+                    padding: '40px 32px 32px',
+                }}
+            >
+                {/* ── Email icon — pops out above card ── */}
+                <div className="flex justify-center" style={{ marginTop: '-72px', marginBottom: '20px' }}>
+                    <motion.div
+                        initial={{ scale: 0, rotate: -20 }}
+                        animate={{ scale: 1, rotate: 0 }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 18, delay: 0.2 }}
+                        className="relative"
+                    >
+                        {/* Outer glow ring */}
+                        <motion.div
+                            animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.7, 0.4] }}
+                            transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
+                            className="absolute inset-0 rounded-full"
+                            style={{ background: 'rgba(96,165,250,0.35)', filter: 'blur(12px)', transform: 'scale(1.3)' }}
+                        />
+                        {/* Icon container — glassmorphism */}
+                        <div style={{
+                            width: 88, height: 88,
+                            background: 'rgba(255,255,255,0.18)',
+                            backdropFilter: 'blur(16px)',
+                            WebkitBackdropFilter: 'blur(16px)',
+                            border: '2px solid rgba(255,255,255,0.4)',
+                            borderRadius: '50%',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            boxShadow: '0 8px 32px rgba(37,99,235,0.4), inset 0 1px 0 rgba(255,255,255,0.3)',
+                            position: 'relative', zIndex: 1,
+                        }}>
+                            <motion.div
+                                animate={{ y: [0, -4, 0] }}
+                                transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
+                            >
+                                <MdOutlineEmail size={40} className="text-white" />
+                            </motion.div>
                         </div>
-                    </div>
+                    </motion.div>
                 </div>
 
                 {/* Title */}
                 <div className="text-center mb-6">
-                    <h1 className="text-2xl font-extrabold text-blue-700 mb-2">Verify Your Email</h1>
-                    <p className="text-gray-500 text-sm">We've sent a verification code to</p>
-                    <p className="text-blue-600 font-bold text-sm mt-1">{email || 'user@example.com'}</p>
+                    <h1 className="text-2xl font-extrabold text-white mb-2">Verify Your Email</h1>
+                    <p className="text-blue-200 text-sm">We've sent a verification code to</p>
+                    <p className="text-white font-bold text-sm mt-1">{email || 'user@example.com'}</p>
                 </div>
 
-                {/* OTP card */}
-                <div className="bg-white border border-gray-200 rounded-2xl p-5 shadow-sm mb-4">
-                    <p className="text-sm font-bold text-gray-800 mb-3">Enter OTP Code</p>
-
-                    {/* 6 digit boxes */}
-                    <div className="flex gap-2 justify-between mb-4" onPaste={handlePaste}>
+                {/* OTP boxes */}
+                <div className="mb-2">
+                    <p className="text-white/80 text-xs font-semibold mb-3 uppercase tracking-wider">Enter OTP Code</p>
+                    <div className="flex gap-2 justify-between" onPaste={handlePaste}>
                         {otp.map((digit, i) => (
-                            <input
+                            <motion.input
                                 key={i}
                                 ref={el => inputRefs.current[i] = el}
                                 type="text"
@@ -127,77 +184,100 @@ const VerifyOtp = () => {
                                 value={digit}
                                 onChange={e => handleChange(i, e.target.value)}
                                 onKeyDown={e => handleKeyDown(i, e)}
-                                className={`w-12 h-14 text-center text-xl font-bold border-2 rounded-xl focus:outline-none transition-all duration-150 ${digit
-                                        ? 'border-blue-600 bg-blue-50 text-blue-700'
-                                        : 'border-blue-300 bg-white text-gray-900 focus:border-blue-600'
-                                    }`}
+                                whileFocus={{ scale: 1.08 }}
+                                transition={{ type: 'spring', stiffness: 400 }}
+                                style={{
+                                    width: 44, height: 52,
+                                    textAlign: 'center',
+                                    fontSize: 20, fontWeight: 700,
+                                    background: digit ? 'rgba(255,255,255,0.25)' : 'rgba(255,255,255,0.1)',
+                                    backdropFilter: 'blur(8px)',
+                                    border: digit ? '2px solid rgba(255,255,255,0.7)' : '2px solid rgba(255,255,255,0.3)',
+                                    borderRadius: 12,
+                                    color: 'white',
+                                    outline: 'none',
+                                    transition: 'all 0.15s',
+                                    boxShadow: digit ? '0 4px 16px rgba(37,99,235,0.3)' : 'none',
+                                }}
                             />
                         ))}
                     </div>
-
-                    {/* Timer bar */}
-                    <div className="flex items-center justify-center gap-2 bg-gray-50 border border-gray-200 rounded-lg py-2 px-4">
-                        <MdOutlineTimer size={18} className={timer <= 60 ? 'text-red-500' : 'text-yellow-500'} />
-                        <span className={`text-base font-bold ${timer <= 60 ? 'text-red-500' : 'text-yellow-600'}`}>
-                            {formatTime(timer)}
-                        </span>
-                    </div>
                 </div>
 
-                {/* Error */}
-                {error && (
-                    <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
-                        {error}
-                    </div>
-                )}
-                {success && (
-                    <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-xl text-sm text-green-700">
-                        {success}
-                    </div>
-                )}
+                {/* Timer */}
+                <div className="flex items-center justify-center gap-2 mt-3 mb-5 py-2 px-4 rounded-xl"
+                    style={{ background: 'rgba(255,255,255,0.08)', border: '1px solid rgba(255,255,255,0.15)' }}>
+                    <MdOutlineTimer size={18} className={timer <= 60 ? 'text-red-400' : 'text-yellow-400'} />
+                    <span className={`text-base font-bold ${timer <= 60 ? 'text-red-400' : 'text-yellow-300'}`}>
+                        {formatTime(timer)}
+                    </span>
+                </div>
+
+                {/* Error / Success */}
+                <AnimatePresence>
+                    {error && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                            className="mb-4 p-3 rounded-xl text-sm text-red-200"
+                            style={{ background: 'rgba(239,68,68,0.2)', border: '1px solid rgba(239,68,68,0.4)' }}>
+                            {error}
+                        </motion.div>
+                    )}
+                    {success && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}
+                            className="mb-4 p-3 rounded-xl text-sm text-green-200"
+                            style={{ background: 'rgba(34,197,94,0.2)', border: '1px solid rgba(34,197,94,0.4)' }}>
+                            {success}
+                        </motion.div>
+                    )}
+                </AnimatePresence>
 
                 {/* Verify button */}
-                <div className="bg-white border border-gray-200 rounded-2xl p-3 shadow-sm mb-4">
-                    <button
-                        onClick={handleVerify}
-                        disabled={loading || otp.join('').length < OTP_LENGTH}
-                        className="w-full bg-blue-700 hover:bg-blue-800 text-white font-extrabold py-4 rounded-xl tracking-widest text-base transition-colors disabled:opacity-50 disabled:cursor-not-allowed uppercase shadow-md"
-                    >
-                        {loading ? (
-                            <span className="flex items-center justify-center gap-2">
-                                <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                Verifying...
-                            </span>
-                        ) : 'Verify OTP'}
-                    </button>
-                </div>
+                <motion.button
+                    onClick={handleVerify}
+                    disabled={loading || otp.join('').length < OTP_LENGTH}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.97 }}
+                    className="w-full font-extrabold py-3.5 rounded-xl tracking-widest text-sm uppercase mb-4 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    style={{
+                        background: 'rgba(255,255,255,0.95)',
+                        color: '#1e40af',
+                        boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
+                    }}
+                >
+                    {loading ? (
+                        <span className="flex items-center justify-center gap-2">
+                            <span className="w-4 h-4 border-2 border-blue-700 border-t-transparent rounded-full animate-spin" />
+                            Verifying...
+                        </span>
+                    ) : 'Verify OTP'}
+                </motion.button>
 
                 {/* Resend */}
-                <div className="text-center mb-4">
-                    <span className="text-sm text-gray-500">Didn't receive the code? </span>
+                <div className="text-center mb-5">
+                    <span className="text-blue-200 text-sm">Didn't receive the code? </span>
                     <button
                         onClick={handleResend}
                         disabled={resending || timer > 0}
-                        className={`text-sm font-bold transition-colors ${timer > 0
-                                ? 'text-gray-400 cursor-not-allowed'
-                                : 'text-blue-600 hover:text-blue-700 cursor-pointer'
+                        className={`text-sm font-bold transition-colors ${timer > 0 ? 'text-white/40 cursor-not-allowed' : 'text-white hover:text-blue-200 cursor-pointer'
                             }`}
                     >
                         {resending ? 'Sending...' : 'Resend'}
                     </button>
                 </div>
 
-                {/* Info banner — yellow/orange like screenshot */}
-                <div className="flex items-start gap-3 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+                {/* Info banner */}
+                <div className="flex items-start gap-3 p-3.5 rounded-xl"
+                    style={{ background: 'rgba(251,191,36,0.15)', border: '1px solid rgba(251,191,36,0.35)' }}>
                     <div className="w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
                         <MdOutlineInfo size={14} className="text-white" />
                     </div>
-                    <p className="text-sm text-gray-700 leading-relaxed">
+                    <p className="text-yellow-200 text-xs leading-relaxed">
                         The OTP is valid for 5 minutes. Please verify before it expires.
                     </p>
                 </div>
-
-            </div>
+            </motion.div>
         </div>
     );
 };
