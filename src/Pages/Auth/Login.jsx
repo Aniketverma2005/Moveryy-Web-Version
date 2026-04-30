@@ -1,7 +1,6 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import authService from '../../services/authService folder/authService';
-import { api } from '../../services/api';
 import logo from '../../assets/logo2.png';
 
 const Login = () => {
@@ -12,74 +11,23 @@ const Login = () => {
 
     const handleChange = (e) => {
         const { name, value, type, checked } = e.target;
-        setFormData(p => ({ ...p, [name]: type === 'checkbox' ? checked : value }));
+        setFormData({ ...formData, [name]: type === 'checkbox' ? checked : value });
         if (error) setError('');
-    };
-
-    // ── Redirect based on role ────────────────────────────────────────────────
-    const redirectByRole = async (user) => {
-        const role = user?.role;
-
-        if (role === 'user') {
-            navigate('/');
-            return;
-        }
-
-        if (role === 'admin') {
-            // Check if organization exists
-            const hasOrgInUser =
-                user?.hasOrganization === true ||
-                !!user?.organization ||
-                !!user?.organizationId ||
-                !!user?.Organization;
-
-            if (hasOrgInUser) {
-                navigate('/admin');
-                return;
-            }
-
-            // Verify via API: GET /api/v1/organizations/all
-            try {
-                const orgRes = await api.get('/api/v1/organizations/all');
-                const orgs = orgRes?.organizations || orgRes?.data?.organizations || orgRes?.data || [];
-                const hasOrg = Array.isArray(orgs) ? orgs.length > 0 : !!orgs;
-                navigate(hasOrg ? '/admin' : '/admin/register-organization');
-            } catch {
-                // Can't verify — send to org registration to be safe
-                navigate('/admin/register-organization');
-            }
-            return;
-        }
-
-        if (role === 'transport') {
-            navigate('/transport');
-            return;
-        }
-
-        // Unknown role — go to user dashboard as default
-        navigate('/');
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setLoading(true);
-
         try {
             const result = await authService.login({
                 email: formData.email,
                 password: formData.password,
             });
-
-            const user = result?.user;
-
-            if (!user || !user.role) {
-                setError('Login succeeded but user data is missing. Please try again.');
-                return;
-            }
-
-            await redirectByRole(user);
-
+            const role = result?.user?.role;
+            if (role === 'admin') navigate('/admin');
+            else if (role === 'transport') navigate('/transport');
+            else navigate('/');
         } catch (err) {
             setError(err?.message || 'Invalid email or password. Please try again.');
         } finally {
@@ -90,7 +38,7 @@ const Login = () => {
     return (
         <div className="min-h-screen flex">
             {/* Left Side */}
-            <div className="flex-1 bg-[#4285F4] text-white p-12 flex flex-col justify-between">
+            <div className="flex-1 bg-blue-600 text-white p-12 flex flex-col justify-between">
                 <div className="mb-20">
                     <div className="bg-white rounded-lg p-4 inline-block shadow-sm">
                         <img src={logo} alt="Moveryy Logo" className="h-16 w-auto object-contain" />
@@ -127,6 +75,7 @@ const Login = () => {
                         <p className="text-gray-600">Sign in to manage your deliveries</p>
                     </div>
 
+                    {/* Error Banner */}
                     {error && (
                         <div className="mb-4 p-3 bg-red-50 border border-red-300 rounded-md">
                             <p className="text-sm text-red-700">{error}</p>
@@ -178,12 +127,7 @@ const Login = () => {
                             disabled={loading}
                             className="w-full bg-[#4285F4] text-white py-3 px-4 rounded-md hover:bg-[#3367D6] focus:outline-none focus:ring-2 focus:ring-[#4285F4] focus:ring-offset-2 font-medium disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
                         >
-                            {loading ? (
-                                <span className="flex items-center justify-center gap-2">
-                                    <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                    Signing in...
-                                </span>
-                            ) : 'Sign in to your account'}
+                            {loading ? 'Signing in...' : 'Sign in to your account'}
                         </button>
 
                         <div className="relative my-6">
