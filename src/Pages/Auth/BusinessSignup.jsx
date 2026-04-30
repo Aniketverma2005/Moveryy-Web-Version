@@ -62,7 +62,8 @@ const BusinessSignup = () => {
                 password: formData.password,
                 agreeToTerms: formData.agreeToTerms,
             });
-            navigate('/');  // → User home (Mover search page)
+            // Redirect to OTP verification — backend sends OTP to email
+            navigate('/verify-otp', { state: { email: formData.email, redirectTo: '/' } });
         } catch (err) {
             setApiError(err?.message || 'Signup failed. Please try again.');
         } finally {
