@@ -37,60 +37,66 @@ import DriverRegistration from "./Pages/ridePooling/driverregistration.jsx";
 import VehicleRegistration from "./Pages/ridePooling/vehicleregistration.jsx";
 import CompleteRegistration from "./Pages/ridePooling/completeregistration.jsx";
 import OrgRegistration from './Pages/Admin/OrgRegistration.jsx';
+
+// Import the new Profile Page
+import Userprofile from './Pages/User/UserProfile.jsx';
+
 function App() {
 
-	return (
-		<>
+    return (
+        <>
+            <Routes>
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/signup/business" element={<BusinessSignup />} />
+                <Route path="/signup/admin" element={<AdminSignup />} />
+                <Route path="/verify-otp" element={<VerifyOtp />} />
+                <Route path="/admin/register-organization" element={<OrgRegistration />} />
+                <Route path="/ride-pooling" element={<RidePooling />} />
+                <Route path="/ride-pooling/register" element={<DriverRegistration />} />
+                <Route path="/ride-pooling/vehicle" element={<VehicleRegistration />} />
+                <Route path="/ride-pooling/complete" element={<CompleteRegistration />} />
 
-			<Routes>
-				<Route path="/login" element={<Login />} />
-				<Route path="/signup" element={<Signup />} />
-				<Route path="/signup/business" element={<BusinessSignup />} />
-				<Route path="/signup/admin" element={<AdminSignup />} />
-				<Route path="/verify-otp" element={<VerifyOtp />} />
-				<Route path="/admin/register-organization" element={<OrgRegistration />} />
-				<Route path="/ride-pooling" element={<RidePooling />} />
-				<Route path="/ride-pooling/register" element={<DriverRegistration />} />
-				<Route path="/ride-pooling/vehicle" element={<VehicleRegistration />} />
-				<Route path="/ride-pooling/complete" element={<CompleteRegistration />} />
+                {/* User Routes */}
+                <Route path="/" element={<UserLayout />}>
+                    <Route index element={<Home />} />
+                    <Route path="compare" element={<ComparePage />} />
+                    <Route path="service/:id" element={<ServiceDetail />} />
+                    <Route path="bookings" element={<BookingsPage />} />
+                    <Route path="house-moving" element={<MoverSearchPage />} />
+                    <Route path="car-moving" element={<CarTransportSearchPage />} />
+                    <Route path="office-shifting" element={<OfficeRelocationSearchPage />} />
+                    
+                    {/* ADDED PROFILE ROUTE HERE */}
+                    <Route path="profile" element={<Userprofile />} />
+                </Route>
 
-				<Route path="/" element={<UserLayout />}>
-					<Route index element={<Home />} />
-					<Route path="compare" element={<ComparePage />} />
-					<Route path="service/:id" element={<ServiceDetail />} />
-					<Route path="bookings" element={<BookingsPage />} />
-					<Route path="house-moving" element={<MoverSearchPage />} />
-					<Route path="car-moving" element={<CarTransportSearchPage />} />
-					<Route path="office-shifting" element={<OfficeRelocationSearchPage />} />
-				</Route>
+                {/* Admin Routes */}
+                <Route path="/admin/" element={<AdminLayout />}>
+                    <Route index element={<Dashboard />} />
+                    <Route path="bookings" element={<Bookings />} />
+                    <Route path="Users" element={<Users />} />
+                    <Route path="payment" element={<Payments />} />
+                    <Route path="offers" element={<Offers />} />
+                    <Route path="analytics" element={<Analytics />} />
+                    <Route path="profile" element={<Profile />} />
+                    <Route path="reviews" element={<Review />} />
+                    <Route path="settings" element={<Settings />} />
+                </Route>
 
-				<Route path="/admin/" element={<AdminLayout />}>
-					<Route index element={<Dashboard />} />
-					{/* <Route path='Dashboard' element={<Dashboard />} /> */}
-					<Route path="bookings" element={<Bookings />} />
-					<Route path="Users" element={<Users />} />
-					<Route path="payment" element={<Payments />} />
-					<Route path="offers" element={<Offers />} />
-					<Route path="analytics" element={<Analytics />} />
-					<Route path="profile" element={<Profile />} />
-					<Route path="reviews" element={<Review />} />
-					<Route path="settings" element={<Settings />} />
-				</Route>
+                {/* Transport/Driver Dashboard Routes */}
+                <Route path="/transport/" element={<Transport />}>
+                    <Route index element={<TransportHome />} />
+                    <Route path="bookings" element={<TransportBookings />} />
+                    <Route path="earnings" element={<TransportEarnings />} />
+                    <Route path="ratings" element={<TransportRatings />} />
+                    <Route path="profile" element={<TransportProfile />} />
+                </Route>
 
-				{/* Transport/Driver Dashboard Routes */}
-				<Route path="/transport/" element={<Transport />}>
-					<Route index element={<TransportHome />} />
-					<Route path="bookings" element={<TransportBookings />} />
-					<Route path="earnings" element={<TransportEarnings />} />
-					<Route path="ratings" element={<TransportRatings />} />
-					<Route path="profile" element={<TransportProfile />} />
-				</Route>
-
-				<Route path="*" element={<Navigate to="/" replace />} />
-			</Routes>
-
-		</>
-	)
+                <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+        </>
+    )
 }
 
-export default App
+export default App;
