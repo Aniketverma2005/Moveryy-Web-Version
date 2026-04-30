@@ -79,7 +79,7 @@ const AdminSignup = () => {
                         <img src={logo} alt="Moveryy Logo" className="h-16 w-auto object-contain" />
                     </div>
                 </div>
-                <div className="flex-1 flex flex-col justify-center -mt-72">
+                <div className="flex-1 flex flex-col justify-center -mt-62">
                     <h1 className="text-5xl font-bold mb-6 leading-tight">Join the Moveryy Community</h1>
                     <p className="text-lg mb-12 opacity-90 leading-relaxed">
                         Whether you're a business owner or a delivery professional, Moveryy is your platform to succeed in the logistics industry.
