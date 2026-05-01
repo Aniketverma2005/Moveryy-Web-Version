@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { addressService } from "../../services/addressService";
+
 import {
   MdOutlineCameraAlt,
   MdOutlinePerson,
@@ -17,6 +18,8 @@ import {
   MdAdd,
   MdDeleteOutline,
   MdKeyboardArrowRight,
+  MdEdit,
+  MdSave,
 } from "react-icons/md";
 
 const UserProfileDashboard = () => {
@@ -37,9 +40,14 @@ const UserProfileDashboard = () => {
     occupation: "Software Engineer",
   });
 
+  // ── EDIT STATES ──
+  const [isEditingPersonal, setIsEditingPersonal] = useState(false);
+  const [isEditingAddress, setIsEditingAddress] = useState(false);
+
   // ── ADDRESSES ──
   const [addresses, setAddresses] = useState([]);
 
+  // ── LOAD DATA ──
   useEffect(() => {
     loadAddresses();
   }, []);
@@ -122,6 +130,38 @@ const UserProfileDashboard = () => {
     setAddresses(updated);
   };
 
+  // ── SAVE PERSONAL DETAILS ──
+  const savePersonalDetails = async () => {
+    try {
+      console.log("Saving personal details:", personalDetails);
+
+      // Replace with API call if needed
+      // await userService.updateProfile(personalDetails);
+
+      alert("Personal details saved successfully!");
+      setIsEditingPersonal(false);
+    } catch (error) {
+      console.error("Failed to save personal details", error);
+      alert("Failed to save personal details.");
+    }
+  };
+
+  // ── SAVE ADDRESSES ──
+  const saveAddresses = async () => {
+    try {
+      console.log("Saving addresses:", addresses);
+
+      // Replace with API call if needed
+      // await addressService.updateAllAddresses(addresses);
+
+      alert("Addresses saved successfully!");
+      setIsEditingAddress(false);
+    } catch (error) {
+      console.error("Failed to save addresses", error);
+      alert("Failed to save addresses.");
+    }
+  };
+
   // ── ADD NEW ADDRESS ──
   const addNewAddress = async () => {
     const newAddress = {
@@ -166,11 +206,11 @@ const UserProfileDashboard = () => {
         <div className="absolute inset-0 pointer-events-none z-0">
           <motion.div
             {...getFloatingAnimation(0)}
-            className="absolute w-64 h-64 rounded-full bg-white/20 border border-white/30 blur-3xl -top-10 -left-10"
+            className="absolute w-64 h-64 rounded-full bg-white/20 blur-3xl -top-10 -left-10"
           />
           <motion.div
             {...getFloatingAnimation(3)}
-            className="absolute w-80 h-80 rounded-full bg-blue-400/20 border border-white/10 blur-3xl top-1/2 -right-20"
+            className="absolute w-80 h-80 rounded-full bg-blue-400/20 blur-3xl top-1/2 -right-20"
           />
           <motion.div
             {...getFloatingAnimation(6)}
@@ -180,25 +220,25 @@ const UserProfileDashboard = () => {
 
         <div className="max-w-6xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
           {/* USER INFO */}
-          <div className="flex-1 text-center md:text-left order-2 md:order-1">
-            <div className="inline-block bg-white/20 border border-white/30 backdrop-blur-md px-4 py-1 rounded-full text-blue-50 font-bold tracking-wider uppercase text-[10px] mb-4 shadow-sm">
+          <div className="flex-1 text-center md:text-left">
+            <div className="inline-block bg-white/20 px-4 py-1 rounded-full text-blue-50 font-bold uppercase text-[10px] mb-4">
               Verified Premium Account
             </div>
 
-            <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight drop-shadow-md">
+            <h1 className="text-3xl md:text-5xl font-black text-white">
               {personalDetails.firstName}{" "}
               <span className="text-yellow-400">
                 {personalDetails.lastName}
               </span>
             </h1>
 
-            <div className="mt-6 flex flex-col sm:flex-row gap-4 sm:gap-6 text-blue-50/90 text-sm font-semibold">
-              <span className="flex items-center gap-2 justify-center md:justify-start bg-white/10 px-4 py-2 rounded-xl">
+            <div className="mt-6 flex flex-col sm:flex-row gap-4 text-blue-50 text-sm font-semibold">
+              <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl">
                 <MdOutlineEmail className="text-yellow-400" size={18} />
                 {personalDetails.email}
               </span>
 
-              <span className="flex items-center gap-2 justify-center md:justify-start bg-white/10 px-4 py-2 rounded-xl">
+              <span className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-xl">
                 <MdOutlinePhone className="text-yellow-400" size={18} />
                 {personalDetails.phone}
               </span>
@@ -206,10 +246,10 @@ const UserProfileDashboard = () => {
           </div>
 
           {/* PROFILE IMAGE */}
-          <div className="relative group order-1 md:order-2">
+          <div className="relative group">
             <motion.div
               whileHover={{ scale: 1.05 }}
-              className="w-40 h-40 rounded-[2.8rem] bg-white/20 p-2 backdrop-blur-md shadow-[0_20px_50px_rgba(0,0,0,0.3)] border-4 border-white/30 overflow-hidden relative"
+              className="w-40 h-40 rounded-[2.8rem] bg-white/20 p-2 border-4 border-white/30 overflow-hidden relative"
             >
               <img
                 src={profileImage}
@@ -219,7 +259,7 @@ const UserProfileDashboard = () => {
 
               <button
                 onClick={() => fileInputRef.current.click()}
-                className="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center rounded-[2.8rem] text-white"
+                className="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center rounded-[2.8rem] text-white"
               >
                 <MdOutlineCameraAlt size={36} />
                 <span className="text-[10px] font-black mt-2 uppercase">
@@ -241,16 +281,37 @@ const UserProfileDashboard = () => {
 
       {/* ── MAIN CONTENT ── */}
       <div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* LEFT SIDE */}
+        {/* LEFT */}
         <div className="lg:col-span-2 space-y-8">
           {/* PERSONAL DETAILS */}
           <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 p-8">
-            <h2 className="text-lg font-black text-slate-800 mb-8 flex items-center gap-3">
-              <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
-                <MdOutlinePerson size={20} />
+            <div className="flex justify-between items-center mb-8">
+              <h2 className="text-lg font-black flex items-center gap-3">
+                <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
+                  <MdOutlinePerson size={20} />
+                </div>
+                Personal Information
+              </h2>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={() =>
+                    setIsEditingPersonal(!isEditingPersonal)
+                  }
+                  className="p-3 rounded-xl bg-slate-100 hover:bg-blue-50"
+                >
+                  <MdEdit size={20} />
+                </button>
+
+                <button
+                  onClick={savePersonalDetails}
+                  className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-xl text-xs font-black"
+                >
+                  <MdSave size={18} />
+                  Save
+                </button>
               </div>
-              Personal Information
-            </h2>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[
@@ -262,17 +323,21 @@ const UserProfileDashboard = () => {
                 ["Occupation", "occupation"],
               ].map(([label, key]) => (
                 <div key={key}>
-                  <label className="block text-[10px] font-black text-slate-800 mb-2 uppercase tracking-widest ml-1">
+                  <label className="block text-[10px] font-black mb-2 uppercase">
                     {label}
                   </label>
 
                   <input
                     type="text"
                     value={personalDetails[key]}
+                    disabled={!isEditingPersonal}
                     onChange={(e) =>
                       handlePersonalChange(key, e.target.value)
                     }
-                    className="w-full px-5 py-3.5 rounded-2xl border border-slate-100 bg-slate-50 text-sm font-bold"
+                    className={`w-full px-5 py-3 rounded-2xl border font-bold ${isEditingPersonal
+                        ? "bg-white border-blue-200"
+                        : "bg-slate-100 border-slate-100 cursor-not-allowed"
+                      }`}
                   />
                 </div>
               ))}
@@ -282,20 +347,39 @@ const UserProfileDashboard = () => {
           {/* ADDRESSES */}
           <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 p-8">
             <div className="flex justify-between items-center mb-8">
-              <h2 className="text-lg font-black text-slate-800 flex items-center gap-3">
+              <h2 className="text-lg font-black flex items-center gap-3">
                 <div className="p-2 bg-rose-50 rounded-lg text-rose-500">
                   <MdOutlineLocationOn size={20} />
                 </div>
                 Saved Addresses
               </h2>
 
-              <button
-                onClick={addNewAddress}
-                className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-black"
-              >
-                <MdAdd size={20} />
-                New Address
-              </button>
+              <div className="flex gap-3">
+                <button
+                  onClick={() =>
+                    setIsEditingAddress(!isEditingAddress)
+                  }
+                  className="p-3 rounded-xl bg-slate-100 hover:bg-yellow-300"
+                >
+                  <MdEdit size={20} />
+                </button>
+
+                <button
+                  onClick={saveAddresses}
+                  className="flex items-center gap-2 bg-yellow-400 text-white px-4 py-2 rounded-xl text-xs font-black"
+                >
+                  <MdSave size={18} />
+                  Save
+                </button>
+
+                <button
+                  onClick={addNewAddress}
+                  className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-black"
+                >
+                  <MdAdd size={20} />
+                  New Address
+                </button>
+              </div>
             </div>
 
             <div className="space-y-6">
@@ -305,12 +389,14 @@ const UserProfileDashboard = () => {
                     key={addr.id || index}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                    className="relative p-6 border border-slate-100 bg-slate-50/50 rounded-3xl"
+                    exit={{ opacity: 0 }}
+                    className="relative p-6 border bg-slate-50 rounded-3xl"
                   >
                     {addresses.length > 1 && (
                       <button
-                        onClick={() => removeAddress(index, addr.id)}
+                        onClick={() =>
+                          removeAddress(index, addr.id)
+                        }
                         className="absolute top-6 right-6 p-2 bg-white rounded-xl"
                       >
                         <MdDeleteOutline size={20} />
@@ -328,6 +414,7 @@ const UserProfileDashboard = () => {
                             <input
                               type="text"
                               value={String(addr[field])}
+                              disabled={!isEditingAddress}
                               onChange={(e) =>
                                 handleAddressChange(
                                   index,
@@ -335,7 +422,10 @@ const UserProfileDashboard = () => {
                                   e.target.value
                                 )
                               }
-                              className="w-full px-4 py-2 rounded-xl border"
+                              className={`w-full px-4 py-2 rounded-xl border ${isEditingAddress
+                                  ? "bg-white border-rose-200"
+                                  : "bg-slate-100 border-slate-100 cursor-not-allowed"
+                                }`}
                             />
                           </div>
                         ) : null
@@ -352,7 +442,7 @@ const UserProfileDashboard = () => {
         <div className="space-y-8">
           {/* ACTIVITY */}
           <div className="bg-white rounded-[2rem] shadow-sm border border-orange-700 p-8">
-            <h2 className="text-xs font-black uppercase tracking-widest mb-6 flex items-center gap-2">
+            <h2 className="text-xs font-black uppercase mb-6 flex items-center gap-2">
               <MdOutlineHistory className="text-orange-500" size={20} />
               Activity Log
             </h2>
@@ -365,7 +455,7 @@ const UserProfileDashboard = () => {
               ].map((item, i) => (
                 <div
                   key={i}
-                  className="group flex justify-between items-center p-4 rounded-2xl bg-slate-50"
+                  className="flex justify-between items-center p-4 rounded-2xl bg-slate-50"
                 >
                   <span className="text-xs font-black">{item}</span>
                   <MdKeyboardArrowRight size={20} />
@@ -376,12 +466,12 @@ const UserProfileDashboard = () => {
 
           {/* QUICK LINKS */}
           <div className="bg-white rounded-[2rem] shadow-sm border border-indigo-700 p-8">
-            <h2 className="text-xs font-black uppercase tracking-widest mb-6 flex items-center gap-2">
+            <h2 className="text-xs font-black uppercase mb-6 flex items-center gap-2">
               <MdOutlineSettings className="text-indigo-600" size={20} />
               Quick Links
             </h2>
 
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid gap-4">
               {[
                 {
                   title: "Rewards",
@@ -408,6 +498,7 @@ const UserProfileDashboard = () => {
                     <div className="p-2.5 rounded-xl bg-slate-100">
                       {link.icon}
                     </div>
+
                     <span className="text-xs font-black">
                       {link.title}
                     </span>
