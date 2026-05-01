@@ -1,5 +1,7 @@
-import React, { useRef, useState } from "react";
+// UserProfileDashboard.jsx
+import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { addressService } from "../../services/addressService";
 import {
   MdOutlineCameraAlt,
   MdOutlinePerson,
@@ -20,10 +22,12 @@ import {
 const UserProfileDashboard = () => {
   const fileInputRef = useRef(null);
 
+  // ── PROFILE IMAGE ──
   const [profileImage, setProfileImage] = useState(
     "https://as2.ftcdn.net/v2/jpg/02/23/50/73/1000_F_223507324_jKl7xbsaEdUjGr42WzQeSazKRighVDU4.jpg"
   );
 
+  // ── PERSONAL DETAILS ──
   const [personalDetails, setPersonalDetails] = useState({
     firstName: "Rakshit",
     lastName: "Panwar",
@@ -33,73 +37,149 @@ const UserProfileDashboard = () => {
     occupation: "Software Engineer",
   });
 
-  const [addresses, setAddresses] = useState([
-    { house: "123", street: "Green Avenue", area: "Sector 45", pincode: "122003", city: "Gurugram", state: "Haryana" },
-  ]);
+  // ── ADDRESSES ──
+  const [addresses, setAddresses] = useState([]);
 
-  // ── ANIMATION LOGIC ──
+  useEffect(() => {
+    loadAddresses();
+  }, []);
+
+  const loadAddresses = async () => {
+    try {
+      const data = await addressService.getAllAddresses();
+
+      if (data && data.length > 0) {
+        setAddresses(data);
+      } else {
+        setAddresses([
+          {
+            addressType: "Home",
+            addressName: "My Apartment",
+            address: "123, MG Road, Sector 14",
+            city: "Bangalore",
+            state: "Karnataka",
+            pincode: "560001",
+            isDefault: true,
+          },
+        ]);
+      }
+    } catch (error) {
+      console.error("Failed to load addresses", error);
+
+      setAddresses([
+        {
+          addressType: "Home",
+          addressName: "My Apartment",
+          address: "123, MG Road, Sector 14",
+          city: "Bangalore",
+          state: "Karnataka",
+          pincode: "560001",
+          isDefault: true,
+        },
+      ]);
+    }
+  };
+
+  // ── ANIMATION ──
   const getFloatingAnimation = (delay = 0) => ({
     initial: { opacity: 0, scale: 0.9 },
     animate: {
-      opacity: [0.2, 0.5, 0.2], // Increased opacity for better visibility
+      opacity: [0.2, 0.5, 0.2],
       x: [0, 30, -30, 0],
       y: [0, -40, 40, 0],
-      transition: { duration: 15, repeat: Infinity, ease: "easeInOut", delay: delay }
-    }
+      transition: {
+        duration: 15,
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay,
+      },
+    },
   });
 
+  // ── IMAGE UPLOAD ──
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    if (file) setProfileImage(URL.createObjectURL(file));
+    if (file) {
+      setProfileImage(URL.createObjectURL(file));
+    }
   };
 
+  // ── PERSONAL DETAILS UPDATE ──
   const handlePersonalChange = (field, value) => {
-    setPersonalDetails((prev) => ({ ...prev, [field]: value }));
+    setPersonalDetails((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
+  // ── ADDRESS UPDATE ──
   const handleAddressChange = (index, field, value) => {
-    const updatedAddresses = [...addresses];
-    updatedAddresses[index][field] = value;
-    setAddresses(updatedAddresses);
+    const updated = [...addresses];
+    updated[index] = {
+      ...updated[index],
+      [field]: value,
+    };
+    setAddresses(updated);
   };
 
-  const addNewAddress = () => {
-    setAddresses([...addresses, { house: "", street: "", area: "", pincode: "", city: "", state: "" }]);
+  // ── ADD NEW ADDRESS ──
+  const addNewAddress = async () => {
+    const newAddress = {
+      addressType: "Home",
+      addressName: "",
+      address: "",
+      city: "",
+      state: "",
+      pincode: "",
+      isDefault: false,
+    };
+
+    try {
+      await addressService.createAddress(newAddress);
+      loadAddresses();
+    } catch (error) {
+      console.error("Failed to add address", error);
+      setAddresses([...addresses, newAddress]);
+    }
   };
 
-  const removeAddress = (index) => {
-    if (addresses.length > 1) {
-      setAddresses(addresses.filter((_, i) => i !== index));
+  // ── DELETE ADDRESS ──
+  const removeAddress = async (index, id) => {
+    if (addresses.length <= 1) return;
+
+    try {
+      if (id) {
+        await addressService.deleteAddress(id);
+        loadAddresses();
+      } else {
+        setAddresses(addresses.filter((_, i) => i !== index));
+      }
+    } catch (error) {
+      console.error("Failed to delete address", error);
     }
   };
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] font-sans text-slate-900">
-
       {/* ── HEADER ── */}
       <div className="relative bg-gradient-to-br from-blue-500 via-blue-700 to-blue-900 shadow-lg px-6 py-12 overflow-hidden border-b border-white/10">
-
-        {/* BUBBLE EFFECTS - Higher Opacity & Explicit Z-Index */}
         <div className="absolute inset-0 pointer-events-none z-0">
-          <motion.div {...getFloatingAnimation(0)} className="absolute w-64 h-64 rounded-full bg-white/20 border border-white/30 blur-3xl -top-10 -left-10" />
-          <motion.div {...getFloatingAnimation(3)} className="absolute w-80 h-80 rounded-full bg-blue-400/20 border border-white/10 blur-3xl top-1/2 -right-20" />
-          <motion.div {...getFloatingAnimation(6)} className="absolute w-40 h-40 rounded-full bg-white/15 blur-2xl bottom-5 left-1/3" />
-        </div>
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-
-          {/* Top Right Bubble */}
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-blue-500 rounded-full opacity-10"></div>
-
-          {/* Bottom Left Bubble */}
-          <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-400 rounded-full opacity-10"></div>
-
-          {/* Center Large Bubble */}
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-white rounded-full opacity-5"></div>
-
+          <motion.div
+            {...getFloatingAnimation(0)}
+            className="absolute w-64 h-64 rounded-full bg-white/20 border border-white/30 blur-3xl -top-10 -left-10"
+          />
+          <motion.div
+            {...getFloatingAnimation(3)}
+            className="absolute w-80 h-80 rounded-full bg-blue-400/20 border border-white/10 blur-3xl top-1/2 -right-20"
+          />
+          <motion.div
+            {...getFloatingAnimation(6)}
+            className="absolute w-40 h-40 rounded-full bg-white/15 blur-2xl bottom-5 left-1/3"
+          />
         </div>
 
         <div className="max-w-6xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
-
+          {/* USER INFO */}
           <div className="flex-1 text-center md:text-left order-2 md:order-1">
             <div className="inline-block bg-white/20 border border-white/30 backdrop-blur-md px-4 py-1 rounded-full text-blue-50 font-bold tracking-wider uppercase text-[10px] mb-4 shadow-sm">
               Verified Premium Account
@@ -107,15 +187,18 @@ const UserProfileDashboard = () => {
 
             <h1 className="text-3xl md:text-5xl font-black text-white tracking-tight leading-tight drop-shadow-md">
               {personalDetails.firstName}{" "}
-              <span className="text-yellow-400">{personalDetails.lastName}</span>
+              <span className="text-yellow-400">
+                {personalDetails.lastName}
+              </span>
             </h1>
 
             <div className="mt-6 flex flex-col sm:flex-row gap-4 sm:gap-6 text-blue-50/90 text-sm font-semibold">
-              <span className="flex items-center gap-2 justify-center md:justify-start bg-white/10 px-4 py-2 rounded-xl backdrop-blur-sm border border-white/10">
+              <span className="flex items-center gap-2 justify-center md:justify-start bg-white/10 px-4 py-2 rounded-xl">
                 <MdOutlineEmail className="text-yellow-400" size={18} />
                 {personalDetails.email}
               </span>
-              <span className="flex items-center gap-2 justify-center md:justify-start bg-white/10 px-4 py-2 rounded-xl backdrop-blur-sm border border-white/10">
+
+              <span className="flex items-center gap-2 justify-center md:justify-start bg-white/10 px-4 py-2 rounded-xl">
                 <MdOutlinePhone className="text-yellow-400" size={18} />
                 {personalDetails.phone}
               </span>
@@ -128,25 +211,39 @@ const UserProfileDashboard = () => {
               whileHover={{ scale: 1.05 }}
               className="w-40 h-40 rounded-[2.8rem] bg-white/20 p-2 backdrop-blur-md shadow-[0_20px_50px_rgba(0,0,0,0.3)] border-4 border-white/30 overflow-hidden relative"
             >
-              <img src={profileImage} alt="Profile" className="w-full h-full rounded-[2.2rem] object-cover bg-white shadow-inner" />
+              <img
+                src={profileImage}
+                alt="Profile"
+                className="w-full h-full rounded-[2.2rem] object-cover"
+              />
+
               <button
                 onClick={() => fileInputRef.current.click()}
                 className="absolute inset-0 bg-blue-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center rounded-[2.8rem] text-white"
               >
-                <MdOutlineCameraAlt size={32} />
-                <span className="text-[9px] font-black mt-1 uppercase tracking-tighter">Update Photo</span>
+                <MdOutlineCameraAlt size={36} />
+                <span className="text-[10px] font-black mt-2 uppercase">
+                  Update Photo
+                </span>
               </button>
             </motion.div>
-            <input type="file" ref={fileInputRef} onChange={handleImageUpload} className="hidden" accept="image/*" />
+
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImageUpload}
+              className="hidden"
+              accept="image/*"
+            />
           </div>
         </div>
       </div>
 
-      {/* MAIN CONTENT */}
-      <div className=" max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
-
+      {/* ── MAIN CONTENT ── */}
+      <div className="max-w-7xl mx-auto px-6 py-10 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* LEFT SIDE */}
         <div className="lg:col-span-2 space-y-8">
-          {/* PERSONAL DETAILS SECTION */}
+          {/* PERSONAL DETAILS */}
           <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 p-8">
             <h2 className="text-lg font-black text-slate-800 mb-8 flex items-center gap-3">
               <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
@@ -154,28 +251,35 @@ const UserProfileDashboard = () => {
               </div>
               Personal Information
             </h2>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {[
-                ["First Name", "firstName"], ["Last Name", "lastName"],
-                ["Email Address", "email"], ["Phone Number", "phone"],
-                ["Date of Birth", "dob"], ["Occupation", "occupation"]
+                ["First Name", "firstName"],
+                ["Last Name", "lastName"],
+                ["Email Address", "email"],
+                ["Phone Number", "phone"],
+                ["Date of Birth", "dob"],
+                ["Occupation", "occupation"],
               ].map(([label, key]) => (
                 <div key={key}>
-                  <label className="block text-[10px] font-black text-slate-400 mb-2 uppercase tracking-widest ml-1">
+                  <label className="block text-[10px] font-black text-slate-800 mb-2 uppercase tracking-widest ml-1">
                     {label}
                   </label>
+
                   <input
                     type="text"
                     value={personalDetails[key]}
-                    onChange={(e) => handlePersonalChange(key, e.target.value)}
-                    className="w-full px-5 py-3.5 rounded-2xl border border-slate-100 bg-slate-50 text-sm font-bold text-slate-700 focus:ring-4 focus:ring-blue-500/10 focus:border-blue-500 focus:bg-white outline-none transition-all"
+                    onChange={(e) =>
+                      handlePersonalChange(key, e.target.value)
+                    }
+                    className="w-full px-5 py-3.5 rounded-2xl border border-slate-100 bg-slate-50 text-sm font-bold"
                   />
                 </div>
               ))}
             </div>
           </div>
 
-          {/* ADDRESS SECTION */}
+          {/* ADDRESSES */}
           <div className="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 p-8">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-lg font-black text-slate-800 flex items-center gap-3">
@@ -184,11 +288,13 @@ const UserProfileDashboard = () => {
                 </div>
                 Saved Addresses
               </h2>
+
               <button
                 onClick={addNewAddress}
-                className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-black uppercase tracking-tighter hover:bg-blue-600 transition shadow-lg"
+                className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl text-xs font-black"
               >
-                <MdAdd size={20} /> New Address
+                <MdAdd size={20} />
+                New Address
               </button>
             </div>
 
@@ -196,7 +302,7 @@ const UserProfileDashboard = () => {
               <AnimatePresence>
                 {addresses.map((addr, index) => (
                   <motion.div
-                    key={index}
+                    key={addr.id || index}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
@@ -204,30 +310,36 @@ const UserProfileDashboard = () => {
                   >
                     {addresses.length > 1 && (
                       <button
-                        onClick={() => removeAddress(index)}
-                        className="absolute top-6 right-6 p-2 bg-white text-slate-300 hover:text-rose-500 hover:shadow-md rounded-xl transition"
+                        onClick={() => removeAddress(index, addr.id)}
+                        className="absolute top-6 right-6 p-2 bg-white rounded-xl"
                       >
                         <MdDeleteOutline size={20} />
                       </button>
                     )}
-                    <h3 className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-6 flex items-center gap-2">
-                      <div className="w-6 h-6 bg-slate-200 rounded-lg flex items-center justify-center text-slate-600">{index + 1}</div>
-                      Primary Location
-                    </h3>
+
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-                      {Object.keys(addr).map((field) => (
-                        <div key={field}>
-                          <label className="block text-[9px] font-black text-slate-400 mb-1.5 uppercase tracking-widest ml-1">
-                            {field}
-                          </label>
-                          <input
-                            type="text"
-                            value={addr[field]}
-                            onChange={(e) => handleAddressChange(index, field, e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-xl border border-slate-200 bg-white text-xs font-bold text-slate-700 focus:border-rose-400 outline-none transition-colors"
-                          />
-                        </div>
-                      ))}
+                      {Object.keys(addr).map((field) =>
+                        field !== "id" ? (
+                          <div key={field}>
+                            <label className="block text-[9px] font-black mb-1 uppercase">
+                              {field}
+                            </label>
+
+                            <input
+                              type="text"
+                              value={String(addr[field])}
+                              onChange={(e) =>
+                                handleAddressChange(
+                                  index,
+                                  field,
+                                  e.target.value
+                                )
+                              }
+                              className="w-full px-4 py-2 rounded-xl border"
+                            />
+                          </div>
+                        ) : null
+                      )}
                     </div>
                   </motion.div>
                 ))}
@@ -236,41 +348,72 @@ const UserProfileDashboard = () => {
           </div>
         </div>
 
-        {/* SIDEBAR */}
+        {/* RIGHT SIDEBAR */}
         <div className="space-y-8">
+          {/* ACTIVITY */}
           <div className="bg-white rounded-[2rem] shadow-sm border border-orange-700 p-8">
-            <h2 className="text-xs font-black text-slate-700 uppercase tracking-widest mb-6 flex items-center gap-2">
+            <h2 className="text-xs font-black uppercase tracking-widest mb-6 flex items-center gap-2">
               <MdOutlineHistory className="text-orange-500" size={20} />
               Activity Log
             </h2>
+
             <div className="space-y-3">
-              {["Recent Bookings", "Completed Orders", "Cancelled Orders"].map((item, i) => (
-                <div key={i} className="group flex justify-between items-center p-4 rounded-2xl bg-slate-50 border border-transparent hover:border-orange-700 hover:bg-white transition cursor-pointer">
-                  <span className="text-xs font-black text-slate-700 uppercase tracking-tight">{item}</span>
-                  <MdKeyboardArrowRight size={20} className="text-slate-700 group-hover:text-orange-500 transition-colors" />
+              {[
+                "Recent Bookings",
+                "Completed Orders",
+                "Cancelled Orders",
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  className="group flex justify-between items-center p-4 rounded-2xl bg-slate-50"
+                >
+                  <span className="text-xs font-black">{item}</span>
+                  <MdKeyboardArrowRight size={20} />
                 </div>
               ))}
             </div>
           </div>
 
+          {/* QUICK LINKS */}
           <div className="bg-white rounded-[2rem] shadow-sm border border-indigo-700 p-8">
-            <h2 className="text-xs font-black text-slate-700 uppercase tracking-widest mb-6 flex items-center gap-2">
+            <h2 className="text-xs font-black uppercase tracking-widest mb-6 flex items-center gap-2">
               <MdOutlineSettings className="text-indigo-600" size={20} />
               Quick Links
             </h2>
+
             <div className="grid grid-cols-1 gap-4">
               {[
-                { title: "Rewards", icon: <MdOutlineEmojiEvents />, color: "text-emerald-600", bg: "bg-emerald-50" },
-                { title: "Referrals", icon: <MdOutlineCardGiftcard />, color: "text-blue-600", bg: "bg-blue-50" },
-                { title: "Legal Info", icon: <MdOutlineGavel />, color: "text-slate-500", bg: "bg-slate-100" },
-                { title: "Support", icon: <MdOutlineSupportAgent />, color: "text-indigo-600", bg: "bg-indigo-50" },
+                {
+                  title: "Rewards",
+                  icon: <MdOutlineEmojiEvents />,
+                },
+                {
+                  title: "Referrals",
+                  icon: <MdOutlineCardGiftcard />,
+                },
+                {
+                  title: "Legal Info",
+                  icon: <MdOutlineGavel />,
+                },
+                {
+                  title: "Support",
+                  icon: <MdOutlineSupportAgent />,
+                },
               ].map((link, idx) => (
-                <div key={idx} className="flex items-center justify-between p-4 rounded-2xl border border-slate-50 bg-slate-50 hover:border-violet-700 hover:shadow-md transition group">
+                <div
+                  key={idx}
+                  className="flex items-center justify-between p-4 rounded-2xl bg-slate-50"
+                >
                   <div className="flex items-center gap-4">
-                    <div className={`p-2.5 ${link.bg} ${link.color} rounded-xl shadow-sm`}>{link.icon}</div>
-                    <span className="text-xs font-black text-white-700 uppercase tracking-tighter">{link.title}</span>
+                    <div className="p-2.5 rounded-xl bg-slate-100">
+                      {link.icon}
+                    </div>
+                    <span className="text-xs font-black">
+                      {link.title}
+                    </span>
                   </div>
-                  <MdAdd size={20} className="text-slate-1000 group-hover:text-blue-500 transition-colors" />
+
+                  <MdAdd size={20} />
                 </div>
               ))}
             </div>
