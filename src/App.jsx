@@ -39,7 +39,7 @@ import CompleteRegistration from "./Pages/ridePooling/completeregistration.jsx";
 import OrgRegistration from './Pages/Admin/OrgRegistration.jsx';
 
 // Import the new Profile Page
-import Userprofile from './Pages/User/UserProfile.jsx';
+import Userprofile from './Pages/User/Userprofile.jsx';
 
 function App() {
 
@@ -57,16 +57,18 @@ function App() {
                 <Route path="/ride-pooling/vehicle" element={<VehicleRegistration />} />
                 <Route path="/ride-pooling/complete" element={<CompleteRegistration />} />
 
+                {/* Standalone pages — no navbar */}
+                <Route path="/house-moving" element={<MoverSearchPage />} />
+
                 {/* User Routes */}
                 <Route path="/" element={<UserLayout />}>
                     <Route index element={<Home />} />
                     <Route path="compare" element={<ComparePage />} />
                     <Route path="service/:id" element={<ServiceDetail />} />
                     <Route path="bookings" element={<BookingsPage />} />
-                    <Route path="house-moving" element={<MoverSearchPage />} />
                     <Route path="car-moving" element={<CarTransportSearchPage />} />
                     <Route path="office-shifting" element={<OfficeRelocationSearchPage />} />
-                    
+
                     {/* ADDED PROFILE ROUTE HERE */}
                     <Route path="profile" element={<Userprofile />} />
                 </Route>
