@@ -1,291 +1,571 @@
-﻿import { useState } from 'react';
+﻿Moveryy - Web - Version / src / Pages / User / Rides.jsimport { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  MdOutlineStar, MdLocationOn, MdOutlinePerson, MdOutlineMyLocation,
-  MdOutlineDirectionsCar, MdOutlinePhone, MdCheck, MdEdit,
-  MdOutlineAccessTime, MdOutlineVerified, MdPeople, MdEventSeat,
-  MdOutlineInfo, MdArrowForward,
+  MdOutlineStar,
+  MdLocationOn,
+  MdOutlinePerson,
+  MdOutlineMyLocation,
+  MdOutlineDirectionsCar,
+  MdOutlinePhone,
+  MdCheck,
+  MdEdit,
+  MdOutlineAccessTime,
+  MdOutlineVerified,
 } from 'react-icons/md';
 import { NavLink } from 'react-router-dom';
 import { cardVariants, containerVariants, pageVariants, fadeSlideUp } from '../../utils/animations';
 import logo from '../../assets/logo2.png';
 import moveryyGoIcon from '../../assets/moveryygo.png';
 
+// ── Helpers ──────────────────────────────────────────────────────────────────
 const getInitials = () => {
   try {
     const u = JSON.parse(localStorage.getItem('moveryy_user'));
     if (u?.firstName) return u.firstName.charAt(0).toUpperCase();
     if (u?.name) return u.name.charAt(0).toUpperCase();
-  } catch { }
+  } catch { /* empty */ }
   return null;
 };
 
-// Each ride = a driver going from A to B with N seats, some already taken by co-passengers
-const MOCK_RIDES = [
+// ── Mock riders data ──────────────────────────────────────────────────────────
+const MOCK_RIDERS = [
   {
-    id: 1, driverName: 'Arjun Sharma', driverAvatar: 'A', driverColor: 'bg-blue-500',
-    rating: 4.9, trips: 1240, verified: true,
-    vehicle: 'Swift Dzire', plate: 'DL 4C 2341', seats: 4, seatsLeft: 2,
-    departure: '08:30 AM', eta: '3 min', distance: '0.8 km',
-    pricePerSeat: 120,
-    coPassengers: [
-      { name: 'Neha', avatar: 'N', color: 'bg-pink-400' },
-      { name: 'Karan', avatar: 'K', color: 'bg-green-500' },
-    ],
-    route: 'Connaught Place → Noida Sector 18',
+    id: 1,
+    name: 'Arjun Sharma',
+    rating: 4.9,
+    trips: 1240,
+    distance: '0.8 km away',
+    eta: '3 min',
+    vehicle: 'Swift Dzire · DL 4C 2341',
+    basePrice: 280,
+    avatar: 'A',
+    verified: true,
+    color: 'bg-blue-500',
   },
   {
-    id: 2, driverName: 'Priya Mehta', driverAvatar: 'P', driverColor: 'bg-purple-500',
-    rating: 4.8, trips: 870, verified: true,
-    vehicle: 'Honda City', plate: 'MH 12 AB 9876', seats: 4, seatsLeft: 3,
-    departure: '08:45 AM', eta: '5 min', distance: '1.2 km',
-    pricePerSeat: 100,
-    coPassengers: [
-      { name: 'Amit', avatar: 'A', color: 'bg-orange-400' },
-    ],
-    route: 'Lajpat Nagar → Gurugram Cyber City',
+    id: 2,
+    name: 'Priya Mehta',
+    rating: 4.8,
+    trips: 870,
+    distance: '1.2 km away',
+    eta: '5 min',
+    vehicle: 'Honda City · MH 12 AB 9876',
+    basePrice: 260,
+    avatar: 'P',
+    verified: true,
+    color: 'bg-blue-500',
   },
   {
-    id: 3, driverName: 'Rahul Verma', driverAvatar: 'R', driverColor: 'bg-green-500',
-    rating: 4.7, trips: 620, verified: false,
-    vehicle: 'Maruti Ertiga', plate: 'KA 05 MN 4512', seats: 6, seatsLeft: 4,
-    departure: '09:00 AM', eta: '7 min', distance: '1.9 km',
-    pricePerSeat: 90,
-    coPassengers: [
-      { name: 'Sonal', avatar: 'S', color: 'bg-cyan-500' },
-      { name: 'Dev', avatar: 'D', color: 'bg-red-400' },
-    ],
-    route: 'Dwarka Sector 10 → Aerocity',
+    id: 3,
+    name: 'Rahul Verma',
+    rating: 4.7,
+    trips: 620,
+    distance: '1.9 km away',
+    eta: '7 min',
+    vehicle: 'Maruti Ertiga · KA 05 MN 4512',
+    basePrice: 240,
+    avatar: 'R',
+    verified: false,
+    color: 'bg-blue-500',
   },
   {
-    id: 4, driverName: 'Sneha Kapoor', driverAvatar: 'S', driverColor: 'bg-orange-500',
-    rating: 4.6, trips: 430, verified: true,
-    vehicle: 'Hyundai i20', plate: 'UP 32 GH 7823', seats: 4, seatsLeft: 1,
-    departure: '09:15 AM', eta: '9 min', distance: '2.4 km',
-    pricePerSeat: 80,
-    coPassengers: [
-      { name: 'Raj', avatar: 'R', color: 'bg-blue-400' },
-      { name: 'Meera', avatar: 'M', color: 'bg-yellow-500' },
-      { name: 'Vivek', avatar: 'V', color: 'bg-indigo-400' },
-    ],
-    route: 'Rohini West → Karol Bagh',
+    id: 4,
+    name: 'Sneha Kapoor',
+    rating: 4.6,
+    trips: 430,
+    distance: '2.4 km away',
+    eta: '9 min',
+    vehicle: 'Hyundai i20 · UP 32 GH 7823',
+    basePrice: 220,
+    avatar: 'S',
+    verified: true,
+    color: 'bg-blue-500',
   },
 ];
 
-// Seat dots visualiser
-const SeatMap = ({ total, taken }) => (
-  <div className="flex items-center gap-1 flex-wrap">
-    {Array.from({ length: total }).map((_, i) => (
-      <div
-        key={i}
-        title={i < taken ? 'Taken' : 'Available'}
-        className={`w-5 h-5 rounded-md flex items-center justify-center ${
-          i < taken ? 'bg-slate-300' : 'bg-blue-500'
-        }`}
-      >
-        <MdEventSeat size={12} className={i < taken ? 'text-slate-500' : 'text-white'} />
-      </div>
-    ))}
-    <span className="text-xs font-bold text-slate-500 ml-1">{total - taken} left</span>
-  </div>
-);
+// ── Rider Card ────────────────────────────────────────────────────────────────
+const RiderCard = ({ rider, offeredPrice, onPriceChange, onSelect, isSelected }) => {
+  const [editing, setEditing] = useState(false);
+  const [inputVal, setInputVal] = useState(String(offeredPrice));
 
-// Ride card
-const RideCard = ({ ride, seats, onSeatsChange, offeredPrice, onPriceChange, onJoin, isJoined }) => {
-  const [editingPrice, setEditingPrice] = useState(false);
-  const [priceInput, setPriceInput] = useState(String(offeredPrice));
-  const takenSeats = ride.seats - ride.seatsLeft;
-  const maxCanBook = Math.min(ride.seatsLeft, 4);
-
-  const confirmPrice = () => {
-    const v = parseInt(priceInput, 10);
-    if (!isNaN(v) && v >= 30) onPriceChange(ride.id, v);
-    else setPriceInput(String(offeredPrice));
-    setEditingPrice(false);
+  const handleConfirm = () => {
+    const parsed = parseInt(inputVal, 10);
+    if (!isNaN(parsed) && parsed >= 50) {
+      onPriceChange(rider.id, parsed);
+    } else {
+      setInputVal(String(offeredPrice));
+    }
+    setEditing(false);
   };
 
-  const diff = offeredPrice - ride.pricePerSeat;
-  const diffLabel = diff === 0 ? null : diff > 0 ? `+₹${diff} above rate` : `₹${Math.abs(diff)} below rate`;
+  const diff = offeredPrice - rider.basePrice;
+  const diffLabel =
+    diff === 0 ? null : diff > 0 ? `+₹${diff} above estimate` : `₹${Math.abs(diff)} below estimate`;
   const diffColor = diff >= 0 ? 'text-green-600' : 'text-red-500';
-  const totalFare = offeredPrice * seats;
 
   return (
     <motion.div
       variants={cardVariants}
       layout
-      className={`bg-white rounded-3xl border-2 transition-all duration-300 shadow-sm overflow-hidden ${
-        isJoined ? 'border-blue-500 shadow-blue-100 shadow-lg' : 'border-slate-100 hover:border-blue-200 hover:shadow-md'
-      }`}
+      className={`relative bg-white rounded-3xl border-2 transition-all duration-300 shadow-sm overflow-hidden ${isSelected ? 'border-blue-500 shadow-blue-100 shadow-lg' : 'border-slate-100 hover:border-blue-200 hover:shadow-md'
+        }`}
     >
-      {isJoined && (
-        <div className="bg-blue-600 text-white text-xs font-black text-center py-1.5 tracking-wider">
-          ✓ YOU JOINED THIS RIDE
+      {isSelected && (
+        <div className="absolute top-4 right-4 w-7 h-7 bg-blue-600 rounded-full flex items-center justify-center shadow-md">
+          <MdCheck size={16} className="text-white" />
         </div>
       )}
 
       <div className="p-6">
-        {/* Driver row */}
-        <div className="flex items-start gap-4 mb-4">
-          <div className={`w-12 h-12 ${ride.driverColor} rounded-2xl flex items-center justify-center text-white font-black text-lg flex-shrink-0 shadow-md`}>
-            {ride.driverAvatar}
+        {/* Top row — avatar + info */}
+        <div className="flex items-start gap-4 mb-5">
+          <div className={`w-12 h-12 ${rider.color} rounded-2xl flex items-center justify-center text-white font-black text-lg flex-shrink-0 shadow-md`}>
+            {rider.avatar}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <p className="font-black text-slate-900 text-base">{ride.driverName}</p>
-              {ride.verified && <MdOutlineVerified size={15} className="text-blue-500" />}
-              <span className="text-[10px] font-black bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full uppercase">Driver</span>
-            </div>
-            <div className="flex items-center gap-2 mt-0.5 flex-wrap text-xs text-slate-500">
-              <span className="flex items-center gap-1 font-bold text-slate-700">
-                <MdOutlineStar size={13} className="text-yellow-500" />{ride.rating}
-              </span>
-              <span className="text-slate-300">·</span>
-              <span>{ride.trips} trips</span>
-              <span className="text-slate-300">·</span>
-              <span className="flex items-center gap-1"><MdOutlineDirectionsCar size={13} />{ride.vehicle} · {ride.plate}</span>
-            </div>
-          </div>
-          <div className="text-right flex-shrink-0">
-            <p className="text-[10px] font-black text-slate-400 uppercase">Per Seat</p>
-            <p className="text-xl font-black text-slate-900">₹{ride.pricePerSeat}</p>
-          </div>
-        </div>
-
-        {/* Route */}
-        <div className="flex items-center gap-2 bg-blue-50 rounded-2xl px-4 py-3 mb-4">
-          <div className="flex flex-col items-center gap-1">
-            <div className="w-2 h-2 rounded-full bg-blue-600" />
-            <div className="w-px h-4 bg-blue-300" />
-            <div className="w-2 h-2 rounded-full bg-orange-500" />
-          </div>
-          <p className="text-xs font-semibold text-slate-700 leading-relaxed">{ride.route}</p>
-          <div className="ml-auto flex items-center gap-1 text-xs text-blue-600 font-bold flex-shrink-0">
-            <MdOutlineAccessTime size={13} />{ride.departure}
-          </div>
-        </div>
-
-        {/* Seat map */}
-        <div className="mb-4">
-          <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2">Seat Availability</p>
-          <SeatMap total={ride.seats} taken={takenSeats} />
-        </div>
-
-        {/* Co-passengers */}
-        {ride.coPassengers.length > 0 && (
-          <div className="mb-4">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-2 flex items-center gap-1">
-              <MdPeople size={13} /> Co-passengers ({ride.coPassengers.length})
-            </p>
-            <div className="flex items-center gap-2 flex-wrap">
-              {ride.coPassengers.map((p, i) => (
-                <div key={i} className="flex items-center gap-1.5 bg-slate-50 border border-slate-100 rounded-full px-3 py-1">
-                  <div className={`w-5 h-5 ${p.color} rounded-full flex items-center justify-center text-white text-[9px] font-black`}>
-                    {p.avatar}
-                  </div>
-                  <span className="text-xs font-semibold text-slate-600">{p.name}</span>
-                </div>
-              ))}
-              {isJoined && (
-                <div className="flex items-center gap-1.5 bg-blue-50 border border-blue-200 rounded-full px-3 py-1">
-                  <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center text-white text-[9px] font-black">
-                    You
-                  </div>
-                  <span className="text-xs font-semibold text-blue-600">You</span>
-                </div>
+              <p className="font-black text-slate-00 text-base">{rider.name}</p>
+              {rider.verified && (
+                <MdOutlineVerified size={16} className="text-blue-500 flex-shrink-0" />
               )}
             </div>
+            <div className="flex items-center gap-3 mt-1 flex-wrap">
+              <span className="flex items-center gap-1 text-xs font-bold text-slate-600">
+                <MdOutlineStar size={14} className="text-yellow-500" />
+                {rider.rating}
+              </span>
+              <span className="text-slate-300 text-xs">·</span>
+              <span className="text-xs text-slate-500">{rider.trips} trips</span>
+              <span className="text-slate-300 text-xs">·</span>
+              <span className="text-xs text-slate-500">{rider.distance}</span>
+            </div>
+            <div className="flex items-center gap-1.5 mt-1.5">
+              <MdOutlineDirectionsCar size={14} className="text-slate-400" />
+              <p className="text-xs text-slate-500 truncate">{rider.vehicle}</p>
+            </div>
           </div>
-        )}
+        </div>
 
-        {/* Booking controls */}
-        <div className="bg-slate-50 rounded-2xl px-5 py-4 flex flex-wrap items-center gap-4 mb-4">
-          {/* Seats selector */}
-          <div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1">Seats</p>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => onSeatsChange(ride.id, Math.max(1, seats - 1))}
-                disabled={seats <= 1 || isJoined}
-                className="w-7 h-7 rounded-lg bg-white border border-slate-200 font-black text-slate-700 hover:bg-blue-50 disabled:opacity-40 transition-colors"
-              >−</button>
-              <span className="text-sm font-black text-slate-900 w-4 text-center">{seats}</span>
-              <button
-                onClick={() => onSeatsChange(ride.id, Math.min(maxCanBook, seats + 1))}
-                disabled={seats >= maxCanBook || isJoined}
-                className="w-7 h-7 rounded-lg bg-white border border-slate-200 font-black text-slate-700 hover:bg-blue-50 disabled:opacity-40 transition-colors"
-              >+</button>
+        {/* ETA + Price row */}
+        <div className="flex items-center justify-between gap-4 bg-slate-50 rounded-2xl px-5 py-4">
+          {/* ETA */}
+          <div className="flex items-center gap-2">
+            <MdOutlineAccessTime size={16} className="text-blue-500" />
+            <div>
+              <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider">ETA</p>
+              <p className="text-sm font-black text-slate-800">{rider.eta}</p>
             </div>
           </div>
 
-          <div className="w-px h-10 bg-slate-200" />
+          <div className="w-px h-8 bg-slate-200" />
 
-          {/* Offer price */}
+          {/* Estimate */}
           <div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1">Offer / Seat</p>
-            {editingPrice ? (
-              <div className="flex items-center gap-1">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Estimate</p>
+            <p className="text-sm font-black text-slate-800">₹{rider.basePrice}</p>
+          </div>
+
+          <div className="w-px h-8 bg-slate-200" />
+
+          {/* Offer price — editable */}
+          <div className="flex-1 min-w-0">
+            <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1">Your Offer</p>
+            {editing ? (
+              <div className="flex items-center gap-2">
                 <span className="text-sm font-black text-slate-700">₹</span>
                 <input
                   type="number"
-                  value={priceInput}
-                  onChange={(e) => setPriceInput(e.target.value)}
-                  onBlur={confirmPrice}
-                  onKeyDown={(e) => e.key === 'Enter' && confirmPrice()}
+                  value={inputVal}
+                  onChange={(e) => setInputVal(e.target.value)}
+                  onBlur={handleConfirm}
+                  onKeyDown={(e) => e.key === 'Enter' && handleConfirm()}
                   autoFocus
-                  className="w-14 text-sm font-black text-slate-900 border-b-2 border-blue-400 outline-none bg-transparent"
+                  className="w-16 text-sm font-black text-slate-900 border-b-2 border-blue-400 outline-none bg-transparent"
                 />
               </div>
             ) : (
               <button
-                onClick={() => { if (!isJoined) { setPriceInput(String(offeredPrice)); setEditingPrice(true); } }}
-                className="flex items-center gap-1 group"
-                disabled={isJoined}
+                onClick={() => { setInputVal(String(offeredPrice)); setEditing(true); }}
+                className="flex items-center gap-1.5 group"
               >
                 <span className="text-sm font-black text-blue-600">₹{offeredPrice}</span>
-                {!isJoined && <MdEdit size={12} className="text-slate-400 group-hover:text-blue-500 transition-colors" />}
+                <MdEdit size={13} className="text-slate-400 group-hover:text-blue-500 transition-colors" />
               </button>
             )}
-            {diffLabel && <p className={`text-[10px] font-semibold mt-0.5 ${diffColor}`}>{diffLabel}</p>}
-          </div>
-
-          <div className="w-px h-10 bg-slate-200" />
-
-          {/* Total */}
-          <div>
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1">Total</p>
-            <p className="text-sm font-black text-slate-900">₹{totalFare}</p>
-            <p className="text-[10px] text-slate-400">{seats} seat{seats > 1 ? 's' : ''}</p>
-          </div>
-
-          {/* ETA */}
-          <div className="ml-auto">
-            <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider mb-1">ETA</p>
-            <p className="text-sm font-black text-slate-800">{ride.eta}</p>
-            <p className="text-[10px] text-slate-400">{ride.distance}</p>
+            {diffLabel && (
+              <p className={`text-[10px] font-semibold mt-0.5 ${diffColor}`}>{diffLabel}</p>
+            )}
           </div>
         </div>
 
-        {/* Join button */}
+        {/* Select button */}
         <button
-          onClick={() => onJoin(ride.id)}
-          disabled={ride.seatsLeft === 0}
-          className={`w-full py-3 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 flex items-center justify-center gap-2 ${
-            isJoined
-              ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
-              : ride.seatsLeft === 0
-              ? 'bg-slate-200 text-slate-400 cursor-not-allowed'
-              : 'bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-200'
-          }`}
+          onClick={() => onSelect(rider.id)}
+          className={`mt-4 w-full py-3 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 ${isSelected
+            ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
+            : 'bg-slate-600 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-200'
+            }`}
         >
-          {isJoined ? (
-            <><MdCheck size={16} /> Joined — ₹{totalFare} for {seats} seat{seats > 1 ? 's' : ''}</>
-          ) : ride.seatsLeft === 0 ? (
-            'Ride Full'
-          ) : (
-            <>Join This Ride <MdArrowForward size={16} /></>
-          )}
+          {isSelected ? '✓ Rider Selected' : 'Select This Rider'}
         </button>
       </div>
     </motion.div>
   );
 };
+
+// ── Main Page ─────────────────────────────────────────────────────────────────
+const MoveryyGoPage = () => {
+  const initials = getInitials();
+
+  const [pickup, setPickup] = useState('');
+  const [drop, setDrop] = useState('');
+  const [searched, setSearched] = useState(false);
+  const [searching, setSearching] = useState(false);
+  const [offeredPrices, setOfferedPrices] = useState(
+    Object.fromEntries(MOCK_RIDERS.map((r) => [r.id, r.basePrice]))
+  );
+  const [selectedRider, setSelectedRider] = useState(null);
+  const [booked, setBooked] = useState(false);
+
+  const handleSearch = () => {
+    if (!pickup.trim() || !drop.trim()) return;
+    setSearching(true);
+    setSearched(false);
+    setSelectedRider(null);
+    setBooked(false);
+    setTimeout(() => {
+      setSearching(false);
+      setSearched(true);
+    }, 1400);
+  };
+
+  const handlePriceChange = (riderId, price) => {
+    setOfferedPrices((prev) => ({ ...prev, [riderId]: price }));
+  };
+
+  const handleSelect = (riderId) => {
+    setSelectedRider((prev) => (prev === riderId ? null : riderId));
+  };
+
+  const handleBook = () => {
+    if (!selectedRider) return;
+    setBooked(true);
+  };
+
+  const selectedRiderData = MOCK_RIDERS.find((r) => r.id === selectedRider);
+
+  return (
+    <motion.div
+      variants={pageVariants}
+      initial="hidden"
+      animate="show"
+      className="bg-[#F8FAFC] min-h-screen font-sans"
+    >
+      {/* ── White Navbar ── */}
+      <header className="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
+        <div className="max-w-5xl mx-auto px-8 md:px-14 h-14 flex items-center justify-between">
+          <NavLink to="/">
+            <img src={logo} alt="Moveryy" className="h-9 w-auto object-contain" />
+          </NavLink>
+          <NavLink to="/profile">
+            <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm hover:bg-blue-700 transition-colors cursor-pointer shadow-sm">
+              {initials ?? <MdOutlinePerson size={18} />}
+            </div>
+          </NavLink>
+        </div>
+      </header>
+
+      {/* ── Blue Hero ── */}
+      <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute -top-32 -right-32 w-72 h-72 bg-blue-500 rounded-full opacity-10" />
+          <div className="absolute -bottom-32 -left-32 w-72 h-72 bg-blue-400 rounded-full opacity-10" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-white rounded-full opacity-5" />
+        </div>
+
+        <div className="relative z-10 max-w-5xl mx-auto px-8 md:px-14 pt-12 pb-28">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12">
+            {/* Left */}
+            <div className="flex flex-col gap-4 max-w-xl">
+
+
+              <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight">
+                Moveryy Rides <br />
+                <span className="text-yellow-400">Ride Smarter</span>
+              </h1>
+
+              <span className="inline-flex items-center gap-2 bg-blue-500/60 border border-white/20 text-white text-sm font-semibold px-4 py-2 rounded-full w-fit shadow-md backdrop-blur-sm">
+                <MdOutlineStar className="text-yellow-400" size={16} />
+                Smart and Convenient Rides
+              </span>
+
+              <p className="text-base md:text-lg text-blue-100 leading-relaxed mt-1">
+                Find nearby riders, and travel together —
+                smarter, cheaper, greener.
+              </p>
+            </div>
+
+            {/* Right — stats */}
+            <div className="hidden lg:flex flex-shrink-0">
+              <div className="bg-white/10 border border-white/20 rounded-3xl p-8 shadow-2xl space-y-6 min-w-[240px]">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-yellow-400 rounded-2xl flex items-center justify-center shadow-md">
+                    <MdOutlineStar size={24} className="text-white" />
+                  </div>
+                  <div>
+                    <p className="text-xl font-bold text-white">4.9★</p>
+                    <p className="text-xs text-blue-200">Avg. Rider Rating</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-green-400 rounded-2xl flex items-center justify-center shadow-md">
+                    <MdOutlineDirectionsCar size={24} className="text-white" />
+                  </div>
+                  <div>
+                    <p className="text-xl font-bold text-white">10K+</p>
+                    <p className="text-xs text-blue-200">Active Riders</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Wave */}
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
+            <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="#F8FAFC" />
+          </svg>
+        </div>
+      </div>
+
+      {/* ── Main content ── */}
+      <div className="max-w-5xl mx-auto px-6 md:px-14 pb-20">
+
+        {/* Search card */}
+        <motion.div
+          variants={cardVariants}
+          className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-500 rounded-3xl px-8 py-10 shadow-xl relative overflow-hidden mt-10"
+        >
+          <div className="absolute top-0 right-0 w-48 h-48 bg-white opacity-10 rounded-full -mr-20 -mt-20" />
+          <div className="absolute bottom-0 left-0 w-32 h-32 bg-white opacity-10 rounded-full -ml-16 -mb-16" />
+
+          <h2 className="text-xl font-black text-white mb-6 relative z-10 tracking-wide">
+            Where are you going?
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
+            {/* Pickup */}
+            <div className="relative">
+              <MdOutlineMyLocation size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Pickup Location"
+                value={pickup}
+                onChange={(e) => setPickup(e.target.value)}
+                className="w-full pl-10 pr-5 py-4 bg-white rounded-2xl text-slate-800 font-semibold text-sm focus:ring-4 focus:ring-yellow-300 shadow-md placeholder:text-slate-400 outline-none"
+              />
+            </div>
+            {/* Drop */}
+            <div className="relative">
+              <MdLocationOn size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+              <input
+                type="text"
+                placeholder="Drop Location"
+                value={drop}
+                onChange={(e) => setDrop(e.target.value)}
+                className="w-full pl-10 pr-5 py-4 bg-white rounded-2xl text-slate-800 font-semibold text-sm focus:ring-4 focus:ring-yellow-300 shadow-md placeholder:text-slate-400 outline-none"
+              />
+            </div>
+          </div>
+
+          <button
+            onClick={handleSearch}
+            disabled={searching || !pickup.trim() || !drop.trim()}
+            className="mt-6 relative z-10 bg-white text-orange-500 font-black px-9 py-3 rounded-2xl shadow-lg hover:bg-orange-50 active:scale-95 transition-all text-sm tracking-wide disabled:opacity-60 disabled:cursor-not-allowed flex items-center gap-2"
+          >
+            {searching ? (
+              <>
+                <span className="w-4 h-4 border-2 border-orange-400 border-t-transparent rounded-full animate-spin" />
+                Searching Riders…
+              </>
+            ) : (
+              'Search Riders →'
+            )}
+          </button>
+        </motion.div>
+
+        {/* ── Riders results ── */}
+        <AnimatePresence>
+          {searched && (
+            <motion.div
+              key="results"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.4, ease: 'easeOut' }}
+              className="mt-10"
+            >
+              {/* Section header */}
+              <div className="flex items-center justify-between mb-2">
+                <div>
+                  <h3 className="text-xl font-black text-slate-900">Nearby Riders</h3>
+                  <div className="w-12 h-1 bg-yellow-400 rounded-full mt-1" />
+                </div>
+                <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full">
+                  {MOCK_RIDERS.length} found within 3 km
+                </span>
+              </div>
+
+              <p className="text-sm text-slate-500 mb-6 mt-2">
+                Tap <span className="font-bold text-blue-600">✏ edit</span> on any offer price to negotiate your fare before selecting a rider.
+              </p>
+
+              <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+                className="grid grid-cols-1 md:grid-cols-2 gap-5"
+              >
+                {MOCK_RIDERS.map((rider) => (
+                  <RiderCard
+                    key={rider.id}
+                    rider={rider}
+                    offeredPrice={offeredPrices[rider.id]}
+                    onPriceChange={handlePriceChange}
+                    onSelect={handleSelect}
+                    isSelected={selectedRider === rider.id}
+                  />
+                ))}
+              </motion.div>
+
+              {/* Confirm booking bar */}
+              <AnimatePresence>
+                {selectedRider && !booked && (
+                  <motion.div
+                    key="confirm-bar"
+                    initial={{ opacity: 0, y: 30 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 30 }}
+                    className="mt-8 bg-slate-900 rounded-3xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 shadow-2xl"
+                  >
+                    <div>
+                      <p className="text-white font-black text-base">
+                        {selectedRiderData?.name}
+                        <span className="text-yellow-400 ml-2">· ₹{offeredPrices[selectedRider]}</span>
+                      </p>
+                      <p className="text-slate-400 text-xs mt-0.5">{selectedRiderData?.vehicle}</p>
+                      <p className="text-slate-400 text-xs">{selectedRiderData?.eta} · {selectedRiderData?.distance}</p>
+                    </div>
+                    <div className="flex items-center gap-3 flex-shrink-0">
+                      <a
+                        href="tel:+919999999999"
+                        className="flex items-center gap-2 bg-white/10 text-white px-4 py-2.5 rounded-2xl text-sm font-bold hover:bg-white/20 transition-colors"
+                      >
+                        <MdOutlinePhone size={16} />
+                        Call
+                      </a>
+                      <button
+                        onClick={handleBook}
+                        className="bg-yellow-400 text-slate-900 px-7 py-2.5 rounded-2xl font-black text-sm hover:bg-yellow-300 active:scale-95 transition-all shadow-lg"
+                      >
+                        Confirm Booking
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Booking confirmed */}
+              <AnimatePresence>
+                {booked && (
+                  <motion.div
+                    key="booked"
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="mt-8 bg-gradient-to-r from-green-500 to-emerald-600 rounded-3xl p-8 text-center shadow-2xl"
+                  >
+                    <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                      <MdCheck size={36} className="text-green-500" />
+                    </div>
+                    <h3 className="text-2xl font-black text-white mb-1">Ride Confirmed!</h3>
+                    <p className="text-green-100 text-sm mb-1">
+                      {selectedRiderData?.name} is on the way
+                    </p>
+                    <p className="text-white font-bold text-lg">
+                      ₹{offeredPrices[selectedRider]} · {selectedRiderData?.eta}
+                    </p>
+                    <p className="text-green-200 text-xs mt-2">{selectedRiderData?.vehicle}</p>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Trust badges */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
+          {[
+            { label: 'Active Riders', value: '10K+', bg: 'bg-blue-50', border: 'border-blue-100', text: 'text-blue-700' },
+            { label: 'Rides Completed', value: '200K+', bg: 'bg-green-50', border: 'border-green-100', text: 'text-green-700' },
+            { label: 'Avg. Rating', value: '4.9★', bg: 'bg-yellow-50', border: 'border-yellow-100', text: 'text-yellow-700' },
+            { label: 'Cities', value: '50+', bg: 'bg-purple-50', border: 'border-purple-100', text: 'text-purple-700' },
+          ].map((b) => (
+            <div key={b.label} className={`${b.bg} ${b.border} border rounded-2xl p-5 text-center shadow-sm`}>
+              <p className={`text-2xl font-black ${b.text}`}>{b.value}</p>
+              <p className="text-xs text-slate-500 font-semibold mt-1">{b.label}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* How it works */}
+        <div className="mt-12">
+          <h3 className="text-xl font-black text-slate-900 mb-1">How it works</h3>
+          <div className="w-12 h-1 bg-yellow-400 rounded-full mb-7" />
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-5">
+            {[
+              { step: '01', title: 'Enter Route', desc: 'Add your pickup and drop location.', color: 'bg-blue-600' },
+              { step: '02', title: 'Browse Riders', desc: 'See nearby riders with ETA and price estimates.', color: 'bg-yellow-500' },
+              { step: '03', title: 'Negotiate Fare', desc: 'Edit the offer price to match your budget.', color: 'bg-orange-500' },
+              { step: '04', title: 'Confirm & Ride', desc: 'Select your rider and confirm the booking.', color: 'bg-green-500' },
+            ].map((s) => (
+              <div key={s.step} className="bg-white rounded-2xl p-5 border border-slate-100 shadow-sm flex gap-4 items-start">
+                <div className={`${s.color} text-white text-xs font-black w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0`}>
+                  {s.step}
+                </div>
+                <div>
+                  <p className="font-bold text-slate-900 mb-1 text-sm">{s.title}</p>
+                  <p className="text-xs text-slate-500 leading-relaxed">{s.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Why Moveryy Go */}
+        <motion.div variants={fadeSlideUp} className="mt-10 bg-white rounded-2xl border border-slate-100 shadow-sm p-8">
+          <h3 className="text-xl font-black text-slate-900 mb-1">Why Moveryy Go?</h3>
+          <div className="w-12 h-1 bg-yellow-400 rounded-full mb-7" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            {[
+              { title: 'Negotiate Your Fare', desc: 'Set your own price — riders accept or counter.' },
+              { title: 'Verified Riders Only', desc: 'Every rider is background-checked and verified.' },
+              { title: 'Real-time Tracking', desc: 'Track your ride live from pickup to destination.' },
+              { title: 'Safe & Insured', desc: 'All rides are insured for your peace of mind.' },
+            ].map((f) => (
+              <div key={f.title} className="flex gap-3 items-start">
+                <div className="w-2 h-2 rounded-full bg-yellow-400 mt-1.5 flex-shrink-0" />
+                <div>
+                  <p className="font-bold text-slate-800 text-sm">{f.title}</p>
+                  <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">{f.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+};
+
+export default MoveryyGoPage;
