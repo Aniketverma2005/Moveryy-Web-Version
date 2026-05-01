@@ -287,10 +287,7 @@ const MoveryyGoPage = () => {
                     <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12">
                         {/* Left */}
                         <div className="flex flex-col gap-4 max-w-xl">
-                            {/* Icon above heading */}
-                            <div className="w-16 h-16">
-                                <img src={moveryyGoIcon} alt="Moveryy Go" className="w-full h-full object-contain drop-shadow-xl" />
-                            </div>
+                            
 
                             <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight">
                                 Moveryy Go <br />
