@@ -53,7 +53,7 @@ const MOCK_RIDERS = [
         basePrice: 260,
         avatar: 'P',
         verified: true,
-        color: 'bg-purple-500',
+        color: 'bg-blue-500',
     },
     {
         id: 3,
@@ -66,7 +66,7 @@ const MOCK_RIDERS = [
         basePrice: 240,
         avatar: 'R',
         verified: false,
-        color: 'bg-green-500',
+        color: 'bg-blue-500',
     },
     {
         id: 4,
@@ -79,7 +79,7 @@ const MOCK_RIDERS = [
         basePrice: 220,
         avatar: 'S',
         verified: true,
-        color: 'bg-orange-500',
+        color: 'bg-blue-500',
     },
 ];
 
@@ -124,7 +124,7 @@ const RiderCard = ({ rider, offeredPrice, onPriceChange, onSelect, isSelected })
                     </div>
                     <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 flex-wrap">
-                            <p className="font-black text-slate-900 text-base">{rider.name}</p>
+                            <p className="font-black text-slate-00 text-base">{rider.name}</p>
                             {rider.verified && (
                                 <MdOutlineVerified size={16} className="text-blue-500 flex-shrink-0" />
                             )}
@@ -203,7 +203,7 @@ const RiderCard = ({ rider, offeredPrice, onPriceChange, onSelect, isSelected })
                     onClick={() => onSelect(rider.id)}
                     className={`mt-4 w-full py-3 rounded-2xl font-black text-sm tracking-wide transition-all active:scale-95 ${isSelected
                         ? 'bg-blue-600 text-white shadow-lg shadow-blue-200'
-                        : 'bg-slate-900 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-200'
+                        : 'bg-slate-600 text-white hover:bg-blue-600 hover:shadow-lg hover:shadow-blue-200'
                         }`}
                 >
                     {isSelected ? '✓ Rider Selected' : 'Select This Rider'}
