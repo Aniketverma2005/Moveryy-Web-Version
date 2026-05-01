@@ -20,6 +20,7 @@ import ComparePage from './Pages/User/Compare.jsx';
 import MoverSearchPage from './Pages/User/House_Moving.jsx';
 import CarTransportSearchPage from './Pages/User/CarTransportsearch.jsx';
 import OfficeRelocationSearchPage from './Pages/User/OfficeShift.jsx';
+import MoveryyGoPage from './Pages/User/MoveryyGo.jsx';
 
 // Transport/Driver Pages
 import TransportHome from './Pages/Transport/Home.jsx';
@@ -59,6 +60,7 @@ function App() {
 
                 {/* Standalone pages — no navbar */}
                 <Route path="/house-moving" element={<MoverSearchPage />} />
+                <Route path="/moveryy-go" element={<MoveryyGoPage />} />
 
                 {/* User Routes */}
                 <Route path="/" element={<UserLayout />}>
