@@ -65,6 +65,8 @@ function App() {
                 <Route path="/house-moving" element={<MoverSearchPage />} />
                 <Route path="/moveryy-go" element={<MoveryyGoPage />} />
                 <Route path="/rides" element={<RidesPage />} />
+                <Route path="/car-moving" element={<CarTransportSearchPage />} />
+                <Route path="/office-shifting" element={<OfficeRelocationSearchPage />} />
 
                 {/* User Routes */}
                 <Route path="/" element={<UserLayout />}>
@@ -72,8 +74,6 @@ function App() {
                     <Route path="compare" element={<ComparePage />} />
                     <Route path="service/:id" element={<ServiceDetail />} />
                     <Route path="bookings" element={<BookingsPage />} />
-                    <Route path="car-moving" element={<CarTransportSearchPage />} />
-                    <Route path="office-shifting" element={<OfficeRelocationSearchPage />} />
 
                     {/* ADDED PROFILE ROUTE HERE */}
                     <Route path="profile" element={<Userprofile />} />
