@@ -182,7 +182,7 @@ const RidesPage = () => {
                 <div className="relative z-10 max-w-5xl mx-auto px-8 md:px-14 pt-12 pb-28">
                     <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12">
                         <div className="flex flex-col gap-4 max-w-xl">
-                            <div className="w-16 h-16">
+                            <div className="w-16 h-5">
 
                             </div>
                             <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight">
