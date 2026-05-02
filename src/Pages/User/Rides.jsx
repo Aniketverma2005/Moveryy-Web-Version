@@ -3,12 +3,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
     MdOutlineStar, MdLocationOn, MdOutlinePerson, MdOutlineMyLocation,
     MdOutlineDirectionsCar, MdOutlinePhone, MdCheck, MdEdit,
-    MdOutlineAccessTime, MdOutlineVerified, MdTwoWheeler, MdOutlineElectricRickshaw,
+    MdOutlineAccessTime, MdOutlineVerified, MdTwoWheeler,
 } from 'react-icons/md';
 import { NavLink } from 'react-router-dom';
 import { cardVariants, containerVariants, pageVariants } from '../../utils/animations';
 import logo from '../../assets/logo2.png';
 import ridesIcon from '../../assets/rides.png';
+import moveryyGoIcon from '../../assets/moveryygo.png';
 
 const getInitials = () => {
     try {
@@ -182,7 +183,7 @@ const RidesPage = () => {
                     <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12">
                         <div className="flex flex-col gap-4 max-w-xl">
                             <div className="w-16 h-16">
-                                <img src={ridesIcon} alt="Rides" className="w-full h-full object-contain drop-shadow-xl" />
+
                             </div>
                             <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight">
                                 Moveryy Rides<br /><span className="text-yellow-400">Cab, Bike & Auto</span>
@@ -227,12 +228,12 @@ const RidesPage = () => {
                 <div className="flex gap-3 mt-10 mb-0">
                     {RIDE_TYPES.map(rt => (
                         <button key={rt.id} onClick={() => { setRideType(rt.id); setSearched(false); setSelectedDriver(null); setBooked(false); }}
-                            className={`flex-1 flex flex-col items-center gap-1.5 py-4 rounded-2xl border-2 font-bold text-sm transition-all ${rideType === rt.id ? 'border-blue-500 bg-blue-50 text-blue-700 shadow-md' : 'border-slate-200 bg-white text-slate-600 hover:border-blue-300'
+                            className={`flex-1 flex flex-col items-center gap-1.5 py-4 rounded-2xl border-2 font-bold text-sm transition-all ${rideType === rt.id ? 'border-blue-1000 bg-blue-20 text-blue-800 shadow-md' : 'border-slate-200 bg-white text-slate-600 hover:border-blue-300'
                                 }`}
                         >
-                            {rt.id === 'cab' && <MdOutlineDirectionsCar size={24} />}
-                            {rt.id === 'bike' && <MdTwoWheeler size={24} />}
-                            {rt.id === 'auto' && <MdOutlineElectricRickshaw size={24} />}
+                            {rt.id === 'cab' && <div className="w-7 h-7"><img src={ridesIcon} alt="Rides" className="w-full h-full object-contain drop-shadow-xl" /></div>}
+                            {rt.id === 'bike' && <MdTwoWheeler size={24} className="text-green-700" />}
+                            {rt.id === 'auto' && <div className="w-7 h-7"><img src={moveryyGoIcon} alt="Moveryy Go" className="w-full h-full object-contain drop-shadow-xl" /></div>}
                             <span>{rt.label}</span>
                             <span className="text-[10px] font-normal text-slate-400">{rt.desc}</span>
                         </button>
@@ -241,7 +242,7 @@ const RidesPage = () => {
 
                 {/* Search card */}
                 <motion.div variants={cardVariants}
-                    className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-500 rounded-3xl px-8 py-10 shadow-xl relative overflow-hidden mt-5"
+                    className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-500 rounded-3xl px-8 py-10 shadow-xl relative overflow-hidden mt-10"
                 >
                     <div className="absolute top-0 right-0 w-48 h-48 bg-white opacity-10 rounded-full -mr-20 -mt-20" />
                     <div className="absolute bottom-0 left-0 w-32 h-32 bg-white opacity-10 rounded-full -ml-16 -mb-16" />

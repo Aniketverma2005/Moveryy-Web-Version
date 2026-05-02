@@ -188,7 +188,7 @@ const RideDetailModal = ({ ride, seats, onSeatsChange, onConfirm, onClose, confi
       <div className="p-6 space-y-5">
         {/* Driver info */}
         <div className="flex items-center gap-4">
-          <div className={`w-14 h-14 ${ride.avatarColor} rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-md`}>
+          <div className={`w-14 h-14 ${ride.avatarColor} rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-md outl mt-8`}>
             {ride.avatar}
           </div>
           <div>
@@ -559,8 +559,8 @@ const MoveryyGoPage = () => {
         <div className="relative z-10 max-w-5xl mx-auto px-8 md:px-14 pt-12 pb-28">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12">
             <div className="flex flex-col gap-4 max-w-xl">
-              <div className="w-16 h-16">
-                <img src={moveryyGoIcon} alt="Moveryy Go" className="w-full h-full object-contain drop-shadow-xl" />
+              <div className="w-4 h-0">
+
               </div>
               <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight">
                 Moveryy Go<br />
@@ -622,7 +622,7 @@ const MoveryyGoPage = () => {
 
         {/* Search card — yellow/orange, same as House Moving */}
         <motion.div variants={cardVariants}
-          className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-500 rounded-3xl px-8 py-10 shadow-2xl relative overflow-hidden"
+          className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-500 rounded-3xl px-8 py-10 shadow-2xl relative overflow-hidden mt-10"
         >
           <div className="absolute top-0 right-0 w-48 h-48 bg-white opacity-10 rounded-full -mr-20 -mt-20" />
           <div className="absolute bottom-0 left-0 w-32 h-32 bg-white opacity-10 rounded-full -ml-16 -mb-16" />
