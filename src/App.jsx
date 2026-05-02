@@ -1,6 +1,7 @@
 import './App.css'
 
 import { Route, Routes, Navigate } from 'react-router-dom';
+import ScrollToTop from './components/ScrollToTop.jsx';
 import UserLayout from './Layout/UserLayout.jsx';
 import AdminLayout from './Layout/Adminlayout.jsx';
 import Transport from './Layout/Transport.jsx';
@@ -47,6 +48,7 @@ function App() {
 
     return (
         <>
+            <ScrollToTop />
             <Routes>
                 <Route path="/login" element={<Login />} />
                 <Route path="/signup" element={<Signup />} />
