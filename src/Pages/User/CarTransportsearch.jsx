@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   MdOutlineStar, MdOutlineLocalShipping, MdLocationOn, MdOutlinePerson,
   MdCalendarToday, MdOutlineDirectionsCar, MdOutlineFilterList,
-  MdOutlineStar as MdStar, MdOutlineInfo, MdOutlineKeyboardArrowDown,
+  MdOutlineStar as MdStar, MdOutlineInfo, MdOutlineKeyboardArrowDown, MdOutlineMyLocation,
 } from 'react-icons/md';
 import { NavLink } from 'react-router-dom';
 import { cardVariants, containerVariants, pageVariants } from '../../utils/animations';
@@ -162,12 +162,12 @@ const CarTransportSearchPage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
             <div className="relative">
-              <MdLocationOn size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+              <MdOutlineMyLocation size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-yellow-400" />
               <input type="text" placeholder="Pickup Location"
                 className="w-full pl-10 pr-5 py-4 bg-white rounded-2xl text-slate-800 font-semibold text-sm focus:ring-4 focus:ring-yellow-300 shadow-md placeholder:text-slate-400 outline-none" />
             </div>
             <div className="relative">
-              <MdLocationOn size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+              <MdLocationOn size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-green-500" />
               <input type="text" placeholder="Drop Location"
                 className="w-full pl-10 pr-5 py-4 bg-white rounded-2xl text-slate-800 font-semibold text-sm focus:ring-4 focus:ring-yellow-300 shadow-md placeholder:text-slate-400 outline-none" />
             </div>
