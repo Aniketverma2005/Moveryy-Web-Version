@@ -128,7 +128,7 @@ const MoverSearchPage = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
             <div className="relative">
-              <MdLocationOn size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-green-500" />
+              <MdLocationOn size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#22C55E' }} />
               <input
                 type="text"
                 placeholder="Drop Location"

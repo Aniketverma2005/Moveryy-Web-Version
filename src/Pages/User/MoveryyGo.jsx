@@ -422,7 +422,7 @@ const MoveryyGoPage = () => {
 
             {/* Pickup input */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 px-5 py-4 flex items-center gap-3 mb-3">
-              <MdOutlineMyLocation size={20} className="text-yellow-400 flex-shrink-0" />
+              <MdOutlineMyLocation size={22} style={{ color: '#EAB308', flexShrink: 0 }} />
               <input
                 type="text"
                 placeholder="Enter pickup location here"
@@ -434,7 +434,7 @@ const MoveryyGoPage = () => {
 
             {/* Drop input */}
             <div className="bg-white rounded-2xl shadow-sm border border-slate-200 px-5 py-4 flex items-center gap-3 mb-8">
-              <MdLocationOn size={20} className="text-green-500 flex-shrink-0" />
+              <MdLocationOn size={22} style={{ color: '#22C55E', flexShrink: 0 }} />
               <input
                 type="text"
                 placeholder="Enter drop location here"
