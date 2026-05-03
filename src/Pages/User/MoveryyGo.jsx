@@ -123,9 +123,9 @@ const RideDetailModal = ({ ride, seats, onSeatsChange, onConfirm, onClose, confi
         <div className="bg-slate-50 rounded-2xl p-4 space-y-3">
           <div className="flex items-start gap-3">
             <div className="flex flex-col items-center gap-1 mt-1">
-              <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
+              <div className="w-2.5 h-2.5 rounded-full bg-yellow-500" />
               <div className="w-0.5 h-8 bg-slate-300" />
-              <div className="w-2.5 h-2.5 rounded-full bg-red-500" />
+              <div className="w-2.5 h-2.5 rounded-full bg-green-500" />
             </div>
             <div className="flex-1 space-y-3">
               <div>
