@@ -426,10 +426,9 @@ const MoveryyGoPage = () => {
               <div className="w-full border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-md">
 
                 {/* Pickup row */}
-                <div className="flex items-center gap-4 px-6 py-5">
-                  <MdOutlineMyLocation size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#f1b80a' }} />
+                <div className="flex items-center gap-3 px-5 py-5">
+                  <MdOutlineMyLocation size={20} style={{ color: '#f1b80a', flexShrink: 0 }} />
                   <input
-                  
                     type="text"
                     placeholder="Enter pickup location here"
                     value={pickup}
@@ -442,8 +441,8 @@ const MoveryyGoPage = () => {
                 <div className="h-px bg-slate-100 mx-6" />
 
                 {/* Drop row */}
-                <div className="flex items-center gap-4 px-6 py-5">
-                  <MdLocationOn size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#22C55E' }} />
+                <div className="flex items-center gap-3 px-5 py-5">
+                  <MdLocationOn size={20} style={{ color: '#22C55E', flexShrink: 0 }} />
                   <input
                     type="text"
                     placeholder="Enter drop location here"
