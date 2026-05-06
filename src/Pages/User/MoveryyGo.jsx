@@ -387,7 +387,7 @@ const MoveryyGoPage = () => {
 
       {/* ── Navbar ── */}
       <header className="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-40">
-        <div className="max-w-5xl mx-auto px-8 md:px-14 h-14 flex items-center justify-between">
+        <div className="w-full px-8 md:px-14 h-14 flex items-center justify-between">
           <NavLink to="/"><img src={logo} alt="Moveryy" className="h-9 w-auto object-contain" /></NavLink>
           <NavLink to="/profile">
             <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm hover:bg-blue-700 transition-colors cursor-pointer shadow-sm">
