@@ -426,14 +426,14 @@ const MoveryyGoPage = () => {
               <div className="w-full border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-md">
 
                 {/* Pickup row */}
-                <div className="flex items-center gap-4 px-6 py-5">
-                  <span style={{ width: 14, height: 14, borderRadius: '50%', backgroundColor: '#22C55E', flexShrink: 0 }} />
+                <div className="relative flex items-center px-6 py-5">
+                  <MdOutlineMyLocation size={18} className="absolute left-6 top-1/2 -translate-y-1/2" style={{ color: '#f1b80a' }} />
                   <input
                     type="text"
                     placeholder="Enter pickup location here"
                     value={pickup}
                     onChange={e => setPickup(e.target.value)}
-                    className="flex-1 text-slate-800 text-base font-medium outline-none placeholder:text-slate-400 bg-transparent"
+                    className="w-full pl-8 text-slate-800 text-base font-medium outline-none placeholder:text-slate-400 bg-transparent"
                   />
                 </div>
 
@@ -441,15 +441,15 @@ const MoveryyGoPage = () => {
                 <div className="h-px bg-slate-100 mx-6" />
 
                 {/* Drop row */}
-                <div className="flex items-center gap-4 px-6 py-5">
-                  <span style={{ width: 14, height: 14, borderRadius: '50%', backgroundColor: '#EF4444', flexShrink: 0 }} />
+                <div className="relative flex items-center px-6 py-5">
+                  <MdLocationOn size={18} className="absolute left-6 top-1/2 -translate-y-1/2" style={{ color: '#22C55E' }} />
                   <input
                     type="text"
                     placeholder="Enter drop location here"
                     value={drop}
                     onChange={e => setDrop(e.target.value)}
                     onKeyDown={e => e.key === 'Enter' && handleContinue()}
-                    className="flex-1 text-slate-800 text-base font-medium outline-none placeholder:text-slate-400 bg-transparent"
+                    className="w-full pl-8 text-slate-800 text-base font-medium outline-none placeholder:text-slate-400 bg-transparent"
                   />
                 </div>
               </div>

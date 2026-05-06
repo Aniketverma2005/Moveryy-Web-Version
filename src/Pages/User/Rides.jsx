@@ -249,7 +249,7 @@ const RidesPage = () => {
                     <h2 className="text-xl font-black text-white mb-6 relative z-10 tracking-wide">Where are you going?</h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
                         <div className="relative">
-                            <MdOutlineMyLocation size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#EAB308' }} />
+                            <MdOutlineMyLocation size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#f1b80a' }} />
                             <input type="text" placeholder="Pickup Location" value={pickup} onChange={e => setPickup(e.target.value)}
                                 className="w-full pl-10 pr-5 py-4 bg-white rounded-2xl text-slate-800 font-semibold text-sm focus:ring-4 focus:ring-yellow-300 shadow-md placeholder:text-slate-400 outline-none" />
                         </div>
