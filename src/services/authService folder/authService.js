@@ -299,7 +299,72 @@ export const authService = {
         }
     },
 
-    // ── Verify OTP — POST /api/v1/users/verify-otp ────────────────────────────
+    // ── Send Login OTP — POST /api/v1/users/resend-otp ───────────────────────
+    // Used for login-via-OTP: sends OTP to a registered email
+    // Body: { email }
+    // 200: { statusCode: 200, success: true, message: "OTP sent to your email", data: {} }
+    // 400: User already verified or invalid email
+    sendLoginOtp: async (email) => {
+        try {
+            const response = await api.post('/api/v1/users/resend-otp', {
+                email: email.trim().toLowerCase(),
+            });
+            console.log('✅ Login OTP sent to:', email);
+            return response?.data || response;
+        } catch (error) {
+            console.error('❌ Send login OTP error:', error);
+            throw error instanceof Error ? error : new Error(error?.message || 'Failed to send OTP');
+        }
+    },
+
+    // ── Login with OTP — POST /api/v1/users/verify-otp ───────────────────────
+    // Body: { email, otp }
+    // On success: treat as login — fetch user profile and store session
+    loginWithOtp: async (email, otp) => {
+        try {
+            const response = await api.post('/api/v1/users/verify-otp', {
+                email: email.trim().toLowerCase(),
+                otp: otp.trim(),
+            });
+
+            const { token, refreshToken, user } = extractAuth(response);
+            if (token) TokenManager.setToken(token);
+            if (refreshToken) TokenManager.setRefreshToken(refreshToken);
+
+            // Try to get user from response first
+            if (user && (user.role || user.email)) {
+                localStorage.setItem('moveryy_user', JSON.stringify(user));
+                console.log('✅ OTP login successful (body):', user?.email);
+                return { token, user };
+            }
+
+            // Fetch profile if not in response
+            try {
+                const profileRes = await api.get('/api/v1/users/user');
+                const fetchedUser =
+                    profileRes?.user ||
+                    profileRes?.data?.user ||
+                    profileRes?.data ||
+                    null;
+                if (fetchedUser && (fetchedUser.role || fetchedUser.email)) {
+                    localStorage.setItem('moveryy_user', JSON.stringify(fetchedUser));
+                    console.log('✅ OTP login — profile fetched:', fetchedUser?.email);
+                    return { token: token || null, user: fetchedUser };
+                }
+            } catch (profileErr) {
+                console.warn('⚠️ Profile fetch failed after OTP login:', profileErr?.message);
+            }
+
+            // Fallback
+            const fallbackUser = { email: email.trim().toLowerCase(), role: 'user' };
+            localStorage.setItem('moveryy_user', JSON.stringify(fallbackUser));
+            return { token: null, user: fallbackUser };
+
+        } catch (error) {
+            console.error('❌ OTP login error:', error);
+            throw error instanceof Error ? error : new Error(error?.message || 'OTP login failed');
+        }
+    },
     // Body: { email, otp }
     // 200: { statusCode: 200, success: true, message: "Email verified successfully!", data: { userId, email } }
     // 400: Invalid or expired OTP

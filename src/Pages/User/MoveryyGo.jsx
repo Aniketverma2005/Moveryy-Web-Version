@@ -405,66 +405,72 @@ const MoveryyGoPage = () => {
         {step === 'welcome' && (
           <motion.div
             key="welcome"
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            transition={{ duration: 0.35 }}
-            className="max-w-lg mx-auto px-6 py-16"
+            exit={{ opacity: 0, y: -16 }}
+            transition={{ duration: 0.3 }}
+            className="min-h-[calc(100vh-56px)] bg-white"
           >
-            {/* Back arrow */}
-            <button onClick={() => navigate(-1)} className="flex items-center gap-1 text-blue-600 font-semibold text-sm mb-10 hover:opacity-70 transition-opacity">
-              <MdArrowBack size={20} />
-            </button>
+            {/* Content area — matches Rapido's left-aligned layout */}
+            <div className="max-w-2xl mx-auto px-6 pt-10 pb-16">
 
-            {/* Title */}
-            <h1 className="text-3xl font-extrabold text-slate-900 mb-2">Welcome to Moveryy Go!</h1>
-            <p className="text-slate-500 text-base mb-10">Book your hassle-free trip with Moveryy Go</p>
+              {/* Title */}
+              <h1 className="text-2xl font-extrabold text-slate-900 mb-1">Welcome to Moveryy Go!</h1>
+              <p className="text-slate-500 text-sm mb-8">Book your hassle-free trip with Moveryy Go</p>
 
-            {/* Pickup input */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 px-5 py-4 flex items-center gap-3 mb-3">
-              <MdOutlineMyLocation size={22} style={{ color: '#EAB308', flexShrink: 0 }} />
-              <input
-                type="text"
-                placeholder="Enter pickup location here"
-                value={pickup}
-                onChange={e => setPickup(e.target.value)}
-                className="flex-1 text-slate-700 font-medium text-sm outline-none placeholder:text-slate-400 bg-transparent"
-              />
-            </div>
+              {/* Input card — full width, inputs separated by a divider, no rounded corners on inner rows */}
+              <div className="border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
 
-            {/* Drop input */}
-            <div className="bg-white rounded-2xl shadow-sm border border-slate-200 px-5 py-4 flex items-center gap-3 mb-8">
-              <MdLocationOn size={22} style={{ color: '#22C55E', flexShrink: 0 }} />
-              <input
-                type="text"
-                placeholder="Enter drop location here"
-                value={drop}
-                onChange={e => setDrop(e.target.value)}
-                onKeyDown={e => e.key === 'Enter' && handleContinue()}
-                className="flex-1 text-slate-700 font-medium text-sm outline-none placeholder:text-slate-400 bg-transparent"
-              />
-            </div>
+                {/* Pickup row */}
+                <div className="flex items-center gap-3 px-4 py-4">
+                  <span style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: '#22C55E', flexShrink: 0 }} />
+                  <input
+                    type="text"
+                    placeholder="Enter pickup location here"
+                    value={pickup}
+                    onChange={e => setPickup(e.target.value)}
+                    className="flex-1 text-slate-700 text-sm font-medium outline-none placeholder:text-slate-400 bg-transparent"
+                  />
+                </div>
 
-            {/* Continue button */}
-            <button
-              onClick={handleContinue}
-              disabled={searching || !pickup.trim() || !drop.trim()}
-              className="w-full bg-blue-700 hover:bg-blue-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-black py-4 rounded-2xl text-sm tracking-widest uppercase transition-all active:scale-95 shadow-lg shadow-blue-200 flex items-center justify-center gap-2"
-            >
-              {searching
-                ? <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Searching…</>
-                : 'Continue'}
-            </button>
+                {/* Divider */}
+                <div className="h-px bg-slate-100 mx-4" />
 
-            {/* Subtitle */}
-            <p className="text-center text-slate-400 text-sm italic mt-6">Smart ridepooling &amp; sharing</p>
+                {/* Drop row */}
+                <div className="flex items-center gap-3 px-4 py-4">
+                  <span style={{ width: 12, height: 12, borderRadius: '50%', backgroundColor: '#EF4444', flexShrink: 0 }} />
+                  <input
+                    type="text"
+                    placeholder="Enter drop location here"
+                    value={drop}
+                    onChange={e => setDrop(e.target.value)}
+                    onKeyDown={e => e.key === 'Enter' && handleContinue()}
+                    className="flex-1 text-slate-700 text-sm font-medium outline-none placeholder:text-slate-400 bg-transparent"
+                  />
+                </div>
+              </div>
 
-            {/* Offer a ride link */}
-            <div className="mt-10 text-center">
-              <p className="text-slate-500 text-sm mb-2">Are you a driver?</p>
-              <button onClick={() => setShowPublish(true)} className="inline-flex items-center gap-2 text-blue-600 font-bold text-sm hover:underline">
-                <MdOutlineAddCircleOutline size={18} /> Offer a Ride
+              {/* Continue button */}
+              <button
+                onClick={handleContinue}
+                disabled={searching || !pickup.trim() || !drop.trim()}
+                className="mt-6 w-full bg-blue-700 hover:bg-blue-800 disabled:opacity-40 disabled:cursor-not-allowed text-white font-black py-4 rounded-xl text-sm tracking-widest uppercase transition-all active:scale-95 flex items-center justify-center gap-2"
+              >
+                {searching
+                  ? <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Searching…</>
+                  : 'Continue'}
               </button>
+
+              {/* Smart ridepooling tagline */}
+              <p className="text-center text-slate-400 text-xs italic mt-5">Smart ridepooling &amp; sharing</p>
+
+              {/* Offer a ride */}
+              <div className="mt-10 text-center">
+                <p className="text-slate-400 text-sm mb-2">Are you a driver?</p>
+                <button onClick={() => setShowPublish(true)} className="inline-flex items-center gap-2 text-blue-600 font-bold text-sm hover:underline">
+                  <MdOutlineAddCircleOutline size={18} /> Offer a Ride
+                </button>
+              </div>
             </div>
           </motion.div>
         )}
