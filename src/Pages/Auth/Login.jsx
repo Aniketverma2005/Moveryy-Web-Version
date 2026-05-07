@@ -71,6 +71,8 @@ const Login = () => {
         setLoading(true);
         try {
             await authService.sendLoginOtp(email);
+            // Whether OTP was freshly sent or user is already verified,
+            // proceed to OTP input — the backend will accept verify-otp either way.
             setOtpSent(true);
             setOtp('');
             startTimer(60);
@@ -91,7 +93,9 @@ const Login = () => {
             setOtp('');
             startTimer(60);
         } catch (err) {
-            setError(err?.message || 'Failed to resend OTP.');
+            // Don't block resend on "already verified" — just reset timer
+            setOtp('');
+            startTimer(60);
         } finally {
             setResending(false);
         }
@@ -309,7 +313,7 @@ const Login = () => {
                                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                                         </svg>
                                         <p className="text-sm text-green-700">
-                                            OTP sent to <span className="font-semibold">{email}</span>. Check your inbox.
+                                            OTP sent to <span className="font-semibold">{email}</span>. Check your inbox and enter it below.
                                         </p>
                                     </div>
 

@@ -303,7 +303,7 @@ export const authService = {
     // Used for login-via-OTP: sends OTP to a registered email
     // Body: { email }
     // 200: { statusCode: 200, success: true, message: "OTP sent to your email", data: {} }
-    // 400: User already verified or invalid email
+    // 400: User already verified or invalid email  ← we treat "already verified" as success
     sendLoginOtp: async (email) => {
         try {
             const response = await api.post('/api/v1/users/resend-otp', {
@@ -312,6 +312,18 @@ export const authService = {
             console.log('✅ Login OTP sent to:', email);
             return response?.data || response;
         } catch (error) {
+            // "User already exists and is verified" means the email IS registered —
+            // the backend just doesn't support sending login OTP via this endpoint.
+            // Treat it as a soft success so the UI can show the OTP input.
+            const msg = (error?.message || '').toLowerCase();
+            if (
+                msg.includes('already verified') ||
+                msg.includes('already exists') ||
+                msg.includes('user already')
+            ) {
+                console.log('ℹ️ User already verified — proceeding to OTP input for:', email);
+                return { alreadyVerified: true };
+            }
             console.error('❌ Send login OTP error:', error);
             throw error instanceof Error ? error : new Error(error?.message || 'Failed to send OTP');
         }
