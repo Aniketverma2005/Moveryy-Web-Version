@@ -325,12 +325,12 @@ export const authService = {
         }
     },
 
-    // ── Login with OTP — POST /api/v1/users/verify-otp ───────────────────────
+    // ── Login with OTP — POST /api/v1/users/login/verify-otp ────────────────
     // Body: { email, otp }
-    // On success: treat as login — fetch user profile and store session
+    // On success: returns user + tokens and logs in
     loginWithOtp: async (email, otp) => {
         try {
-            const response = await api.post('/api/v1/users/verify-otp', {
+            const response = await api.post('/api/v1/users/login/verify-otp', {
                 email: email.trim().toLowerCase(),
                 otp: otp.trim(),
             });
@@ -339,31 +339,24 @@ export const authService = {
             if (token) TokenManager.setToken(token);
             if (refreshToken) TokenManager.setRefreshToken(refreshToken);
 
-            // Try to get user from response first
             if (user && (user.role || user.email)) {
                 localStorage.setItem('moveryy_user', JSON.stringify(user));
-                console.log('✅ OTP login successful (body):', user?.email);
+                console.log('✅ OTP login successful:', user?.email);
                 return { token, user };
             }
 
             // Fetch profile if not in response
             try {
                 const profileRes = await api.get('/api/v1/users/user');
-                const fetchedUser =
-                    profileRes?.user ||
-                    profileRes?.data?.user ||
-                    profileRes?.data ||
-                    null;
+                const fetchedUser = profileRes?.user || profileRes?.data?.user || profileRes?.data || null;
                 if (fetchedUser && (fetchedUser.role || fetchedUser.email)) {
                     localStorage.setItem('moveryy_user', JSON.stringify(fetchedUser));
-                    console.log('✅ OTP login — profile fetched:', fetchedUser?.email);
                     return { token: token || null, user: fetchedUser };
                 }
             } catch (profileErr) {
                 console.warn('⚠️ Profile fetch failed after OTP login:', profileErr?.message);
             }
 
-            // Fallback
             const fallbackUser = { email: email.trim().toLowerCase(), role: 'user' };
             localStorage.setItem('moveryy_user', JSON.stringify(fallbackUser));
             return { token: null, user: fallbackUser };
