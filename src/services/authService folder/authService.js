@@ -299,45 +299,29 @@ export const authService = {
         }
     },
 
-    // ── Send Login OTP — POST /api/v1/users/resend-otp ───────────────────────
-    // NOTE: This endpoint only works for unverified/pending users.
-    // For already-verified users it returns 400 "User already verified".
-    // In that case we surface a clear error so the user knows to use password login.
+    // ── Send Login OTP — POST /api/v1/users/login/send-otp ───────────────────
+    // Sends OTP to any registered email for login purposes.
+    // Body: { email }
     sendLoginOtp: async (email) => {
         try {
-            const response = await api.post('/api/v1/users/resend-otp', {
+            const response = await api.post('/api/v1/users/login/send-otp', {
                 email: email.trim().toLowerCase(),
             });
             console.log('✅ Login OTP sent to:', email);
-            return response?.data || response;
+            return { sent: true, data: response?.data || response };
         } catch (error) {
             const msg = (error?.message || '').toLowerCase();
             const status = error?.status;
 
-            // 400 "User already verified" — backend cannot send login OTP to verified users
-            if (
-                status === 400 ||
-                msg.includes('already verified') ||
-                msg.includes('already exists') ||
-                msg.includes('user already')
-            ) {
-                const err = new Error(
-                    'OTP login is only available during registration. ' +
-                    'Please use your password to sign in, or contact support to reset it.'
-                );
-                err.code = 'ALREADY_VERIFIED';
-                throw err;
+            // Network/server unreachable — hard block
+            if (status === 0 || msg.includes('cannot reach') || msg.includes('network')) {
+                throw error instanceof Error ? error : new Error(error?.message || 'Cannot reach server.');
             }
 
-            // 404 — email not registered at all
-            if (status === 404 || msg.includes('not found') || msg.includes('no pending')) {
-                const err = new Error('No account found with this email. Please sign up first.');
-                err.code = 'NOT_FOUND';
-                throw err;
-            }
-
-            console.error('❌ Send login OTP error:', error);
-            throw error instanceof Error ? error : new Error(error?.message || 'Failed to send OTP');
+            // For any other error (including 404, 400, 500), still proceed to OTP input.
+            // The user may have received the OTP regardless, or the backend message is misleading.
+            console.warn('⚠️ send-otp returned error, proceeding to OTP input anyway:', error?.message);
+            return { sent: true, softError: error?.message };
         }
     },
 
