@@ -71,13 +71,17 @@ const Login = () => {
         setLoading(true);
         try {
             await authService.sendLoginOtp(email);
-            // Whether OTP was freshly sent or user is already verified,
-            // proceed to OTP input — the backend will accept verify-otp either way.
+            // OTP sent successfully (only works for unverified/pending accounts)
             setOtpSent(true);
             setOtp('');
             startTimer(60);
         } catch (err) {
-            setError(err?.message || 'Could not send OTP. Make sure this email is registered.');
+            if (err?.code === 'ALREADY_VERIFIED') {
+                // Backend doesn't support login OTP for verified users — guide them
+                setError('Your account is already verified. Please use your password to sign in. If you forgot your password, contact support.');
+            } else {
+                setError(err?.message || 'Could not send OTP. Make sure this email is registered.');
+            }
         } finally {
             setLoading(false);
         }
@@ -93,9 +97,7 @@ const Login = () => {
             setOtp('');
             startTimer(60);
         } catch (err) {
-            // Don't block resend on "already verified" — just reset timer
-            setOtp('');
-            startTimer(60);
+            setError(err?.message || 'Failed to resend OTP.');
         } finally {
             setResending(false);
         }
@@ -190,11 +192,24 @@ const Login = () => {
 
                     {/* ── Error banner ── */}
                     {error && (
-                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2">
-                            <svg className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                            </svg>
-                            <p className="text-sm text-red-700">{error}</p>
+                        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                            <div className="flex items-start gap-2">
+                                <svg className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                                </svg>
+                                <div className="flex-1">
+                                    <p className="text-sm text-red-700">{error}</p>
+                                    {error.includes('already verified') || error.includes('use your password') ? (
+                                        <button
+                                            type="button"
+                                            onClick={() => switchMode('password')}
+                                            className="mt-2 text-xs font-bold text-[#4285F4] hover:underline"
+                                        >
+                                            → Switch to Password Login
+                                        </button>
+                                    ) : null}
+                                </div>
+                            </div>
                         </div>
                     )}
 
