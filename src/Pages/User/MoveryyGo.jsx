@@ -417,3 +417,185 @@ const PublishRideModal = ({ onClose, onPublish }) => {
     </motion.div>
   );
 };
+
+// ── Main Page ─────────────────────────────────────────────────────────────────
+const MoveryyGoPage = () => {
+  const initials = getInitials();
+  const navigate = useNavigate();
+
+  const [step, setStep] = useState('welcome');
+  const [pickup, setPickup] = useState('');
+  const [drop, setDrop] = useState('');
+  const [searching, setSearching] = useState(false);
+  const [results, setResults] = useState([]);
+  const [locationOverlay, setLocationOverlay] = useState(null);
+  const [selectedRide, setSelectedRide] = useState(null);
+  const [modalSeats, setModalSeats] = useState(1);
+  const [confirmedRides, setConfirmedRides] = useState({});
+  const [showPublish, setShowPublish] = useState(false);
+
+  const handleContinue = () => {
+    if (!pickup.trim() || !drop.trim()) return;
+    setSearching(true);
+    setTimeout(() => { setResults(MOCK_RIDES); setSearching(false); setStep('results'); }, 1200);
+  };
+
+  const handleBack = () => { setStep('welcome'); setResults([]); setSelectedRide(null); };
+  const handleViewDetails = (ride) => { setSelectedRide(ride); setModalSeats(1); };
+  const handleConfirmBooking = () => setConfirmedRides(prev => ({ ...prev, [selectedRide.id]: true }));
+
+  return (
+    <motion.div variants={pageVariants} initial="hidden" animate="show" className="min-h-screen bg-[#F3F4F6] font-sans">
+
+      {/* Navbar */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="w-full px-6 md:px-10 h-14 flex items-center justify-between">
+          <NavLink to="/"><img src={logo} alt="Moveryy" className="h-9 w-auto object-contain" /></NavLink>
+          <NavLink to="/profile">
+            <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold text-sm hover:bg-blue-700 transition-colors cursor-pointer">
+              {initials ?? <MdOutlinePerson size={18} />}
+            </div>
+          </NavLink>
+        </div>
+      </header>
+
+      <AnimatePresence mode="wait">
+
+        {/* ── STEP 1: WELCOME ── */}
+        {step === 'welcome' && (
+          <motion.div key="welcome" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25 }}
+            className="min-h-[calc(100vh-56px)] bg-white">
+            <div className="w-full px-6 md:px-10 pt-8 pb-10">
+
+              <h1 className="text-2xl font-bold text-gray-900 mb-1">Welcome to Moveryy Go!</h1>
+              <p className="text-gray-500 text-sm mb-8">Book your hassle-free trip with Moveryy Go</p>
+
+              {/* Input fields with dot connector */}
+              <div className="w-full relative">
+                {/* Dotted connector line */}
+                <div style={{
+                  position: 'absolute', left: '24px', top: '26px',
+                  width: '1.5px', height: 'calc(100% - 52px)',
+                  background: 'repeating-linear-gradient(to bottom,#9CA3AF 0,#9CA3AF 4px,transparent 4px,transparent 9px)',
+                  zIndex: 1,
+                }} />
+
+                {/* Pickup */}
+                <div className="w-full flex items-center gap-4 px-5 py-4 bg-[#F3F4F6] cursor-pointer hover:bg-[#EAECEE] transition-colors"
+                  onClick={() => setLocationOverlay('pickup')}>
+                  <div style={{ width: 16, height: 16, borderRadius: '50%', border: '4px solid #22C55E', backgroundColor: '#fff', flexShrink: 0, zIndex: 2 }} />
+                  <span className={`flex-1 text-sm select-none ${pickup ? 'text-gray-800 font-medium' : 'text-gray-400'}`}>
+                    {pickup || 'Enter pickup location here'}
+                  </span>
+                  {pickup && <button onClick={e => { e.stopPropagation(); setPickup(''); }}><MdClose size={14} className="text-gray-400 hover:text-gray-600" /></button>}
+                </div>
+
+                {/* Gap */}
+                <div className="h-7 bg-white" />
+
+                {/* Drop */}
+                <div className="w-full flex items-center gap-4 px-5 py-4 bg-[#F3F4F6] cursor-pointer hover:bg-[#EAECEE] transition-colors"
+                  onClick={() => setLocationOverlay('drop')}>
+                  <div style={{ width: 16, height: 16, borderRadius: '50%', border: '4px solid #EF4444', backgroundColor: '#fff', flexShrink: 0, zIndex: 2 }} />
+                  <span className={`flex-1 text-sm select-none ${drop ? 'text-gray-800 font-medium' : 'text-gray-400'}`}>
+                    {drop || 'Enter drop location here'}
+                  </span>
+                  {drop && <button onClick={e => { e.stopPropagation(); setDrop(''); }}><MdClose size={14} className="text-gray-400 hover:text-gray-600" /></button>}
+                </div>
+              </div>
+
+              {/* Continue */}
+              <button onClick={handleContinue} disabled={searching || !pickup.trim() || !drop.trim()}
+                className="mt-5 w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3.5 text-sm tracking-wide uppercase transition-colors flex items-center justify-center gap-2">
+                {searching ? <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Searching…</> : 'Continue'}
+              </button>
+
+              <p className="text-center text-gray-400 text-xs mt-5">Smart ridepooling &amp; sharing</p>
+
+              <div className="mt-10 text-center">
+                <p className="text-gray-400 text-sm mb-2">Are you a driver?</p>
+                <button onClick={() => setShowPublish(true)} className="inline-flex items-center gap-1.5 text-blue-600 font-semibold text-sm hover:underline">
+                  <MdOutlineAddCircleOutline size={17} /> Offer a Ride
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
+        {/* ── STEP 2: RESULTS ── */}
+        {step === 'results' && (
+          <motion.div key="results" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25 }}
+            className="w-full max-w-5xl mx-auto px-6 md:px-10 py-8 pb-16">
+
+            {/* Route bar */}
+            <div className="flex items-center gap-3 mb-8">
+              <button onClick={handleBack} className="w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:border-blue-400 transition-colors flex-shrink-0">
+                <MdArrowBack size={18} />
+              </button>
+              <div className="flex-1 bg-white rounded-xl border border-gray-200 px-4 py-2.5 flex items-center gap-3">
+                <div className="flex flex-col items-center gap-0.5 flex-shrink-0">
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', border: '2px solid #22C55E', backgroundColor: '#fff' }} />
+                  <div style={{ width: 1, height: 12, backgroundColor: '#D1D5DB' }} />
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', border: '2px solid #EF4444', backgroundColor: '#fff' }} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-xs font-semibold text-gray-800 truncate">{pickup}</p>
+                  <p className="text-xs text-gray-400 truncate">{drop}</p>
+                </div>
+                <button onClick={handleBack} className="text-xs text-blue-600 font-semibold hover:underline flex-shrink-0">Edit</button>
+              </div>
+              <button onClick={() => setShowPublish(true)}
+                className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2.5 rounded-xl transition-colors flex-shrink-0">
+                <MdOutlineAddCircleOutline size={15} /> Offer Ride
+              </button>
+            </div>
+
+            {/* Header */}
+            <div className="flex items-center justify-between mb-5">
+              <div>
+                <h2 className="text-lg font-bold text-gray-900">Available Rides</h2>
+                <div className="w-10 h-0.5 bg-blue-600 rounded-full mt-1" />
+              </div>
+              <span className="text-xs text-gray-500 bg-white border border-gray-200 px-3 py-1.5 rounded-full">
+                {results.length} ride{results.length !== 1 ? 's' : ''} found
+              </span>
+            </div>
+
+            {results.length === 0 ? (
+              <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
+                <MdOutlineDirectionsCar size={36} className="text-gray-300 mx-auto mb-3" />
+                <p className="font-semibold text-gray-700">No rides found</p>
+                <p className="text-sm text-gray-400 mt-1">Try a different route, or offer your own ride.</p>
+                <button onClick={() => setShowPublish(true)} className="mt-4 bg-blue-600 text-white font-semibold px-5 py-2 rounded-xl text-sm hover:bg-blue-700 transition-colors">
+                  Offer a Ride
+                </button>
+              </div>
+            ) : (
+              <motion.div variants={containerVariants} initial="hidden" animate="show" className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {results.map(ride => <RideCard key={ride.id} ride={ride} onViewDetails={handleViewDetails} />)}
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {selectedRide && <RideDetailModal ride={selectedRide} seats={modalSeats} onSeatsChange={setModalSeats} onConfirm={handleConfirmBooking} onClose={() => setSelectedRide(null)} confirmed={!!confirmedRides[selectedRide.id]} />}
+      </AnimatePresence>
+      <AnimatePresence>
+        {showPublish && <PublishRideModal onClose={() => setShowPublish(false)} onPublish={() => setShowPublish(false)} />}
+      </AnimatePresence>
+      <AnimatePresence>
+        {locationOverlay && (
+          <LocationSearchOverlay type={locationOverlay}
+            onSelect={(value) => { if (locationOverlay === 'pickup') setPickup(value); else setDrop(value); setLocationOverlay(null); }}
+            onClose={() => setLocationOverlay(null)} />
+        )}
+      </AnimatePresence>
+
+    </motion.div>
+  );
+};
+
+export default MoveryyGoPage;
