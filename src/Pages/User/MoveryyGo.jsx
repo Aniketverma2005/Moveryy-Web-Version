@@ -642,7 +642,7 @@ const MoveryyGoPage = () => {
                   {/* Green ring dot with white center */}
                   <div style={{
                     width: 16, height: 16, borderRadius: '50%',
-                    border: '2.5px solid #22C55E',
+                    border: '4px solid #22C55E',
                     backgroundColor: '#ffffff',
                     flexShrink: 0, zIndex: 2,
                     boxShadow: '0 0 0 2px rgba(34,197,94,0.18)',
@@ -658,7 +658,7 @@ const MoveryyGoPage = () => {
                 </div>
 
                 {/* Gap between fields — increased */}
-                <div className="h-3 bg-white" />
+                <div className="h-6 bg-white" />
 
                 {/* Drop field */}
                 <div
@@ -668,7 +668,7 @@ const MoveryyGoPage = () => {
                   {/* Red ring dot with white center */}
                   <div style={{
                     width: 16, height: 16, borderRadius: '50%',
-                    border: '2.5px solid #EF4444',
+                    border: '4px solid #EF4444',
                     backgroundColor: '#ffffff',
                     flexShrink: 0, zIndex: 2,
                     boxShadow: '0 0 0 2px rgba(239,68,68,0.18)',
