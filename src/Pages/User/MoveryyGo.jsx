@@ -125,7 +125,7 @@ const LocationSearchOverlay = ({ type, onSelect, onClose }) => {
       </div>
 
       {/* Location type indicator */}
-      <div className="flex items-center gap-2 px-5 py-2.5 bg-slate-50 border-b border-slate-100">
+      <div className="flex items-center gap-3 px-20 py-2.5 bg-slate-50 border-b border-slate-100">
         <span style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: dotColor, flexShrink: 0 }} />
         <span className="text-xs font-semibold text-slate-500">{label}</span>
       </div>
