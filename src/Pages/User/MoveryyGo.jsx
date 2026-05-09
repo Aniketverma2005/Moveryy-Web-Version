@@ -603,10 +603,10 @@ const MoveryyGoPage = () => {
             className="min-h-[calc(100vh-56px)] bg-white"
           >
             {/* Full-width content — no max-width cap on the input card */}
-            <div className="w-full px-8 md:px-16 lg:px-24 pt-12 pb-16">
+            <div className="w-full px-6 md:px-6 lg:px-6 pt-6 pb-6">
 
               {/* Title block */}
-              <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-2 leading-tight">
+              <h1 className="text-3xl md:text-3xl font-extrabold text-slate-900 mb-2 leading-tight">
                 Welcome to Moveryy Go!
               </h1>
               <p className="text-slate-500 text-base md:text-lg mb-10">
