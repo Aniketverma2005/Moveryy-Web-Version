@@ -27,10 +27,10 @@ const RIDE_TYPES = [
 ];
 
 const MOCK_DRIVERS = [
-    { id: 1, name: 'Arjun Sharma', avatar: 'A', color: 'bg-blue-500', rating: 4.9, trips: 1240, verified: true, vehicle: 'Swift Dzire', plate: 'DL 4C 2341', eta: '3 min', distance: '0.8 km', basePrice: { cab: 220, bike: 110, auto: 150 } },
-    { id: 2, name: 'Priya Mehta', avatar: 'P', color: 'bg-purple-500', rating: 4.8, trips: 870, verified: true, vehicle: 'Honda Activa', plate: 'MH 12 AB 987', eta: '5 min', distance: '1.2 km', basePrice: { cab: 200, bike: 100, auto: 140 } },
-    { id: 3, name: 'Rahul Verma', avatar: 'R', color: 'bg-green-500', rating: 4.7, trips: 620, verified: false, vehicle: 'Bajaj Auto', plate: 'KA 05 MN 451', eta: '7 min', distance: '1.9 km', basePrice: { cab: 180, bike: 90, auto: 130 } },
-    { id: 4, name: 'Sneha Kapoor', avatar: 'S', color: 'bg-orange-500', rating: 4.6, trips: 430, verified: true, vehicle: 'Hyundai i20', plate: 'UP 32 GH 782', eta: '9 min', distance: '2.4 km', basePrice: { cab: 160, bike: 80, auto: 120 } },
+    { id: 1, name: 'Arjun Sharma', avatar: 'A', color: 'bg-blue-600', rating: 4.9, trips: 1240, verified: true, vehicle: 'Swift Dzire', plate: 'DL 4C 2341', eta: '3 min', distance: '0.8 km', basePrice: { cab: 220, bike: 110, auto: 150 } },
+    { id: 2, name: 'Priya Mehta', avatar: 'P', color: 'bg-blue-600', rating: 4.8, trips: 870, verified: true, vehicle: 'Honda Activa', plate: 'MH 12 AB 987', eta: '5 min', distance: '1.2 km', basePrice: { cab: 200, bike: 100, auto: 140 } },
+    { id: 3, name: 'Rahul Verma', avatar: 'R', color: 'bg-blue-600', rating: 4.7, trips: 620, verified: false, vehicle: 'Bajaj Auto', plate: 'KA 05 MN 451', eta: '7 min', distance: '1.9 km', basePrice: { cab: 180, bike: 90, auto: 130 } },
+    { id: 4, name: 'Sneha Kapoor', avatar: 'S', color: 'bg-blue-600', rating: 4.6, trips: 430, verified: true, vehicle: 'Hyundai i20', plate: 'UP 32 GH 782', eta: '9 min', distance: '2.4 km', basePrice: { cab: 160, bike: 80, auto: 120 } },
 ];
 
 const DriverCard = ({ driver, rideType, offeredPrice, onPriceChange, onSelect, isSelected }) => {
