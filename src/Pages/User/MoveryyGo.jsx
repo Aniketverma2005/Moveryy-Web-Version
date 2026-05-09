@@ -616,30 +616,36 @@ const MoveryyGoPage = () => {
               {/* Location fields — Rapido style: separate sharp rectangles with dot connector */}
               <div className="w-full relative">
 
-                {/* Vertical dotted connector line between the two circles */}
-                <div
-                  style={{
-                    position: 'absolute',
-                    left: '28px',
-                    top: '50px',
-                    width: '2px',
-                    height: '28px',
-                    background: 'repeating-linear-gradient(to bottom, rgba(156,163,175,0.5) 0px, rgba(156,163,175,0.5) 4px, transparent 4px, transparent 8px)',
-                    zIndex: 1,
-                  }}
-                />
+                {/*
+                  Connector line: starts from bottom of green dot, ends at top of red dot.
+                  Pickup field height ≈ 54px (py-4 = 16px × 2 + ~22px content).
+                  Dot center is at left: 28px (px-5=20px + half of 16px dot = 8px).
+                  Line starts at top: 27px (center of pickup dot) and spans through the gap to drop dot center.
+                  Gap between fields = 12px (h-3).
+                  Total span = 54px - 27px + 12px + 27px = 66px → use 60px to be safe.
+                */}
+                <div style={{
+                  position: 'absolute',
+                  left: '27px',
+                  top: '27px',
+                  width: '2px',
+                  height: 'calc(100% - 54px)',
+                  background: 'repeating-linear-gradient(to bottom, #9CA3AF 0px, #9CA3AF 5px, transparent 5px, transparent 10px)',
+                  zIndex: 1,
+                }} />
 
                 {/* Pickup field */}
                 <div
                   className="w-full flex items-center gap-4 px-5 py-4 bg-[#F1F3F4] cursor-pointer hover:bg-[#E8EAEB] transition-colors"
-                  style={{ borderBottom: '1px solid transparent' }}
                   onClick={() => setLocationOverlay('pickup')}
                 >
-                  {/* Green filled circle */}
+                  {/* Green ring dot with white center */}
                   <div style={{
-                    width: 14, height: 14, borderRadius: '50%',
-                    backgroundColor: '#22C55E', flexShrink: 0, zIndex: 2,
-                    boxShadow: '0 0 0 3px rgba(34,197,94,0.15)'
+                    width: 16, height: 16, borderRadius: '50%',
+                    border: '2.5px solid #22C55E',
+                    backgroundColor: '#ffffff',
+                    flexShrink: 0, zIndex: 2,
+                    boxShadow: '0 0 0 2px rgba(34,197,94,0.18)',
                   }} />
                   <span className={`flex-1 text-sm font-medium select-none ${pickup ? 'text-slate-800' : 'text-slate-500'}`}>
                     {pickup || 'Enter pickup location here'}
@@ -651,19 +657,21 @@ const MoveryyGoPage = () => {
                   )}
                 </div>
 
-                {/* Gap between fields */}
-                <div className="h-1.5 bg-white" />
+                {/* Gap between fields — increased */}
+                <div className="h-3 bg-white" />
 
                 {/* Drop field */}
                 <div
                   className="w-full flex items-center gap-4 px-5 py-4 bg-[#F1F3F4] cursor-pointer hover:bg-[#E8EAEB] transition-colors"
                   onClick={() => setLocationOverlay('drop')}
                 >
-                  {/* Red filled circle */}
+                  {/* Red ring dot with white center */}
                   <div style={{
-                    width: 14, height: 14, borderRadius: '50%',
-                    backgroundColor: '#EF4444', flexShrink: 0, zIndex: 2,
-                    boxShadow: '0 0 0 3px rgba(239,68,68,0.15)'
+                    width: 16, height: 16, borderRadius: '50%',
+                    border: '2.5px solid #EF4444',
+                    backgroundColor: '#ffffff',
+                    flexShrink: 0, zIndex: 2,
+                    boxShadow: '0 0 0 2px rgba(239,68,68,0.18)',
                   }} />
                   <span className={`flex-1 text-sm font-medium select-none ${drop ? 'text-slate-800' : 'text-slate-500'}`}>
                     {drop || 'Enter drop location here'}
