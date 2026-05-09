@@ -613,50 +613,74 @@ const MoveryyGoPage = () => {
                 Book your hassle-free trip with Moveryy Go
               </p>
 
-              {/* Full-width input card */}
-              <div className="w-full border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-md">
+              {/* Location fields — Rapido style: separate sharp rectangles with dot connector */}
+              <div className="w-full relative">
 
-                {/* Pickup row — click to open overlay */}
+                {/* Vertical dotted connector line between the two circles */}
                 <div
-                  className="flex items-center gap-3 px-5 py-5 cursor-pointer hover:bg-slate-50 transition-colors"
+                  style={{
+                    position: 'absolute',
+                    left: '28px',
+                    top: '50px',
+                    width: '2px',
+                    height: '28px',
+                    background: 'repeating-linear-gradient(to bottom, rgba(156,163,175,0.5) 0px, rgba(156,163,175,0.5) 4px, transparent 4px, transparent 8px)',
+                    zIndex: 1,
+                  }}
+                />
+
+                {/* Pickup field */}
+                <div
+                  className="w-full flex items-center gap-4 px-5 py-4 bg-[#F1F3F4] cursor-pointer hover:bg-[#E8EAEB] transition-colors"
+                  style={{ borderBottom: '1px solid transparent' }}
                   onClick={() => setLocationOverlay('pickup')}
                 >
-                  <MdOutlineMyLocation size={20} style={{ color: '#f1b80a', flexShrink: 0 }} />
-                  <span className={`flex-1 text-base font-medium select-none ${pickup ? 'text-slate-800' : 'text-slate-400'}`}>
+                  {/* Green filled circle */}
+                  <div style={{
+                    width: 14, height: 14, borderRadius: '50%',
+                    backgroundColor: '#22C55E', flexShrink: 0, zIndex: 2,
+                    boxShadow: '0 0 0 3px rgba(34,197,94,0.15)'
+                  }} />
+                  <span className={`flex-1 text-sm font-medium select-none ${pickup ? 'text-slate-800' : 'text-slate-500'}`}>
                     {pickup || 'Enter pickup location here'}
                   </span>
                   {pickup && (
-                    <button onClick={e => { e.stopPropagation(); setPickup(''); }} className="text-slate-300 hover:text-slate-500 transition-colors">
-                      <MdClose size={16} />
+                    <button onClick={e => { e.stopPropagation(); setPickup(''); }} className="text-slate-400 hover:text-slate-600 transition-colors">
+                      <MdClose size={15} />
                     </button>
                   )}
                 </div>
 
-                {/* Divider */}
-                <div className="h-px bg-slate-100 mx-6" />
+                {/* Gap between fields */}
+                <div className="h-1.5 bg-white" />
 
-                {/* Drop row — click to open overlay */}
+                {/* Drop field */}
                 <div
-                  className="flex items-center gap-3 px-5 py-5 cursor-pointer hover:bg-slate-50 transition-colors"
+                  className="w-full flex items-center gap-4 px-5 py-4 bg-[#F1F3F4] cursor-pointer hover:bg-[#E8EAEB] transition-colors"
                   onClick={() => setLocationOverlay('drop')}
                 >
-                  <MdLocationOn size={20} style={{ color: '#22C55E', flexShrink: 0 }} />
-                  <span className={`flex-1 text-base font-medium select-none ${drop ? 'text-slate-800' : 'text-slate-400'}`}>
+                  {/* Red filled circle */}
+                  <div style={{
+                    width: 14, height: 14, borderRadius: '50%',
+                    backgroundColor: '#EF4444', flexShrink: 0, zIndex: 2,
+                    boxShadow: '0 0 0 3px rgba(239,68,68,0.15)'
+                  }} />
+                  <span className={`flex-1 text-sm font-medium select-none ${drop ? 'text-slate-800' : 'text-slate-500'}`}>
                     {drop || 'Enter drop location here'}
                   </span>
                   {drop && (
-                    <button onClick={e => { e.stopPropagation(); setDrop(''); }} className="text-slate-300 hover:text-slate-500 transition-colors">
-                      <MdClose size={16} />
+                    <button onClick={e => { e.stopPropagation(); setDrop(''); }} className="text-slate-400 hover:text-slate-600 transition-colors">
+                      <MdClose size={15} />
                     </button>
                   )}
                 </div>
               </div>
 
-              {/* Continue button — full width */}
+              {/* Continue button — full width, sharp edges */}
               <button
                 onClick={handleContinue}
                 disabled={searching || !pickup.trim() || !drop.trim()}
-                className="mt-6 w-full bg-blue-700 hover:bg-blue-800 disabled:opacity-40 disabled:cursor-not-allowed text-white font-black py-4 rounded-2xl text-base tracking-widest uppercase transition-all active:scale-95 flex items-center justify-center gap-2 shadow-lg"
+                className="mt-4 w-full bg-blue-700 hover:bg-blue-800 disabled:opacity-40 disabled:cursor-not-allowed text-white font-black py-4 text-sm tracking-widest uppercase transition-all active:scale-95 flex items-center justify-center gap-2"
               >
                 {searching
                   ? <><span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" /> Searching…</>
