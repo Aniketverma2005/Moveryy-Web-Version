@@ -1,10 +1,11 @@
-﻿import { useState } from 'react';
+﻿import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   MdOutlineStar, MdLocationOn, MdOutlinePerson, MdOutlineMyLocation,
   MdOutlineDirectionsCar, MdOutlinePhone, MdCheck, MdOutlineAccessTime,
   MdOutlineVerified, MdOutlineEventSeat, MdOutlineGroups,
   MdOutlineAddCircleOutline, MdCalendarToday, MdClose, MdArrowBack,
+  MdSearch, MdMyLocation, MdHistory,
 } from 'react-icons/md';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { cardVariants, containerVariants, pageVariants, fadeSlideUp } from '../../utils/animations';
@@ -18,6 +19,194 @@ const getInitials = () => {
     if (u?.name) return u.name.charAt(0).toUpperCase();
   } catch { }
   return null;
+};
+
+// ── Location Search Overlay ───────────────────────────────────────────────────
+const LocationSearchOverlay = ({ type, onSelect, onClose }) => {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [gpsLoading, setGpsLoading] = useState(false);
+  const inputRef = useRef(null);
+  const debounceRef = useRef(null);
+
+  const isPickup = type === 'pickup';
+  const dotColor = isPickup ? '#22C55E' : '#EF4444';
+  const label = isPickup ? 'Pickup Location' : 'Drop Location';
+  const placeholder = isPickup ? 'Search pickup location…' : 'Search drop location…';
+
+  useEffect(() => {
+    setTimeout(() => inputRef.current?.focus(), 100);
+  }, []);
+
+  const searchLocations = useCallback(async (q) => {
+    if (!q.trim() || q.trim().length < 2) { setResults([]); return; }
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&addressdetails=1&limit=6&countrycodes=in`,
+        { headers: { 'Accept-Language': 'en' } }
+      );
+      const data = await res.json();
+      setResults(data.map(item => ({
+        id: item.place_id,
+        name: item.display_name.split(',').slice(0, 2).join(', '),
+        full: item.display_name,
+        type: item.type,
+        lat: item.lat,
+        lon: item.lon,
+      })));
+    } catch {
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const handleChange = (e) => {
+    const val = e.target.value;
+    setQuery(val);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => searchLocations(val), 350);
+  };
+
+  const handleGPS = () => {
+    if (!navigator.geolocation) return;
+    setGpsLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json`,
+            { headers: { 'Accept-Language': 'en' } }
+          );
+          const data = await res.json();
+          const name = data.display_name?.split(',').slice(0, 3).join(', ') || 'Current Location';
+          onSelect(name);
+        } catch {
+          onSelect('Current Location');
+        } finally {
+          setGpsLoading(false);
+        }
+      },
+      () => { setGpsLoading(false); },
+      { timeout: 8000 }
+    );
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 bg-white flex flex-col"
+    >
+      {/* Header */}
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-slate-100 bg-white">
+        <button onClick={onClose} className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-slate-100 transition-colors flex-shrink-0">
+          <MdArrowBack size={22} className="text-slate-700" />
+        </button>
+        <div className="flex-1 flex items-center gap-2 bg-slate-100 rounded-xl px-3 py-2.5">
+          <MdSearch size={18} className="text-slate-400 flex-shrink-0" />
+          <input
+            ref={inputRef}
+            type="text"
+            value={query}
+            onChange={handleChange}
+            placeholder={placeholder}
+            className="flex-1 bg-transparent text-slate-800 text-sm font-medium outline-none placeholder:text-slate-400"
+          />
+          {query && (
+            <button onClick={() => { setQuery(''); setResults([]); }} className="text-slate-400 hover:text-slate-600">
+              <MdClose size={16} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Location type indicator */}
+      <div className="flex items-center gap-2 px-5 py-2.5 bg-slate-50 border-b border-slate-100">
+        <span style={{ width: 10, height: 10, borderRadius: '50%', backgroundColor: dotColor, flexShrink: 0 }} />
+        <span className="text-xs font-semibold text-slate-500">{label}</span>
+      </div>
+
+      {/* Results */}
+      <div className="flex-1 overflow-y-auto">
+        {/* Use Current Location */}
+        <button
+          onClick={handleGPS}
+          disabled={gpsLoading}
+          className="w-full flex items-center gap-4 px-5 py-4 hover:bg-slate-50 transition-colors border-b border-slate-100"
+        >
+          <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+            {gpsLoading
+              ? <span className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+              : <MdMyLocation size={20} className="text-blue-600" />
+            }
+          </div>
+          <div className="text-left">
+            <p className="text-sm font-bold text-slate-800">Use Current Location</p>
+            <p className="text-xs text-slate-400">Using GPS</p>
+          </div>
+          <MdArrowBack size={16} className="text-slate-300 ml-auto rotate-180" />
+        </button>
+
+        {/* Loading */}
+        {loading && (
+          <div className="flex flex-col items-center justify-center py-16 gap-3">
+            <span className="w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            <p className="text-sm text-slate-400">Searching locations…</p>
+          </div>
+        )}
+
+        {/* Search results */}
+        {!loading && results.length > 0 && (
+          <div>
+            {results.map(r => (
+              <button
+                key={r.id}
+                onClick={() => onSelect(r.name)}
+                className="w-full flex items-start gap-4 px-5 py-4 hover:bg-slate-50 transition-colors border-b border-slate-50 text-left"
+              >
+                <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <MdLocationOn size={18} className="text-slate-500" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold text-slate-800 truncate">{r.name}</p>
+                  <p className="text-xs text-slate-400 truncate mt-0.5">{r.full}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!loading && query.length >= 2 && results.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-16 gap-2">
+            <MdSearch size={40} className="text-slate-200" />
+            <p className="text-sm text-slate-400">No locations found for "{query}"</p>
+          </div>
+        )}
+
+        {/* Initial hint */}
+        {!loading && query.length < 2 && (
+          <div className="px-5 pt-6">
+            <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Suggestions</p>
+            {['Delhi', 'Mumbai', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata'].map(city => (
+              <button
+                key={city}
+                onClick={() => { setQuery(city); searchLocations(city); }}
+                className="w-full flex items-center gap-3 py-3 border-b border-slate-50 hover:bg-slate-50 transition-colors text-left"
+              >
+                <MdHistory size={16} className="text-slate-300 flex-shrink-0" />
+                <span className="text-sm text-slate-600 font-medium">{city}</span>
+              </button>
+            ))}
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
 };
 
 // ── Mock rides ────────────────────────────────────────────────────────────────
@@ -358,11 +547,13 @@ const MoveryyGoPage = () => {
   const [searching, setSearching] = useState(false);
   const [results, setResults] = useState([]);
 
+  // Location search overlay
+  const [locationOverlay, setLocationOverlay] = useState(null); // 'pickup' | 'drop' | null
+
   const [selectedRide, setSelectedRide] = useState(null);
   const [modalSeats, setModalSeats] = useState(1);
   const [confirmedRides, setConfirmedRides] = useState({});
   const [showPublish, setShowPublish] = useState(false);
-
   const handleContinue = () => {
     if (!pickup.trim() || !drop.trim()) return;
     setSearching(true);
@@ -425,32 +616,39 @@ const MoveryyGoPage = () => {
               {/* Full-width input card */}
               <div className="w-full border border-slate-200 rounded-2xl overflow-hidden bg-white shadow-md">
 
-                {/* Pickup row */}
-                <div className="flex items-center gap-3 px-5 py-5">
+                {/* Pickup row — click to open overlay */}
+                <div
+                  className="flex items-center gap-3 px-5 py-5 cursor-pointer hover:bg-slate-50 transition-colors"
+                  onClick={() => setLocationOverlay('pickup')}
+                >
                   <MdOutlineMyLocation size={20} style={{ color: '#f1b80a', flexShrink: 0 }} />
-                  <input
-                    type="text"
-                    placeholder="Enter pickup location here"
-                    value={pickup}
-                    onChange={e => setPickup(e.target.value)}
-                    className="flex-1 text-slate-800 text-base font-medium outline-none placeholder:text-slate-400 bg-transparent"
-                  />
+                  <span className={`flex-1 text-base font-medium select-none ${pickup ? 'text-slate-800' : 'text-slate-400'}`}>
+                    {pickup || 'Enter pickup location here'}
+                  </span>
+                  {pickup && (
+                    <button onClick={e => { e.stopPropagation(); setPickup(''); }} className="text-slate-300 hover:text-slate-500 transition-colors">
+                      <MdClose size={16} />
+                    </button>
+                  )}
                 </div>
 
                 {/* Divider */}
                 <div className="h-px bg-slate-100 mx-6" />
 
-                {/* Drop row */}
-                <div className="flex items-center gap-3 px-5 py-5">
+                {/* Drop row — click to open overlay */}
+                <div
+                  className="flex items-center gap-3 px-5 py-5 cursor-pointer hover:bg-slate-50 transition-colors"
+                  onClick={() => setLocationOverlay('drop')}
+                >
                   <MdLocationOn size={20} style={{ color: '#22C55E', flexShrink: 0 }} />
-                  <input
-                    type="text"
-                    placeholder="Enter drop location here"
-                    value={drop}
-                    onChange={e => setDrop(e.target.value)}
-                    onKeyDown={e => e.key === 'Enter' && handleContinue()}
-                    className="flex-1 text-slate-800 text-base font-medium outline-none placeholder:text-slate-400 bg-transparent"
-                  />
+                  <span className={`flex-1 text-base font-medium select-none ${drop ? 'text-slate-800' : 'text-slate-400'}`}>
+                    {drop || 'Enter drop location here'}
+                  </span>
+                  {drop && (
+                    <button onClick={e => { e.stopPropagation(); setDrop(''); }} className="text-slate-300 hover:text-slate-500 transition-colors">
+                      <MdClose size={16} />
+                    </button>
+                  )}
                 </div>
               </div>
 
@@ -629,15 +827,14 @@ const MoveryyGoPage = () => {
 
       {/* ── Ride Detail Modal ── */}
       <AnimatePresence>
-        {selectedRide && (
-          <RideDetailModal
-            ride={selectedRide}
-            seats={modalSeats}
-            onSeatsChange={setModalSeats}
-            onConfirm={handleConfirmBooking}
-            onClose={() => setSelectedRide(null)}
-            confirmed={!!confirmedRides[selectedRide.id]}
-          />
+        {selectedRide && (<RideDetailModal
+          ride={selectedRide}
+          seats={modalSeats}
+          onSeatsChange={setModalSeats}
+          onConfirm={handleConfirmBooking}
+          onClose={() => setSelectedRide(null)}
+          confirmed={!!confirmedRides[selectedRide.id]}
+        />
         )}
       </AnimatePresence>
 
@@ -645,6 +842,21 @@ const MoveryyGoPage = () => {
       <AnimatePresence>
         {showPublish && (
           <PublishRideModal onClose={() => setShowPublish(false)} onPublish={() => setShowPublish(false)} />
+        )}
+      </AnimatePresence>
+
+      {/* ── Location Search Overlay ── */}
+      <AnimatePresence>
+        {locationOverlay && (
+          <LocationSearchOverlay
+            type={locationOverlay}
+            onSelect={(value) => {
+              if (locationOverlay === 'pickup') setPickup(value);
+              else setDrop(value);
+              setLocationOverlay(null);
+            }}
+            onClose={() => setLocationOverlay(null)}
+          />
         )}
       </AnimatePresence>
 
