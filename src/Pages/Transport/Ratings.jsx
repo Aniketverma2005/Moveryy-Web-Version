@@ -1,387 +1,222 @@
-import React, { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MdOutlineStar, MdCheck } from 'react-icons/md';
+import { cardVariants, containerVariants, pageVariants } from '../../utils/animations';
 
-const Ratings = () => {
-  // State for pending customer ratings
-  const [customerRatings, setCustomerRatings] = useState({
-    'Priya Sharma': { 
-      rating: 0, 
-      comment: '', 
-      orderId: 'ORD-2046',
-      location: 'Sector 15, Gurugram → DLF Phase 2',
-      isSubmitted: false,
-      submittedAt: null
-    },
-    'Rohit Gupta': { 
-      rating: 0, 
-      comment: '', 
-      orderId: 'ORD-2047',
-      location: 'Connaught Place → Karol Bagh, Delhi',
-      isSubmitted: false,
-      submittedAt: null
-    }
-  });
+const RATING_LABELS = { 1: 'Poor', 2: 'Fair', 3: 'Good', 4: 'Very Good', 5: 'Excellent' };
 
-  const [filterDate, setFilterDate] = useState('');
-  const [showSuccessMessage, setShowSuccessMessage] = useState('');
-  const [hoveredStar, setHoveredStar] = useState({ customer: '', star: -1 });
+const PENDING = [
+  { name: 'Priya Sharma', orderId: 'ORD-2046', route: 'Sector 15, Gurugram → DLF Phase 2' },
+  { name: 'Rohit Gupta', orderId: 'ORD-2047', route: 'Connaught Place → Karol Bagh, Delhi' },
+];
 
-  // More realistic and diverse rating history
-  const ratingHistory = [
-    {
-      orderId: 'ORD-2045',
-      customerName: 'Arjun Mehta',
-      date: '15/01/2025',
-      rating: 5,
-      comment: 'Bhai sahab, ekdum perfect service! Saman bilkul safe pahuncha diya. Driver bhi bahut polite tha. 👍',
-      location: 'Dwarka → Vasant Kunj'
-    },
-    {
-      orderId: 'ORD-2044',
-      customerName: 'Kavya Singh',
-      date: '12/01/2025',
-      rating: 4,
-      comment: 'Good service overall. Driver was on time and handled everything professionally. Just wish the truck was a bit cleaner.',
-      location: 'Gurgaon → Noida'
-    },
-    {
-      orderId: 'ORD-2043',
-      customerName: 'Vikash Kumar',
-      date: '08/01/2025',
-      rating: 5,
-      comment: 'Excellent work! Helped me move my entire 3BHK without any damage. Very careful with fragile items. Highly recommend! 🌟',
-      location: 'Lajpat Nagar → Greater Kailash'
-    },
-    {
-      orderId: 'ORD-2042',
-      customerName: 'Sneha Joshi',
-      date: '05/01/2025',
-      rating: 3,
-      comment: 'Service was okay but took longer than expected. Driver was helpful though.',
-      location: 'Rohini → Pitampura'
-    },
-    {
-      orderId: 'ORD-2041',
-      customerName: 'Rajesh Agarwal',
-      date: '02/01/2025',
-      rating: 5,
-      comment: 'Outstanding! Made my office relocation so smooth. Team was very professional and efficient. Will definitely use again.',
-      location: 'CP → Cyber City'
-    }
-  ];
+const HISTORY = [
+  { orderId: 'ORD-2045', customer: 'Arjun Mehta', date: '15 Jan 2025', rating: 5, route: 'Dwarka → Vasant Kunj', comment: 'Ekdum perfect service! Saman bilkul safe pahuncha diya. Driver bhi bahut polite tha.' },
+  { orderId: 'ORD-2044', customer: 'Kavya Singh', date: '12 Jan 2025', rating: 4, route: 'Gurgaon → Noida', comment: 'Good service overall. Driver was on time and handled everything professionally.' },
+  { orderId: 'ORD-2043', customer: 'Vikash Kumar', date: '08 Jan 2025', rating: 5, route: 'Lajpat Nagar → Greater Kailash', comment: 'Excellent work! Helped me move my entire 3BHK without any damage. Highly recommend!' },
+  { orderId: 'ORD-2042', customer: 'Sneha Joshi', date: '05 Jan 2025', rating: 3, route: 'Rohini → Pitampura', comment: 'Service was okay but took longer than expected.' },
+  { orderId: 'ORD-2041', customer: 'Rajesh Agarwal', date: '02 Jan 2025', rating: 5, route: 'CP → Cyber City', comment: 'Outstanding! Made my office relocation so smooth. Very professional and efficient.' },
+];
 
-  // Star rating descriptions for better UX
-  const ratingDescriptions = {
-    1: 'Poor - Not satisfied',
-    2: 'Fair - Below expectations', 
-    3: 'Good - Met expectations',
-    4: 'Very Good - Above expectations',
-    5: 'Excellent - Outstanding service!'
-  };
-
-  // Handle star click with better feedback
-  const handleStarClick = (customer, starIndex) => {
-    const newRating = starIndex + 1;
-    setCustomerRatings(prev => ({
-      ...prev,
-      [customer]: {
-        ...prev[customer],
-        rating: newRating
-      }
-    }));
-    
-    // Show brief feedback
-    setShowSuccessMessage(`${newRating} star${newRating > 1 ? 's' : ''} selected for ${customer.split(' ')[0]}`);
-    setTimeout(() => setShowSuccessMessage(''), 2000);
-  };
-
-  // Handle comment changes with character count
-  const handleCommentChange = (customer, comment) => {
-    if (comment.length <= 500) { // Limit comment length
-      setCustomerRatings(prev => ({
-        ...prev,
-        [customer]: {
-          ...prev[customer],
-          comment: comment
-        }
-      }));
-    }
-  };
-
-  // Submit rating with validation and feedback
-  const handleSubmitRating = (customer) => {
-    const customerData = customerRatings[customer];
-    
-    if (customerData.rating === 0) {
-      alert('Please select a star rating before submitting!');
-      return;
-    }
-
-    setCustomerRatings(prev => ({
-      ...prev,
-      [customer]: {
-        ...prev[customer],
-        isSubmitted: true,
-        submittedAt: new Date().toLocaleString()
-      }
-    }));
-
-    setShowSuccessMessage(`Thank you! Your rating for ${customer.split(' ')[0]} has been submitted successfully! 🎉`);
-    setTimeout(() => setShowSuccessMessage(''), 4000);
-  };
-
-  // Interactive star rendering with hover effects
-  const renderInteractiveStars = (customer, currentRating) => {
-    const customerData = customerRatings[customer];
-    
-    return (
-      <div className="flex flex-col items-end">
-        <div className="flex space-x-1 mb-2">
-          {[0, 1, 2, 3, 4].map((starIndex) => {
-            const isActive = starIndex < currentRating;
-            const isHovered = hoveredStar.customer === customer && starIndex <= hoveredStar.star;
-            
-            return (
-              <button
-                key={starIndex}
-                onClick={() => !customerData.isSubmitted && handleStarClick(customer, starIndex)}
-                onMouseEnter={() => !customerData.isSubmitted && setHoveredStar({ customer, star: starIndex })}
-                onMouseLeave={() => setHoveredStar({ customer: '', star: -1 })}
-                className={`text-2xl transition-all duration-200 ${
-                  customerData.isSubmitted 
-                    ? 'cursor-default' 
-                    : 'cursor-pointer hover:scale-125 active:scale-110'
-                } ${
-                  isActive || isHovered ? 'text-yellow-400' : 'text-gray-300'
-                }`}
-                disabled={customerData.isSubmitted}
-                title={ratingDescriptions[starIndex + 1]}
-              >
-                ★
-              </button>
-            );
-          })}
-        </div>
-        
-        {/* Rating description */}
-        {(currentRating > 0 || hoveredStar.customer === customer) && (
-          <p className="text-xs text-gray-500 text-right">
-            {ratingDescriptions[hoveredStar.customer === customer ? hoveredStar.star + 1 : currentRating]}
-          </p>
-        )}
-      </div>
-    );
-  };
-
-  // History stars with better visual feedback
-  const renderHistoryStars = (rating) => {
-    return (
-      <div className="flex space-x-1 items-center">
-        {[1, 2, 3, 4, 5].map((star) => (
-          <span
-            key={star}
-            className={`text-lg ${star <= rating ? 'text-yellow-400' : 'text-gray-300'}`}
-          >
-            ★
-          </span>
-        ))}
-        <span className="ml-2 text-sm font-medium text-gray-600">({rating}/5)</span>
-      </div>
-    );
-  };
-
-  // Format date for better readability
-  const formatDate = (dateStr) => {
-    const [day, month, year] = dateStr.split('/');
-    const date = new Date(year, month - 1, day);
-    const today = new Date();
-    const diffTime = Math.abs(today - date);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 1) return 'Yesterday';
-    if (diffDays <= 7) return `${diffDays} days ago`;
-    return dateStr;
-  };
-
+// ── Star Row ──────────────────────────────────────────────────────────────────
+const StarRow = ({ value, onChange, disabled, size = 24 }) => {
+  const [hovered, setHovered] = useState(0);
   return (
-    <div className="p-6 max-w-7xl mx-auto bg-gray-50 min-h-screen">
-      {/* Success Message */}
-      {showSuccessMessage && (
-        <div className="fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 animate-bounce">
-          {showSuccessMessage}
-        </div>
+    <div className="flex items-center gap-1">
+      {[1, 2, 3, 4, 5].map(s => (
+        <button key={s} type="button"
+          disabled={disabled}
+          onClick={() => !disabled && onChange(s)}
+          onMouseEnter={() => !disabled && setHovered(s)}
+          onMouseLeave={() => !disabled && setHovered(0)}
+          className={`transition-transform ${!disabled ? 'hover:scale-110 cursor-pointer' : 'cursor-default'}`}
+        >
+          <MdOutlineStar size={size}
+            className={s <= (hovered || value) ? 'text-yellow-400' : 'text-gray-200'}
+          />
+        </button>
+      ))}
+      {(hovered || value) > 0 && (
+        <span className="ml-1.5 text-xs text-gray-500 font-medium">
+          {RATING_LABELS[hovered || value]}
+        </span>
       )}
-
-      {/* Header with more personality */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-              Your Driver Rating
-              <div className="ml-4 flex items-center bg-yellow-50 px-3 py-1 rounded-full">
-                <span className="text-yellow-500 text-2xl mr-2">★</span>
-                <span className="text-2xl font-bold text-gray-900">4.7</span>
-                <span className="text-sm text-gray-600 ml-2">(248 reviews)</span>
-              </div>
-            </h1>
-            <p className="text-gray-600 mt-2">Help us improve by rating your recent customers</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Rate Recent Customers Section */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-8">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-bold text-gray-900">Rate Recent Customers</h2>
-          <span className="text-sm text-blue-500 bg-blue-50 px-3 py-1 rounded-full">
-            2 pending ratings
-          </span>
-        </div>
-        
-        <div className="space-y-8">
-          {Object.entries(customerRatings).map(([customerName, data], index) => (
-            <div key={customerName} className={`${index === 0 ? 'border-b border-gray-100 pb-6' : ''}`}>
-              {/* Customer Header */}
-              <div className="flex justify-between items-start mb-4">
-                <div className="flex-1">
-                  <div className="flex items-center space-x-3 mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900">{customerName}</h3>
-                    {data.isSubmitted && (
-                      <span className="bg-green-100 text-green-800 text-xs px-2 py-1 rounded-full">
-                        ✓ Submitted
-                      </span>
-                    )}
-                  </div>
-                  <div className="text-sm text-gray-600 space-y-1">
-                    <p><span className="font-medium">Order:</span> {data.orderId}</p>
-                    <p><span className="font-medium">Route:</span> {data.location}</p>
-                    {data.submittedAt && (
-                      <p><span className="font-medium">Submitted:</span> {data.submittedAt}</p>
-                    )}
-                  </div>
-                </div>
-                {renderInteractiveStars(customerName, data.rating)}
-              </div>
-
-              {/* Comment Section */}
-              <div className="mb-4">
-                <textarea
-                  placeholder={`Share your experience with ${customerName.split(' ')[0]}... (optional)`}
-                  value={data.comment}
-                  onChange={(e) => handleCommentChange(customerName, e.target.value)}
-                  disabled={data.isSubmitted}
-                  className={`w-full p-4 border border-gray-300 rounded-lg resize-none h-24 text-sm transition-colors ${
-                    data.isSubmitted 
-                      ? 'bg-gray-50 cursor-not-allowed' 
-                      : 'focus:ring-2 focus:ring-blue-500 focus:border-blue-500'
-                  }`}
-                />
-                <div className="flex justify-between items-center mt-2">
-                  <span className="text-xs text-gray-500">
-                    {data.comment.length}/500 characters
-                  </span>
-                  {data.comment.length > 400 && (
-                    <span className="text-xs text-orange-500">
-                      {500 - data.comment.length} characters remaining
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Submit Button */}
-              <div className="flex justify-end">
-                {data.isSubmitted ? (
-                  <div className="flex items-center text-green-600">
-                    <span className="mr-2">✓</span>
-                    <span className="font-medium">Rating Submitted</span>
-                  </div>
-                ) : (
-                  <button 
-                    onClick={() => handleSubmitRating(customerName)}
-                    className={`px-6 py-2 rounded-lg font-medium transition-all ${
-                      data.rating > 0
-                        ? 'bg-blue-500 hover:bg-blue-600 text-white shadow-md hover:shadow-lg'
-                        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                    }`}
-                    disabled={data.rating === 0}
-                  >
-                    Submit Rating {data.rating > 0 && `(${data.rating} ★)`}
-                  </button>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Rating History Section */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h2 className="text-xl font-bold text-gray-900">Rating History</h2>
-            <p className="text-sm text-gray-600">Your past customer feedback</p>
-          </div>
-          <div className="relative">
-            <input
-              type="text"
-              placeholder="Search by date (dd/mm/yyyy)"
-              value={filterDate}
-              onChange={(e) => setFilterDate(e.target.value)}
-              className="pl-3 pr-10 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-48"
-            />
-            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-              <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          {ratingHistory
-            .filter(item => !filterDate || item.date.includes(filterDate))
-            .map((item, index) => (
-            <div key={index} className="flex justify-between items-start p-5 border border-gray-200 rounded-xl hover:bg-gray-50 transition-all hover:shadow-md">
-              <div className="flex-1">
-                <div className="flex items-center space-x-4 mb-3">
-                  <span className="font-semibold text-gray-900 bg-gray-100 px-3 py-1 rounded-full text-sm">
-                    {item.orderId}
-                  </span>
-                  <span className="text-gray-400">•</span>
-                  <span className="text-gray-600 font-medium">{formatDate(item.date)}</span>
-                  <span className="text-gray-400">•</span>
-                  <span className="text-xs text-gray-500 bg-blue-50 px-2 py-1 rounded">
-                    {item.location}
-                  </span>
-                </div>
-                
-                <p className="text-lg font-medium text-gray-800 mb-2">{item.customerName}</p>
-                
-                {item.comment && (
-                  <div className="bg-gray-50 p-3 rounded-lg border-l-4 border-blue-200">
-                    <p className="text-sm text-gray-700 italic">"{item.comment}"</p>
-                  </div>
-                )}
-              </div>
-              
-              <div className="ml-6 text-right">
-                {renderHistoryStars(item.rating)}
-                <p className="text-xs text-gray-500 mt-1">
-                  {item.rating >= 4 ? 'Great job! 👏' : item.rating >= 3 ? 'Good work 👍' : 'Room for improvement'}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {ratingHistory.filter(item => !filterDate || item.date.includes(filterDate)).length === 0 && (
-          <div className="text-center py-12">
-            <div className="text-gray-400 text-6xl mb-4">📅</div>
-            <p className="text-gray-500">No ratings found for the selected date</p>
-          </div>
-        )}
-      </div>
     </div>
   );
 };
 
-export default Ratings;
+// ── Pending Rating Card ───────────────────────────────────────────────────────
+const PendingCard = ({ item }) => {
+  const [rating, setRating] = useState(0);
+  const [comment, setComment] = useState('');
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleSubmit = () => {
+    if (!rating) return;
+    setSubmitted(true);
+  };
+
+  return (
+    <motion.div variants={cardVariants}
+      className="bg-white rounded-2xl border border-gray-200 p-5">
+      <div className="flex items-start justify-between mb-3">
+        <div>
+          <h3 className="font-semibold text-gray-900">{item.name}</h3>
+          <p className="text-xs text-gray-400 mt-0.5">{item.orderId} · {item.route}</p>
+        </div>
+        {submitted
+          ? <span className="flex items-center gap-1 text-xs font-semibold text-green-600 bg-green-50 border border-green-100 px-2.5 py-1 rounded-full">
+            <MdCheck size={12} /> Submitted
+          </span>
+          : <StarRow value={rating} onChange={setRating} disabled={submitted} />
+        }
+      </div>
+
+      {!submitted && (
+        <>
+          <textarea
+            value={comment}
+            onChange={e => e.target.value.length <= 500 && setComment(e.target.value)}
+            placeholder={`Share your experience with ${item.name.split(' ')[0]}… (optional)`}
+            rows={3}
+            className="w-full text-sm text-gray-700 bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 resize-none focus:ring-2 focus:ring-blue-300 outline-none placeholder:text-gray-400 mt-3"
+          />
+          <div className="flex items-center justify-between mt-2">
+            <span className="text-xs text-gray-400">{comment.length}/500</span>
+            <button onClick={handleSubmit} disabled={!rating}
+              className={`px-5 py-2 rounded-xl text-sm font-semibold transition-colors ${rating ? 'bg-blue-600 hover:bg-blue-700 text-white' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                }`}>
+              Submit {rating > 0 && `· ${rating}★`}
+            </button>
+          </div>
+        </>
+      )}
+
+      {submitted && (
+        <div className="mt-3 bg-green-50 border border-green-100 rounded-xl px-4 py-3 flex items-center gap-2">
+          <MdCheck size={16} className="text-green-500 flex-shrink-0" />
+          <p className="text-sm text-green-700 font-medium">Rating submitted — thank you!</p>
+        </div>
+      )}
+    </motion.div>
+  );
+};
+
+// ── History Card ──────────────────────────────────────────────────────────────
+const HistoryCard = ({ item }) => (
+  <motion.div variants={cardVariants}
+    className="bg-white rounded-2xl border border-gray-200 p-5 hover:shadow-md transition-all duration-200">
+    <div className="flex items-start justify-between mb-3">
+      <div>
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-xs font-semibold text-gray-500 bg-gray-100 px-2.5 py-0.5 rounded-full">{item.orderId}</span>
+          <span className="text-xs text-gray-400">{item.date}</span>
+        </div>
+        <p className="font-semibold text-gray-900">{item.customer}</p>
+        <p className="text-xs text-gray-400 mt-0.5">{item.route}</p>
+      </div>
+      <div className="text-right flex-shrink-0 ml-4">
+        <StarRow value={item.rating} onChange={() => { }} disabled size={18} />
+        <p className="text-xs text-gray-400 mt-1">
+          {item.rating >= 4 ? 'Great job 👏' : item.rating >= 3 ? 'Good work 👍' : 'Room to improve'}
+        </p>
+      </div>
+    </div>
+    {item.comment && (
+      <div className="bg-gray-50 border-l-2 border-blue-200 rounded-r-xl px-4 py-3 mt-2">
+        <p className="text-sm text-gray-600 italic">"{item.comment}"</p>
+      </div>
+    )}
+  </motion.div>
+);
+
+// ── Main ──────────────────────────────────────────────────────────────────────
+const TransportRatings = () => {
+  const [search, setSearch] = useState('');
+
+  const avgRating = (HISTORY.reduce((s, h) => s + h.rating, 0) / HISTORY.length).toFixed(1);
+  const filtered = HISTORY.filter(h =>
+    !search || h.date.toLowerCase().includes(search.toLowerCase()) || h.customer.toLowerCase().includes(search.toLowerCase())
+  );
+
+  return (
+    <motion.div variants={pageVariants} initial="hidden" animate="show"
+      className="p-6 max-w-3xl mx-auto space-y-6">
+
+      {/* Header */}
+      <div className="bg-white rounded-2xl border border-gray-200 p-5">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-xl font-bold text-gray-900">Your Rating</h1>
+            <div className="w-10 h-0.5 bg-blue-600 rounded-full mt-1" />
+            <p className="text-sm text-gray-500 mt-2">Rate your recent customers and view feedback</p>
+          </div>
+          <div className="text-right">
+            <div className="flex items-center gap-1.5 justify-end">
+              <MdOutlineStar size={22} className="text-yellow-400" />
+              <span className="text-3xl font-bold text-gray-900">{avgRating}</span>
+            </div>
+            <p className="text-xs text-gray-400 mt-0.5">{HISTORY.length} reviews</p>
+          </div>
+        </div>
+
+        {/* Rating distribution */}
+        <div className="mt-4 space-y-1.5">
+          {[5, 4, 3, 2, 1].map(star => {
+            const count = HISTORY.filter(h => h.rating === star).length;
+            const pct = Math.round((count / HISTORY.length) * 100);
+            return (
+              <div key={star} className="flex items-center gap-2">
+                <span className="text-xs text-gray-500 w-4">{star}</span>
+                <MdOutlineStar size={12} className="text-yellow-400 flex-shrink-0" />
+                <div className="flex-1 bg-gray-100 rounded-full h-1.5">
+                  <div className="bg-yellow-400 h-1.5 rounded-full transition-all" style={{ width: `${pct}%` }} />
+                </div>
+                <span className="text-xs text-gray-400 w-6 text-right">{count}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Pending ratings */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-base font-bold text-gray-900">Rate Recent Customers</h2>
+          <span className="text-xs font-semibold text-blue-600 bg-blue-50 border border-blue-100 px-2.5 py-1 rounded-full">
+            {PENDING.length} pending
+          </span>
+        </div>
+        <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-3">
+          {PENDING.map(p => <PendingCard key={p.orderId} item={p} />)}
+        </motion.div>
+      </div>
+
+      {/* History */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="text-base font-bold text-gray-900">Rating History</h2>
+          <input
+            type="text"
+            placeholder="Search by name or date…"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            className="text-xs bg-white border border-gray-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-blue-300 outline-none placeholder:text-gray-400 w-44"
+          />
+        </div>
+        <motion.div variants={containerVariants} initial="hidden" animate="show" className="space-y-3">
+          {filtered.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-gray-200 p-10 text-center">
+              <MdOutlineStar size={32} className="text-gray-200 mx-auto mb-2" />
+              <p className="text-sm text-gray-500">No results found</p>
+            </div>
+          ) : (
+            filtered.map(h => <HistoryCard key={h.orderId} item={h} />)
+          )}
+        </motion.div>
+      </div>
+    </motion.div>
+  );
+};
+
+export default TransportRatings;

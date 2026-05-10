@@ -1,325 +1,270 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  MdOutlineLocationOn, MdArrowBack, MdOutlineDirectionsCar,
+  MdOutlineAccessTime, MdOutlinePhone, MdCheck, MdClose,
+  MdOutlineAttachMoney,
+} from 'react-icons/md';
+import { cardVariants, containerVariants, pageVariants } from '../../utils/animations';
 
-const Bookings = () => {
-  const [activeTab, setActiveTab] = useState('Active');
-  const [selectedBooking, setSelectedBooking] = useState(null);
+const TABS = ['Active', 'Completed', 'Rejected'];
 
-  // Sample booking data
-  const bookings = {
-    Active: [
-      {
-        id: 'ORD-2042',
-        pickup: 'Sector 10, Gurugram',
-        dropoff: 'The Sapphire Mall, Gurugram',
-        status: 'Accepted',
-        customerName: 'Naman Chaudhary',
-        customerPhone: '+91 98765 43210',
-        time: '2 min',
-        distance: '12.5 km',
-        estimatedFare: '₹2500',
-        earnings: '₹2500',
-        pickupTime: '10:30 AM',
-        vehicleType: 'Sedan',
-        paymentMethod: 'Cash',
-        service: 'Residential Move',
-        estimatedLoad: '2 BHK',
-        schedule: 'Today, 10:30 AM',
-        specialInstructions: 'Handle with care. Customer has a narrow stairwell.'
-      }
-    ],
-    Completed: [
-      {
-        id: 'ORD-2041',
-        pickup: 'Sector 37,Gurugram',
-        dropoff: 'Iffco Chowk, Gurugram',
-        status: 'Completed',
-        customerName: 'Shruti Sharma',
-        customerPhone: '+91 87654 32109',
-        time: '45 min',
-        distance: '18.2 km',
-        earnings: '₹3200',
-        completedTime: '9:45 AM',
-        vehicleType: 'Hatchback',
-        paymentMethod: 'UPI'
-      },
-      {
-        id: 'ORD-2040',
-        pickup: 'GTB Nagar, Delhi',
-        dropoff: 'Rohini Sector 18, Delhi',
-        status: 'Completed',
-        customerName: 'Amitansh Patel',
-        customerPhone: '+91 76543 21098',
-        time: '25 min',
-        distance: '8.7 km',
-        earnings: '₹1800',
-        completedTime: '8:20 AM',
-        vehicleType: 'Sedan',
-        paymentMethod: 'Card'
-      }
-    ],
-    Rejected: [
-      {
-        id: 'ORD-2039',
-        pickup: 'Sector 16, Noida',
-        dropoff: 'Indirapuram, Ghaziabad',
-        status: 'Rejected',
-        customerName: 'Sneha Joshi',
-        customerPhone: '+91 65432 10987',
-        time: '1 hour ago',
-        distance: '22.1 km',
-        reason: 'Too far from current location',
-        rejectedTime: '7:30 AM',
-        vehicleType: 'SUV',
-        paymentMethod: 'Cash'
-      }
-    ]
-  };
+const STATUS_STYLE = {
+  Accepted: 'bg-blue-50 text-blue-600 border-blue-100',
+  Completed: 'bg-green-50 text-green-600 border-green-100',
+  Rejected: 'bg-red-50 text-red-500 border-red-100',
+  Active: 'bg-blue-50 text-blue-600 border-blue-100',
+};
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'Assigned':
-        return 'text-blue-500 bg-blue-50';
-      case 'Completed':
-        return 'text-green-600 bg-green-50';
-      case 'Rejected':
-        return 'text-red-600 bg-red-50';
-      default:
-        return 'text-gray-600 bg-gray-50';
-    }
-  };
+const bookings = {
+  Active: [
+    {
+      id: 'ORD-2042', pickup: 'Sector 10, Gurugram', dropoff: 'The Sapphire Mall, Gurugram',
+      status: 'Accepted', customerName: 'Naman Chaudhary', customerPhone: '+91 98765 43210',
+      time: '2 min', distance: '12.5 km', earnings: '₹2500', pickupTime: '10:30 AM',
+      vehicleType: 'Sedan', paymentMethod: 'Cash', service: 'Residential Move',
+      estimatedLoad: '2 BHK', schedule: 'Today, 10:30 AM',
+      specialInstructions: 'Handle with care. Customer has a narrow stairwell.',
+    },
+  ],
+  Completed: [
+    {
+      id: 'ORD-2041', pickup: 'Sector 37, Gurugram', dropoff: 'Iffco Chowk, Gurugram',
+      status: 'Completed', customerName: 'Shruti Sharma', customerPhone: '+91 87654 32109',
+      time: '45 min', distance: '18.2 km', earnings: '₹3200', completedTime: '9:45 AM',
+      vehicleType: 'Hatchback', paymentMethod: 'UPI',
+    },
+    {
+      id: 'ORD-2040', pickup: 'GTB Nagar, Delhi', dropoff: 'Rohini Sector 18, Delhi',
+      status: 'Completed', customerName: 'Amitansh Patel', customerPhone: '+91 76543 21098',
+      time: '25 min', distance: '8.7 km', earnings: '₹1800', completedTime: '8:20 AM',
+      vehicleType: 'Sedan', paymentMethod: 'Card',
+    },
+  ],
+  Rejected: [
+    {
+      id: 'ORD-2039', pickup: 'Sector 16, Noida', dropoff: 'Indirapuram, Ghaziabad',
+      status: 'Rejected', customerName: 'Sneha Joshi', customerPhone: '+91 65432 10987',
+      time: '1 hour ago', distance: '22.1 km', reason: 'Too far from current location',
+      rejectedTime: '7:30 AM', vehicleType: 'SUV', paymentMethod: 'Cash',
+    },
+  ],
+};
 
-  const getTabStyle = (tab) => {
-    return activeTab === tab
-      ? 'px-4 py-2 text-sm font-medium text-blue-500 bg-blue-50 border-b-2 border-blue-500'
-      : 'px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 hover:bg-gray-50';
-  };
+// ── Detail View ───────────────────────────────────────────────────────────────
+const BookingDetail = ({ booking, onBack }) => (
+  <motion.div variants={pageVariants} initial="hidden" animate="show"
+    className="p-6 max-w-2xl mx-auto">
+    <button onClick={onBack}
+      className="flex items-center gap-2 text-blue-600 text-sm font-semibold mb-6 hover:opacity-70 transition-opacity">
+      <MdArrowBack size={18} /> Back to Bookings
+    </button>
 
-  // If a booking is selected, show detailed view
-  if (selectedBooking) {
-    return (
-      <div className="flex-1 bg-gray-50 min-h-screen">
-        <div className="p-6 max-w-4xl mx-auto">
-          {/* Back Button */}
-          <button
-            onClick={() => setSelectedBooking(null)}
-            className="flex items-center text-blue-500 hover:text-blue-600 mb-6"
-          >
-            <span className="mr-2">←</span> Back to Bookings
-          </button>
-
-          {/* Customer Info and Earnings Combined */}
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <div className="flex justify-between items-start">
-              <div>
-                <p className="text-sm text-gray-500 mb-1">Customer</p>
-                <h2 className="text-2xl font-bold text-gray-900 mb-2">{selectedBooking.customerName}</h2>
-                <p className="text-sm text-gray-600">{selectedBooking.id} • {selectedBooking.status}</p>
-                <p className="text-sm text-gray-600 mt-1">Phone: {selectedBooking.customerPhone}</p>
-                <p className="text-sm text-gray-600">Payment: {selectedBooking.paymentMethod}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-gray-500 mb-1">Earnings</p>
-                <p className="text-3xl font-bold text-gray-900">{selectedBooking.earnings}</p>
-              </div>
-            </div>
+    {/* Customer + Earnings */}
+    <div className="bg-white rounded-2xl border border-gray-200 p-5 mb-4">
+      <div className="flex items-start justify-between">
+        <div>
+          <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Customer</p>
+          <h2 className="text-xl font-bold text-gray-900">{booking.customerName}</h2>
+          <p className="text-sm text-gray-500 mt-1">{booking.id}</p>
+          <div className="flex items-center gap-1.5 mt-1 text-sm text-gray-500">
+            <MdOutlinePhone size={14} className="text-gray-400" />
+            {booking.customerPhone}
           </div>
-
-          {/* Route Information */}
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <div className="space-y-4">
-              {/* Pickup */}
-              <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-orange-500 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Pickup</p>
-                  <p className="text-blue-500 font-medium">{selectedBooking.pickup}</p>
-                </div>
-              </div>
-
-              {/* Drop-off */}
-              <div className="flex items-start space-x-3">
-                <div className="w-6 h-6 bg-red-400 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                  <div className="w-2 h-2 bg-white rounded-full"></div>
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Drop-off</p>
-                  <p className="text-blue-500 font-medium">{selectedBooking.dropoff}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Trip Information */}
-          <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-            <div className="grid grid-cols-2 gap-6 mb-4">
-              <div>
-                <p className="text-sm text-gray-500 mb-1">Service</p>
-                <p className="font-medium text-gray-900">{selectedBooking.service}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 mb-1">Estimated Load</p>
-                <p className="font-medium text-gray-900">{selectedBooking.estimatedLoad}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 mb-1">Schedule</p>
-                <p className="font-medium text-gray-900">{selectedBooking.schedule}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500 mb-1">Distance</p>
-                <p className="font-medium text-gray-900">{selectedBooking.distance}</p>
-              </div>
-            </div>
-
-            {/* Special Instructions */}
-            <div className="mt-4 p-3 bg-yellow-50 rounded-lg border-l-4 border-yellow-400">
-              <p className="text-sm text-gray-600">
-                <span className="font-medium">Special instructions:</span> {selectedBooking.specialInstructions}
-              </p>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="space-y-3">
-            <button className="w-full bg-blue-500 text-white py-4 px-6 rounded-lg font-medium text-lg hover:bg-blue-600 transition-colors shadow-sm">
-              🚗 Arrived at Pickup
-            </button>
-            <button className="w-full bg-blue-500 text-white py-4 px-6 rounded-lg font-medium text-lg hover:bg-blue-600 transition-colors shadow-sm">
-              🚀 Start Trip
-            </button>
-            <button className="w-full bg-red-400 text-white py-4 px-6 rounded-lg font-medium text-lg hover:bg-red-500 transition-colors shadow-sm">
-              ❌ Cancel Trip
-            </button>
-            <button className="w-full bg-blue-500 text-white py-4 px-6 rounded-lg font-medium text-lg hover:bg-blue-600 transition-colors shadow-sm">
-              ✅ Complete Trip
-            </button>
-          </div>
+          <p className="text-sm text-gray-500 mt-0.5">Payment: {booking.paymentMethod}</p>
+        </div>
+        <div className="text-right">
+          <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-1">Earnings</p>
+          <p className="text-3xl font-bold text-gray-900">{booking.earnings}</p>
+          <span className={`inline-block mt-2 text-xs font-semibold px-2.5 py-1 rounded-full border ${STATUS_STYLE[booking.status] || STATUS_STYLE.Active}`}>
+            {booking.status}
+          </span>
         </div>
       </div>
-    );
-  }
+    </div>
 
-  return (
-    <div className="flex-1 bg-gray-50 min-h-screen">
-      {/* Content */}
-      <div className="p-6">
-        <div className="bg-white rounded-lg shadow-sm">
-          {/* Tabs */}
-          <div className="border-b border-gray-200">
-            <nav className="flex space-x-8 px-6">
-              {['Active', 'Completed', 'Rejected'].map((tab) => (
-                <button
-                  key={tab}
-                  onClick={() => setActiveTab(tab)}
-                  className={getTabStyle(tab)}
-                >
-                  {tab}
-                </button>
-              ))}
-            </nav>
+    {/* Route */}
+    <div className="bg-white rounded-2xl border border-gray-200 p-5 mb-4">
+      <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-4">Route</p>
+      <div className="flex items-start gap-3">
+        <div className="flex flex-col items-center gap-1 mt-1 flex-shrink-0">
+          <div style={{ width: 10, height: 10, borderRadius: '50%', border: '2.5px solid #22C55E', backgroundColor: '#fff' }} />
+          <div style={{ width: 1.5, height: 32, background: 'repeating-linear-gradient(to bottom,#9CA3AF 0,#9CA3AF 4px,transparent 4px,transparent 8px)' }} />
+          <div style={{ width: 10, height: 10, borderRadius: '50%', border: '2.5px solid #EF4444', backgroundColor: '#fff' }} />
+        </div>
+        <div className="flex-1 space-y-4">
+          <div>
+            <p className="text-xs text-gray-400 uppercase tracking-wider font-medium">Pickup</p>
+            <p className="text-sm font-semibold text-gray-800">{booking.pickup}</p>
           </div>
-
-          {/* Booking Cards */}
-          <div className="p-6">
-            {bookings[activeTab].length === 0 ? (
-              <div className="text-center py-12">
-                <p className="text-gray-500">No {activeTab.toLowerCase()} bookings found.</p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {bookings[activeTab].map((booking) => (
-                  <div key={booking.id} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
-                    {/* Booking Header */}
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="flex items-center space-x-3">
-                        <h3 className="font-semibold text-gray-900">{booking.id}</h3>
-                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(booking.status)}`}>
-                          {booking.status}
-                        </span>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-sm text-gray-500">{booking.customerName}</p>
-                        <p className="text-xs text-gray-400">{booking.time}</p>
-                      </div>
-                    </div>
-
-                    {/* Route Information */}
-                    <div className="space-y-2">
-                      {/* Pickup */}
-                      <div className="flex items-center space-x-3">
-                        <div className="w-3 h-3 bg-green-500 rounded-full flex-shrink-0"></div>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">{booking.pickup}</p>
-                        </div>
-                      </div>
-
-                      {/* Route Line */}
-                      <div className="flex items-center space-x-3">
-                        <div className="w-3 flex justify-center">
-                          <div className="w-0.5 h-6 bg-gray-300"></div>
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-xs text-gray-500">{booking.distance}</p>
-                        </div>
-                      </div>
-
-                      {/* Destination */}
-                      <div className="flex items-center space-x-3">
-                        <div className="w-3 h-3 bg-red-400 rounded-full flex-shrink-0"></div>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-gray-900">{booking.dropoff}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Open Link */}
-                    <div className="mt-3">
-                      <button
-                        onClick={() => setSelectedBooking(booking)}
-                        className="text-blue-500 hover:text-blue-600 text-sm underline bg-transparent border-none cursor-pointer"
-                      >
-                        Open
-                      </button>
-                    </div>
-
-                    {/* Additional Info */}
-                    <div className="mt-4 pt-3 border-t border-gray-100">
-                      <div className="flex justify-between items-center">
-                        <div className="flex space-x-4">
-                          {booking.earnings && (
-                            <span className="text-sm font-semibold text-green-600">
-                              Earned: {booking.earnings}
-                            </span>
-                          )}
-                          {booking.reason && (
-                            <span className="text-sm text-red-500">
-                              Reason: {booking.reason}
-                            </span>
-                          )}
-                        </div>
-
-                        {activeTab === 'Active' && (
-                          <div className="flex space-x-2">
-                            <button className="px-3 py-1 text-xs font-medium text-red-500 bg-red-50 rounded-md hover:bg-red-100">
-                              Decline
-                            </button>
-                            <button className="px-3 py-1 text-xs font-medium text-white bg-blue-500 rounded-md hover:bg-blue-600">
-                              Accept
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
+          <div>
+            <p className="text-xs text-gray-400 uppercase tracking-wider font-medium">Drop-off</p>
+            <p className="text-sm font-semibold text-gray-800">{booking.dropoff}</p>
           </div>
         </div>
       </div>
     </div>
+
+    {/* Trip Info */}
+    {booking.service && (
+      <div className="bg-white rounded-2xl border border-gray-200 p-5 mb-4">
+        <p className="text-xs text-gray-400 font-medium uppercase tracking-wider mb-4">Trip Details</p>
+        <div className="grid grid-cols-2 gap-4">
+          {[
+            { label: 'Service', value: booking.service },
+            { label: 'Estimated Load', value: booking.estimatedLoad },
+            { label: 'Schedule', value: booking.schedule },
+            { label: 'Distance', value: booking.distance },
+          ].map(({ label, value }) => (
+            <div key={label}>
+              <p className="text-xs text-gray-400 mb-0.5">{label}</p>
+              <p className="text-sm font-semibold text-gray-800">{value}</p>
+            </div>
+          ))}
+        </div>
+        {booking.specialInstructions && (
+          <div className="mt-4 p-3 bg-amber-50 border border-amber-100 rounded-xl">
+            <p className="text-xs text-amber-700">
+              <span className="font-semibold">Note: </span>{booking.specialInstructions}
+            </p>
+          </div>
+        )}
+      </div>
+    )}
+
+    {/* Actions */}
+    <div className="space-y-2.5">
+      {[
+        { label: '🚗 Arrived at Pickup', style: 'bg-blue-600 hover:bg-blue-700 text-white' },
+        { label: '🚀 Start Trip', style: 'bg-blue-600 hover:bg-blue-700 text-white' },
+        { label: '✅ Complete Trip', style: 'bg-green-600 hover:bg-green-700 text-white' },
+        { label: '❌ Cancel Trip', style: 'bg-white hover:bg-red-50 text-red-500 border border-red-200' },
+      ].map(({ label, style }) => (
+        <button key={label} className={`w-full py-3 px-5 rounded-xl font-semibold text-sm transition-colors ${style}`}>
+          {label}
+        </button>
+      ))}
+    </div>
+  </motion.div>
+);
+
+// ── Booking Card ──────────────────────────────────────────────────────────────
+const BookingCard = ({ booking, onOpen, activeTab }) => (
+  <motion.div variants={cardVariants}
+    className="bg-white rounded-2xl border border-gray-200 p-5 hover:shadow-md transition-all duration-200">
+    {/* Header */}
+    <div className="flex items-start justify-between mb-4">
+      <div className="flex items-center gap-2.5">
+        <span className="text-sm font-bold text-gray-900">{booking.id}</span>
+        <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full border ${STATUS_STYLE[booking.status] || STATUS_STYLE.Active}`}>
+          {booking.status}
+        </span>
+      </div>
+      <div className="text-right">
+        <p className="text-xs font-semibold text-gray-700">{booking.customerName}</p>
+        <p className="text-xs text-gray-400 mt-0.5">{booking.time}</p>
+      </div>
+    </div>
+
+    {/* Route */}
+    <div className="flex items-start gap-3 mb-4">
+      <div className="flex flex-col items-center gap-0.5 mt-1 flex-shrink-0">
+        <div style={{ width: 9, height: 9, borderRadius: '50%', border: '2px solid #22C55E', backgroundColor: '#fff' }} />
+        <div style={{ width: 1.5, height: 22, background: 'repeating-linear-gradient(to bottom,#9CA3AF 0,#9CA3AF 3px,transparent 3px,transparent 7px)' }} />
+        <div style={{ width: 9, height: 9, borderRadius: '50%', border: '2px solid #EF4444', backgroundColor: '#fff' }} />
+      </div>
+      <div className="flex-1 space-y-2">
+        <p className="text-sm font-semibold text-gray-800 leading-tight">{booking.pickup}</p>
+        <p className="text-xs text-gray-400">{booking.distance}</p>
+        <p className="text-sm font-semibold text-gray-800 leading-tight">{booking.dropoff}</p>
+      </div>
+    </div>
+
+    {/* Footer */}
+    <div className="flex items-center justify-between pt-3 border-t border-gray-100">
+      <div className="flex items-center gap-3">
+        {booking.earnings && (
+          <span className="text-sm font-bold text-green-600">{booking.earnings}</span>
+        )}
+        {booking.reason && (
+          <span className="text-xs text-red-400">{booking.reason}</span>
+        )}
+      </div>
+      <div className="flex items-center gap-2">
+        {activeTab === 'Active' && (
+          <>
+            <button className="px-3 py-1.5 text-xs font-semibold text-red-500 bg-red-50 border border-red-100 rounded-lg hover:bg-red-100 transition-colors">
+              Decline
+            </button>
+            <button className="px-3 py-1.5 text-xs font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+              Accept
+            </button>
+          </>
+        )}
+        <button onClick={() => onOpen(booking)}
+          className="px-3 py-1.5 text-xs font-semibold text-blue-600 bg-blue-50 border border-blue-100 rounded-lg hover:bg-blue-100 transition-colors">
+          View →
+        </button>
+      </div>
+    </div>
+  </motion.div>
+);
+
+// ── Main ──────────────────────────────────────────────────────────────────────
+const TransportBookings = () => {
+  const [activeTab, setActiveTab] = useState('Active');
+  const [selectedBooking, setSelectedBooking] = useState(null);
+
+  if (selectedBooking) {
+    return <BookingDetail booking={selectedBooking} onBack={() => setSelectedBooking(null)} />;
+  }
+
+  const list = bookings[activeTab] || [];
+
+  return (
+    <motion.div variants={pageVariants} initial="hidden" animate="show"
+      className="p-6 max-w-3xl mx-auto">
+
+      {/* Header */}
+      <div className="mb-6">
+        <h1 className="text-xl font-bold text-gray-900">Bookings</h1>
+        <div className="w-10 h-0.5 bg-blue-600 rounded-full mt-1" />
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-1 bg-gray-100 rounded-xl p-1 mb-6">
+        {TABS.map(tab => (
+          <button key={tab} onClick={() => setActiveTab(tab)}
+            className={`flex-1 py-2 text-sm font-semibold rounded-lg transition-all ${activeTab === tab ? 'bg-white text-gray-900 shadow-sm' : 'text-gray-500 hover:text-gray-700'
+              }`}>
+            {tab}
+            <span className={`ml-1.5 text-xs px-1.5 py-0.5 rounded-full ${activeTab === tab ? 'bg-blue-100 text-blue-600' : 'bg-gray-200 text-gray-500'
+              }`}>
+              {bookings[tab].length}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {/* Cards */}
+      <AnimatePresence mode="wait">
+        <motion.div key={activeTab} variants={containerVariants} initial="hidden" animate="show"
+          className="space-y-3">
+          {list.length === 0 ? (
+            <div className="bg-white rounded-2xl border border-gray-200 p-12 text-center">
+              <MdOutlineDirectionsCar size={36} className="text-gray-300 mx-auto mb-3" />
+              <p className="font-semibold text-gray-600">No {activeTab.toLowerCase()} bookings</p>
+              <p className="text-sm text-gray-400 mt-1">New bookings will appear here.</p>
+            </div>
+          ) : (
+            list.map(b => (
+              <BookingCard key={b.id} booking={b} onOpen={setSelectedBooking} activeTab={activeTab} />
+            ))
+          )}
+        </motion.div>
+      </AnimatePresence>
+    </motion.div>
   );
 };
 
-export default Bookings;
+export default TransportBookings;
