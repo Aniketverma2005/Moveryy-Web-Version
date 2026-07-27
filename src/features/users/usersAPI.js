@@ -4,6 +4,10 @@ import { api } from "../../services/api";
 export const fetchUsersAPI = () =>
   api.get("/api/v1/employee/all");
 
+// GET /api/v1/vehicles/all
+export const fetchVehiclesAPI = () =>
+  api.get("/api/v1/vehicles/all");
+
 // POST /api/v1/employee/create
 export const createEmployeeAPI = (payload) =>
   api.post("/api/v1/employee/create", payload);

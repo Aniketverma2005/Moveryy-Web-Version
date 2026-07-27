@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { fetchUsersAPI, createEmployeeAPI, updateEmployeeAPI, deleteEmployeeAPI } from './usersAPI';
+import { fetchUsersAPI, createEmployeeAPI, updateEmployeeAPI, deleteEmployeeAPI, fetchVehiclesAPI } from './usersAPI';
 
 // ── Async thunks ──────────────────────────────────────────────────────────────
 
@@ -8,12 +8,25 @@ export const fetchUsers = createAsyncThunk(
   async () => await fetchUsersAPI()
 );
 
+export const fetchVehicles = createAsyncThunk(
+  'users/fetchVehicles',
+  async (_, { rejectWithValue }) => {
+    try {
+      const response = await fetchVehiclesAPI();
+      return response?.vehicles ?? [];
+    } catch (err) {
+      return rejectWithValue(err?.message ?? 'Failed to load vehicles');
+    }
+  }
+);
+
 export const createEmployee = createAsyncThunk(
   'users/createEmployee',
   async (payload, { rejectWithValue }) => {
     try {
       const response = await createEmployeeAPI(payload);
-      return response ?? null;
+      // Backend returns { success, message, data: employee }
+      return response?.data ?? response ?? null;
     } catch (err) {
       return rejectWithValue(err?.response?.data?.message ?? err?.message ?? 'Failed to create employee');
     }
@@ -24,10 +37,10 @@ export const updateEmployee = createAsyncThunk(
   'users/updateEmployee',
   async ({ employeeId, payload }, { rejectWithValue }) => {
     try {
-      await updateEmployeeAPI(employeeId, payload);
-      // Use the payload we sent as source of truth for the Redux merge
-      // (avoids issues with inconsistent API response shapes)
-      return { employeeId, updated: payload };
+      const response = await updateEmployeeAPI(employeeId, payload);
+      // Backend returns { message, data: updatedEmployee } — unwrap .data
+      const updated = response?.data ?? payload;
+      return { employeeId, updated };
     } catch (err) {
       const message = err?.message ?? err?.response?.data?.message ?? 'Failed to update employee';
       return rejectWithValue(message);
@@ -57,12 +70,15 @@ const usersSlice = createSlice({
     currentUser: null,
     organization: null,
     loading: false,
-    creating: false,   // tracks Add User API call
+    creating: false,
     createError: null,
-    updating: false,   // tracks Edit/Deactivate API call
+    updating: false,
     updateError: null,
     deleting: false,
     deleteError: null,
+    vehicles: [],
+    vehiclesLoading: false,
+    vehiclesError: null,
     error: null,
   },
   reducers: {
@@ -144,6 +160,19 @@ const usersSlice = createSlice({
       .addCase(deleteEmployee.rejected, (state, action) => {
         state.deleting = false;
         state.deleteError = action.payload ?? 'Failed to delete employee';
+      })
+      // ── fetchVehicles ─────────────────────────────────────────────────────
+      .addCase(fetchVehicles.pending, (state) => {
+        state.vehiclesLoading = true;
+        state.vehiclesError = null;
+      })
+      .addCase(fetchVehicles.fulfilled, (state, action) => {
+        state.vehiclesLoading = false;
+        state.vehicles = action.payload;
+      })
+      .addCase(fetchVehicles.rejected, (state, action) => {
+        state.vehiclesLoading = false;
+        state.vehiclesError = action.payload ?? 'Failed to load vehicles';
       });
   },
 });

@@ -385,6 +385,7 @@ import { addUser } from "../../features/users/usersSlice";
 import { createEmployee } from "../../features/users/usersSlice";
 import { updateEmployee } from "../../features/users/usersSlice";
 import { deleteEmployee } from "../../features/users/usersSlice";
+import { fetchVehicles } from "../../features/users/usersSlice";
 
 /* ---------- UI Helpers ---------- */
 
@@ -438,7 +439,7 @@ const UserRow = ({ user, onEdit, onDelete }) => {
       {/* Contact */}
       <td className="text-sm text-gray-600 pr-4">
         <p>{user.email ?? "—"}</p>
-        <p className="text-xs text-gray-500">{user.phone ? `+${user.phone}` : "—"}</p>
+        <p className="text-xs text-gray-500">{user.phone ? `+${user.phone.replace(/^\+/, "")}` : "—"}</p>
       </td>
 
       {/* Status */}
@@ -489,6 +490,7 @@ const UserRow = ({ user, onEdit, onDelete }) => {
 const UserManagementPage = () => {
   const dispatch = useDispatch();
   const { list, loading, creating, createError } = useSelector((state) => state.users);
+  const { vehicles, vehiclesLoading, vehiclesError } = useSelector((state) => state.users);
 
   const [showModal, setShowModal] = useState(false);
 
@@ -527,6 +529,7 @@ const UserManagementPage = () => {
       phone:        detectedNumber,
       gender:       user.gender ?? "",
       address:      user.address ?? "",
+      vehicleId:    user.vehicleId ?? "",
     });
     setEditError(null);
   };
@@ -549,6 +552,7 @@ const UserManagementPage = () => {
       aadharNumber: editUser.aadharNumber,
       panNumber:    editUser.panNumber,
       status:       editUser.status ?? "busy",
+      ...(editUser.role === "driver" && { vehicleId: editForm.vehicleId }),
     };
     const result = await dispatch(updateEmployee({ employeeId: editUser.employeeId, payload }));
     setEditSaving(false);
@@ -629,13 +633,7 @@ const UserManagementPage = () => {
     vehicle: ""
   });
 
-  const VEHICLES = [
-    { id: "VH001", name: "Tata Ace",                number: "DL 01 AB 1234" },
-    { id: "VH002", name: "Mahindra Bolero Pickup",  number: "DL 01 CD 5678" },
-    { id: "VH003", name: "Ashok Leyland Dost",      number: "DL 01 EF 9012" },
-    { id: "VH004", name: "Eicher Truck",             number: "DL 01 GH 3456" },
-    { id: "VH005", name: "Force Traveller",          number: "DL 01 JK 7890" },
-  ];
+  // VEHICLES are now fetched from API via Redux — see vehicles, vehiclesLoading, vehiclesError
 
   const handleFormChange = (e) => {
     const { name, value } = e.target;
@@ -683,6 +681,7 @@ const UserManagementPage = () => {
 
   useEffect(() => {
     dispatch(fetchUsers());
+    dispatch(fetchVehicles());
   }, [dispatch]);
 
   if (loading) {
@@ -824,7 +823,7 @@ const UserManagementPage = () => {
                 {/* Contact */}
                 <div className="text-sm text-gray-600 space-y-0.5">
                   <p>{user.email ?? "—"}</p>
-                  <p className="text-xs text-gray-400">{user.phone ? `+${user.phone}` : "—"}</p>
+                  <p className="text-xs text-gray-400">{user.phone ? `+${user.phone.replace(/^\+/, "")}` : "—"}</p>
                 </div>
 
                 {/* Status + Joined */}
@@ -1013,6 +1012,36 @@ const UserManagementPage = () => {
                     placeholder="Full address" />
                 </div>
 
+                {/* Vehicle — only for driver role */}
+                {editUser.role === "driver" && (
+                  <div>
+                    <label className="block text-xs font-medium text-gray-600 mb-1">Vehicle</label>
+                    {vehiclesLoading ? (
+                      <div className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-400 bg-gray-50">
+                        Loading vehicles...
+                      </div>
+                    ) : vehiclesError ? (
+                      <div className="w-full border border-red-200 rounded-lg px-3 py-2 text-sm text-red-500 bg-red-50">
+                        {vehiclesError}
+                      </div>
+                    ) : (
+                      <select
+                        name="vehicleId"
+                        value={editForm.vehicleId}
+                        onChange={handleEditFormChange}
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="">Select a vehicle</option>
+                        {vehicles.map((v) => (
+                          <option key={v.vehicleId} value={v.vehicleId}>
+                            {v.vehicleName}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                  </div>
+                )}
+
               </form>
             </div>
 
@@ -1121,20 +1150,30 @@ const UserManagementPage = () => {
                 {formData.role === "driver" && (
                   <div>
                     <label className="block text-sm text-gray-600 mb-1">Vehicle <span className="text-red-500">*</span></label>
-                    <select
-                      required={formData.role === "driver"}
-                      name="vehicle"
-                      value={formData.vehicle}
-                      onChange={handleFormChange}
-                      className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    >
-                      <option value="">Select a vehicle</option>
-                      {VEHICLES.map((vehicle) => (
-                        <option key={vehicle.id} value={vehicle.id}>
-                          {vehicle.name} ({vehicle.number})
-                        </option>
-                      ))}
-                    </select>
+                    {vehiclesLoading ? (
+                      <div className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-400 bg-gray-50">
+                        Loading vehicles...
+                      </div>
+                    ) : vehiclesError ? (
+                      <div className="w-full border border-red-200 rounded-lg px-3 py-2 text-sm text-red-500 bg-red-50">
+                        {vehiclesError}
+                      </div>
+                    ) : (
+                      <select
+                        required={formData.role === "driver"}
+                        name="vehicle"
+                        value={formData.vehicle}
+                        onChange={handleFormChange}
+                        className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      >
+                        <option value="">Select a vehicle</option>
+                        {vehicles.map((v) => (
+                          <option key={v.vehicleId} value={v.vehicleId}>
+                            {v.vehicleName}
+                          </option>
+                        ))}
+                      </select>
+                    )}
                   </div>
                 )}
 
