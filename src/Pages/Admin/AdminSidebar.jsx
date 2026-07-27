@@ -5,7 +5,7 @@ import {
   MdOutlineDashboard, MdOutlineBook, MdOutlinePeople, MdOutlinePayment,
   MdOutlineInsights, MdOutlineLocalOffer, MdOutlinePerson,
   MdOutlineSettings, MdOutlineStar, MdOutlineLogout, MdMenu, MdClose,
-  MdChevronLeft, MdChevronRight,
+  MdChevronLeft, MdChevronRight, MdOutlineDirectionsCar,
 } from 'react-icons/md';
 import logo from '../../assets/logo2.png';
 import authService from '../../services/authService folder/authService';
@@ -14,6 +14,7 @@ const navItems = [
   { name: 'Dashboard', icon: MdOutlineDashboard, path: '/admin' },
   { name: 'Bookings', icon: MdOutlineBook, path: '/admin/bookings' },
   { name: 'Users', icon: MdOutlinePeople, path: '/admin/users' },
+  { name: 'Vehicles', icon: MdOutlineDirectionsCar, path: '/admin/transport' },
   { name: 'Payment', icon: MdOutlinePayment, path: '/admin/payment' },
   { name: 'Analytics', icon: MdOutlineInsights, path: '/admin/analytics' },
   { name: 'Offers', icon: MdOutlineLocalOffer, path: '/admin/offers' },

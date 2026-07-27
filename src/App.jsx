@@ -9,6 +9,7 @@ import Home from './Pages/User/Home.jsx';
 import ServiceDetail from './Pages/User/ServiceDetails.jsx';
 import Dashboard from './Pages/Admin/Dashboard.jsx';
 import Users from './Pages/Admin/Users.jsx';
+import Vehicles from './Pages/Admin/Vehicles.jsx';
 import Payments from './Pages/Admin/Payments.jsx';
 import Offers from './Pages/Admin/Offers.jsx';
 import Bookings from './Pages/Admin/Bookings.jsx';
@@ -84,6 +85,7 @@ function App() {
                     <Route index element={<Dashboard />} />
                     <Route path="bookings" element={<Bookings />} />
                     <Route path="Users" element={<Users />} />
+                    <Route path="transport" element={<Vehicles />} />
                     <Route path="payment" element={<Payments />} />
                     <Route path="offers" element={<Offers />} />
                     <Route path="analytics" element={<Analytics />} />

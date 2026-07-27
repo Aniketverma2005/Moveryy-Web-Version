@@ -8,6 +8,7 @@ const routeTitles = {
   '/admin': 'Dashboard',
   '/admin/bookings': 'Bookings',
   '/admin/users': 'Users',
+  '/admin/transport': 'Vehicles',
   '/admin/payment': 'Payments',
   '/admin/analytics': 'Analytics',
   '/admin/offers': 'Offers',
