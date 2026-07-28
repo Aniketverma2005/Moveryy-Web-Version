@@ -368,6 +368,7 @@
 
 
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useDispatch, useSelector } from "react-redux";
 import {
   MdOutlinePerson,
@@ -459,7 +460,7 @@ const UserRow = ({ user, onEdit, onDelete }) => {
         <p className="text-xs">Joined: {joined}</p>
       </td>
 
-      {/* Actions — Edit + Delete only */}
+      {/* Actions */}
       <td>
         <div className="flex items-center gap-1.5">
           <button
@@ -684,6 +685,10 @@ const UserManagementPage = () => {
     dispatch(fetchVehicles());
   }, [dispatch]);
 
+  const [searchQuery, setSearchQuery]   = useState('');
+  const [roleFilter, setRoleFilter]     = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
+
   if (loading) {
     return (
       <div className="p-6 space-y-6 animate-pulse">
@@ -703,160 +708,210 @@ const UserManagementPage = () => {
   const staffCount   = list.filter((u) => u.role !== "transport").length;
   const driverCount  = list.filter((u) => u.role === "transport").length;
 
-  return (
-    <div className="bg-gray-100 min-h-screen p-4 sm:p-6 space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">
-            User Management
-          </h1>
-          <p className="text-sm text-gray-500">
-            Manage your team members and permissions
-          </p>
-        </div>
-        <button onClick={() => setShowModal(true)} className="flex items-center gap-1 bg-blue-600 text-white px-4 py-2 rounded-lg w-fit">
-          <MdOutlineAdd /> Add User
-        </button>
-      </div>
+  // ── Filtered list ─────────────────────────────────────────────────────────
+  const filteredList = list.filter((u) => {
+    const q = searchQuery.toLowerCase();
+    const matchSearch =
+      !q ||
+      u.employeeName?.toLowerCase().includes(q) ||
+      u.email?.toLowerCase().includes(q) ||
+      u.phone?.toLowerCase().includes(q);
+    const matchRole =
+      roleFilter === 'all' || u.role?.toLowerCase() === roleFilter.toLowerCase();
+    const matchStatus =
+      statusFilter === 'all' ||
+      (statusFilter === 'active' && u.isActive) ||
+      (statusFilter === 'inactive' && !u.isActive);
+    return matchSearch && matchRole && matchStatus;
+  });
 
-      {/* Search & Filters */}
-      <div className="flex flex-col lg:flex-row gap-4">
+  return (
+    <div className="bg-gray-50 min-h-screen p-4 sm:p-6 space-y-6">
+      {/* ── Header ── */}
+      <motion.div
+        initial={{ opacity: 0, y: -16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
+        className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+      >
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">User Management</h1>
+          <p className="text-sm text-gray-500 mt-0.5">Manage your team members and their permissions</p>
+        </div>
+        <button onClick={() => setShowModal(true)} className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium transition-all shadow-sm hover:shadow-md w-fit">
+          <MdOutlineAdd size={20} /> Add User
+        </button>
+      </motion.div>
+
+      {/* ── Search & Filters ── */}
+      <motion.div
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, delay: 0.1 }}
+        className="flex flex-col sm:flex-row gap-3"
+      >
         <div className="relative flex-1">
-          <MdOutlineSearch
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-            size={20}
-          />
+          <MdOutlineSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={20} />
           <input
             type="text"
+            value={searchQuery}
+            onChange={e => setSearchQuery(e.target.value)}
             placeholder="Search by name, email, or phone..."
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+            className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm"
           />
         </div>
-
-        <div className="flex flex-col sm:flex-row gap-2">
-          <select className="p-2 rounded-lg border border-gray-300 bg-white text-gray-600">
-            <option>All Roles</option>
-            <option>Crew</option>
-            <option>Staff</option>
-            <option>Driver</option>
+        <div className="flex gap-2">
+          <select value={roleFilter} onChange={e => setRoleFilter(e.target.value)} className="px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm">
+            <option value="all">All Roles</option>
+            <option value="crew">Crew</option>
+            <option value="driver">Driver</option>
+            <option value="transport">Transport</option>
+            <option value="staff">Staff</option>
           </select>
-          <select className="p-2 rounded-lg border border-gray-300 bg-white text-gray-600">
-            <option>All Status</option>
-            <option>Active</option>
-            <option>Inactive</option>
+          <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-gray-600 focus:ring-2 focus:ring-blue-500 focus:outline-none shadow-sm">
+            <option value="all">All Status</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
           </select>
         </div>
+      </motion.div>
+
+      {/* ── Stat Cards ── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        {[
+          { title: 'Total Users',   count: totalUsers,  icon: <MdOutlinePerson />,        bg: 'bg-blue-50',   color: 'text-blue-600',   border: 'border-blue-100'   },
+          { title: 'Active Users',  count: activeUsers, icon: <MdOutlineDone />,           bg: 'bg-green-50',  color: 'text-green-600',  border: 'border-green-100'  },
+          { title: 'Staff Members', count: staffCount,  icon: <MdOutlineBusinessCenter />, bg: 'bg-purple-50', color: 'text-purple-600', border: 'border-purple-100' },
+          { title: 'Drivers',       count: driverCount, icon: <MdOutlineDriveEta />,       bg: 'bg-orange-50', color: 'text-orange-500', border: 'border-orange-100' },
+        ].map((card, i) => (
+          <motion.div key={card.title} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.15 + i * 0.07 }}
+            className={`bg-white rounded-2xl p-5 border ${card.border} shadow-sm hover:shadow-md transition-shadow`}>
+            <div className="flex items-center justify-between mb-3">
+              <p className="text-sm text-gray-500 font-medium">{card.title}</p>
+              <div className={`w-9 h-9 rounded-xl ${card.bg} ${card.color} flex items-center justify-center`}>
+                {React.cloneElement(card.icon, { size: 18 })}
+              </div>
+            </div>
+            <p className="text-3xl font-bold text-gray-900">{card.count}</p>
+          </motion.div>
+        ))}
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="Total Users" count={totalUsers} icon={<MdOutlinePerson />} bg="bg-gray-100" color="text-gray-600" />
-        <StatCard title="Active Users" count={activeUsers} icon={<MdOutlineDone />} bg="bg-green-100" color="text-green-600" />
-        <StatCard title="Staff Members" count={staffCount} icon={<MdOutlineBusinessCenter />} bg="bg-blue-100" color="text-blue-600" />
-        <StatCard title="Drivers" count={driverCount} icon={<MdOutlineDriveEta />} bg="bg-green-100" color="text-green-600" />
-      </div>
+      {/* ── Table Card ── */}
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: 0.45 }}
+        className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <div>
+            <h2 className="text-base font-semibold text-gray-900">Team Members</h2>
+            <p className="text-xs text-gray-400 mt-0.5">
+              {filteredList.length}{filteredList.length !== list.length ? ` of ${list.length}` : ''} user{list.length !== 1 ? 's' : ''}
+            </p>
+          </div>
+        </div>
 
-      {/* Table */}
-      <div className="bg-white p-4 sm:p-6 rounded-xl border border-gray-200 shadow-sm">
-        <h2 className="text-lg font-semibold mb-4">
-          Team Members ({list.length})
-        </h2>
-
-        {/* Desktop table — hidden on mobile */}
-        <div className="hidden md:block overflow-x-auto">
-          <table className="min-w-full text-sm">
-            <thead className="text-gray-400">
-              <tr>
-                <th className="py-3 text-left">Name</th>
-                {/* <th className="py-3 text-left">Role</th> */}
-                <th className="py-3 text-left">Contact</th>
-                <th className="py-3 text-left">Status</th>
-                <th className="py-3 text-left">Last Login</th>
-                <th className="py-3 text-left">Actions</th>
+        {/* Desktop table */}
+        <div className="hidden md:block">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gray-100">
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Name</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Role</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Contact</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Joined</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wide">Actions</th>
               </tr>
             </thead>
-            <tbody>
-              {list.map((user) => (
-                <UserRow
-                  key={user.employeeId}
-                  user={user}
-                  onEdit={handleOpenEdit}
-                  onDelete={handleDelete}
-                />
-              ))}
+            <tbody className="divide-y divide-gray-50">
+              {filteredList.length === 0 ? (
+                <tr><td colSpan={6} className="py-16 text-center"><MdOutlinePerson size={40} className="text-gray-200 mx-auto mb-3" /><p className="text-gray-400 text-sm">No users match your search</p></td></tr>
+              ) : filteredList.map((user, i) => {
+                const roleStyles = { transport:"bg-green-100 text-green-700", staff:"bg-blue-100 text-blue-700", crew:"bg-yellow-100 text-yellow-700", driver:"bg-indigo-100 text-indigo-700" };
+                return (
+                  <motion.tr key={user.employeeId} initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.25, delay: i * 0.04 }} className="hover:bg-blue-50/40 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shrink-0 shadow-sm">
+                          <MdOutlinePerson className="text-white" />
+                        </div>
+                        <p className="font-semibold text-gray-900">{user.employeeName ?? "—"}</p>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2.5 py-1 rounded-full text-xs font-semibold capitalize ${roleStyles[user.role] ?? "bg-gray-100 text-gray-600"}`}>{user.role ?? "—"}</span>
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="text-sm text-gray-700">{user.email ?? "—"}</p>
+                      <p className="text-xs text-gray-400">{user.phone ? `+${user.phone.replace(/^\+/, "")}` : "—"}</p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-1.5">
+                        <span className="relative flex h-2 w-2">
+                          {user.isActive && (
+                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                          )}
+                          <span className={`relative inline-flex rounded-full h-2 w-2 ${user.isActive ? "bg-green-500" : "bg-red-400"}`}></span>
+                        </span>
+                        <span className={`text-sm font-medium ${user.isActive ? "text-green-600" : "text-red-500"}`}>{user.isActive ? "Active" : "Inactive"}</span>
+                      </div>
+                      {user.status && <p className="text-xs text-gray-400 capitalize mt-0.5">{user.status}</p>}
+                    </td>
+                    <td className="px-6 py-4 text-xs text-gray-500">{user.createdAt ? new Date(user.createdAt).toLocaleDateString("en-GB") : "—"}</td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <button onClick={() => handleOpenEdit(user)} className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-blue-600 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"><MdOutlineModeEdit size={13} /> Edit</button>
+                        <button onClick={() => handleDelete(user)} className="flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"><MdOutlineDelete size={13} /> Delete</button>
+                      </div>
+                    </td>
+                  </motion.tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
 
-        {/* Mobile cards — shown only below md */}
-        <div className="flex flex-col gap-3 md:hidden">
-          {list.map((user) => {
-            const roleStyles = {
-              transport: "bg-green-100 text-green-600",
-              staff:     "bg-blue-100 text-blue-600",
-              crew:      "bg-yellow-100 text-yellow-700",
-              Driver:     "bg-indigo-100 text-indigo-600",
-            };
-            const isActive = user.isActive;
-            const joined   = user.createdAt
-              ? new Date(user.createdAt).toLocaleDateString("en-GB")
-              : "—";
+        {/* Mobile cards */}
+        <div className="flex flex-col divide-y divide-gray-50 md:hidden">
+          {filteredList.length === 0 ? (
+            <div className="py-16 text-center"><MdOutlinePerson size={40} className="text-gray-200 mx-auto mb-3" /><p className="text-gray-400 text-sm">No users match your search</p></div>
+          ) : filteredList.map((user, i) => {
+            const roleStyles = { transport:"bg-green-100 text-green-700", staff:"bg-blue-100 text-blue-700", crew:"bg-yellow-100 text-yellow-700", driver:"bg-indigo-100 text-indigo-700" };
             return (
-              <div key={user.employeeId} className="border border-gray-200 rounded-xl p-4 flex flex-col gap-3">
-                {/* Top row: avatar + name + role badge */}
-                <div className="flex items-center justify-between">
+              <motion.div key={user.employeeId} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25, delay: i * 0.05 }} className="p-4 hover:bg-blue-50/30 transition-colors">
+                <div className="flex items-start justify-between gap-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-blue-600 flex items-center justify-center shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shrink-0 shadow-sm">
                       <MdOutlinePerson className="text-white text-lg" />
                     </div>
-                    <div>
-                      <p className="font-semibold text-gray-800 text-sm">{user.employeeName ?? "—"}</p>
-                      <p className="text-xs text-gray-400">#{user.employeeId ?? "—"}</p>
-                    </div>
+                    <p className="font-semibold text-gray-900 text-sm">{user.employeeName ?? "—"}</p>
                   </div>
-                  <span className={`px-2 py-1 rounded-full text-xs font-semibold capitalize ${roleStyles[user.role] ?? "bg-gray-100 text-gray-600"}`}>
-                    {user.role ?? "—"}
-                  </span>
+                  <span className={`px-2.5 py-1 rounded-full text-xs font-semibold capitalize shrink-0 ${roleStyles[user.role] ?? "bg-gray-100 text-gray-600"}`}>{user.role ?? "—"}</span>
                 </div>
-
-                {/* Contact */}
-                <div className="text-sm text-gray-600 space-y-0.5">
+                <div className="mt-3 space-y-1 text-sm text-gray-600">
                   <p>{user.email ?? "—"}</p>
                   <p className="text-xs text-gray-400">{user.phone ? `+${user.phone.replace(/^\+/, "")}` : "—"}</p>
                 </div>
-
-                {/* Status + Joined */}
-                <div className="flex items-center justify-between text-xs">
-                  <div className="flex flex-col gap-0.5">
-                    <span className={`font-medium ${isActive ? "text-green-600" : "text-red-500"}`}>
-                      {isActive ? "Active" : "Inactive"}
+                <div className="flex items-center justify-between mt-3 text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <span className="relative flex h-2 w-2">
+                      {user.isActive && (
+                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      )}
+                      <span className={`relative inline-flex rounded-full h-2 w-2 ${user.isActive ? "bg-green-500" : "bg-red-400"}`}></span>
                     </span>
-                    {user.status && (
-                      <span className="text-gray-400 capitalize">{user.status}</span>
-                    )}
+                    <span className={`font-medium ${user.isActive ? "text-green-600" : "text-red-500"}`}>{user.isActive ? "Active" : "Inactive"}</span>
                   </div>
-                  <span className="text-gray-400">Joined: {joined}</span>
+                  <span className="text-gray-400">Joined: {user.createdAt ? new Date(user.createdAt).toLocaleDateString("en-GB") : "—"}</span>
                 </div>
-
-                {/* Actions — Edit + Delete only */}
-                <div className="flex gap-2 pt-1">
-                  <button
-                    onClick={() => handleOpenEdit(user)}
-                    className="flex-1 inline-flex items-center justify-center gap-1 border border-gray-200 rounded-lg py-2 text-sm hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition-colors">
-                    <MdOutlineModeEdit size={14} /> Edit
-                  </button>
-                  <button
-                    onClick={() => handleDelete(user)}
-                    className="flex-1 inline-flex items-center justify-center gap-1 border border-red-200 rounded-lg py-2 text-sm text-red-600 hover:bg-red-50 transition-colors">
-                    <MdOutlineDelete size={14} /> Delete
-                  </button>
+                <div className="flex gap-2 mt-3">
+                  <button onClick={() => handleOpenEdit(user)} className="flex-1 flex items-center justify-center gap-1 border border-gray-200 rounded-lg py-2 text-sm hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition-colors"><MdOutlineModeEdit size={14} /> Edit</button>
+                  <button onClick={() => handleDelete(user)} className="flex-1 flex items-center justify-center gap-1 border border-red-200 rounded-lg py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"><MdOutlineDelete size={14} /> Delete</button>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
         </div>
-      </div>
+      </motion.div>
 
       {/* ── Delete Confirm Modal ── */}
       {deleteTarget && (
@@ -1034,7 +1089,7 @@ const UserManagementPage = () => {
                         <option value="">Select a vehicle</option>
                         {vehicles.map((v) => (
                           <option key={v.vehicleId} value={v.vehicleId}>
-                            {v.vehicleName}
+                            {v.vehicleName}{v.registrationNumber ? ` (${v.registrationNumber})` : ""}
                           </option>
                         ))}
                       </select>
@@ -1169,7 +1224,7 @@ const UserManagementPage = () => {
                         <option value="">Select a vehicle</option>
                         {vehicles.map((v) => (
                           <option key={v.vehicleId} value={v.vehicleId}>
-                            {v.vehicleName}
+                            {v.vehicleName}{v.registrationNumber ? ` (${v.registrationNumber})` : ""}
                           </option>
                         ))}
                       </select>

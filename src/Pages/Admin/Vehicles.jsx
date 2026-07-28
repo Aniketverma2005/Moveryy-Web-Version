@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import {
   MdOutlineDirectionsCar, MdOutlineCheckCircle,
   MdOutlineCancel, MdOutlineRefresh, MdOutlineAdd, MdClose,
@@ -575,10 +576,15 @@ const Vehicles = () => {
 
       <div className="p-6 space-y-6">
         {/* ── Page Header ── */}
-        <div className="flex items-center justify-between">
+        <motion.div
+          initial={{ opacity: 0, y: -16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+        >
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">Vehicles Details</h1>
-            <p className="text-sm text-gray-500 mt-1">All vehicles registered under your organisation</p>
+            <h1 className="text-2xl font-bold text-gray-900">Fleet Vehicles</h1>
+            <p className="text-sm text-gray-500 mt-0.5">All vehicles registered under your organisation</p>
           </div>
           <div className="flex items-center gap-3">
             <button
@@ -590,48 +596,70 @@ const Vehicles = () => {
             </button>
             <button
               onClick={() => setShowModal(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors shadow-sm"
+              className="flex items-center gap-2 px-5 py-2.5 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-all shadow-sm hover:shadow-md"
             >
               <MdOutlineAdd size={20} />
               Add Vehicle
             </button>
           </div>
-        </div>
+        </motion.div>
 
         {/* ── 3 Stat Cards ── */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <StatCard label="Total Vehicles" value={total}     icon={MdOutlineDirectionsCar} color="text-blue-600"   bg="bg-blue-50"   />
-          <StatCard label="Available"      value={available} icon={MdOutlineCheckCircle}   color="text-green-600"  bg="bg-green-50"  />
-          <StatCard label="Active"         value={active}    icon={MdOutlineCheckCircle}   color="text-purple-600" bg="bg-purple-50" />
+          {[
+            { label: 'Total Vehicles', value: total,     Icon: MdOutlineDirectionsCar, color: 'text-blue-600',   bg: 'bg-blue-50',   border: 'border-blue-100'   },
+            { label: 'Available',      value: available, Icon: MdOutlineCheckCircle,   color: 'text-green-600',  bg: 'bg-green-50',  border: 'border-green-100'  },
+            { label: 'Active',         value: active,    Icon: MdOutlineCheckCircle,   color: 'text-purple-600', bg: 'bg-purple-50', border: 'border-purple-100' },
+          ].map((card, i) => (
+            <motion.div
+              key={card.label}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.1 + i * 0.08 }}
+              className={`bg-white rounded-2xl p-5 border ${card.border} shadow-sm hover:shadow-md transition-shadow flex items-center gap-4`}
+            >
+              <div className={`w-12 h-12 ${card.bg} rounded-xl flex items-center justify-center flex-shrink-0`}>
+                <card.Icon size={24} className={card.color} />
+              </div>
+              <div>
+                <p className="text-3xl font-bold text-gray-900">{card.value}</p>
+                <p className="text-sm text-gray-500">{card.label}</p>
+              </div>
+            </motion.div>
+          ))}
         </div>
 
         {/* ── Table Card ── */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.4 }}
+          className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+        >
           {/* Table toolbar */}
-          <div className="p-5 border-b border-gray-100 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
-            <h2 className="text-lg font-bold text-gray-900">Vehicle List</h2>
+          <div className="px-6 py-4 border-b border-gray-100 flex flex-col sm:flex-row gap-3 items-start sm:items-center justify-between">
+            <div>
+              <h2 className="text-base font-semibold text-gray-900">Vehicle List</h2>
+              <p className="text-xs text-gray-400 mt-0.5">{filtered.length} vehicle{filtered.length !== 1 ? 's' : ''}</p>
+            </div>
             <div className="flex items-center gap-3 flex-wrap">
               <input
                 type="text"
                 placeholder="Search vehicles..."
                 value={search}
                 onChange={e => setSearch(e.target.value)}
-                className="pl-3 pr-4 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-52"
+                className="pl-4 pr-4 py-2 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 w-52"
               />
               <select
                 value={filterType}
                 onChange={e => setFilterType(e.target.value)}
-                className="px-3 py-2 text-sm border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                className="px-3 py-2 text-sm bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">All Types</option>
                 {types.map(t => (
                   <option key={t} value={t}>{t.charAt(0).toUpperCase() + t.slice(1)}</option>
                 ))}
               </select>
-              <span className="text-sm text-gray-500">
-                {filtered.length} vehicle{filtered.length !== 1 ? 's' : ''}
-              </span>
             </div>
           </div>
 
@@ -689,9 +717,12 @@ const Vehicles = () => {
               </thead>
               <tbody className="divide-y divide-gray-50">
                   {filtered.map((v, i) => (
-                    <tr
+                    <motion.tr
                       key={v.vehicleId ?? i}
-                      className="hover:bg-blue-50 transition-colors cursor-pointer"
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.25, delay: i * 0.04 }}
+                      className="hover:bg-blue-50/40 transition-colors cursor-pointer"
                       onClick={() => setDetailVehicle(v)}
                     >
                       <td className="px-4 py-4 text-gray-400 text-xs font-medium">{i + 1}</td>
@@ -717,9 +748,16 @@ const Vehicles = () => {
                         </span>
                       </td>
                       <td className="px-4 py-4">
-                        <span className={`px-3 py-1 rounded-full text-xs font-semibold ${activeBadge(v.isActive)}`}>
-                          {v.isActive ? 'Yes' : 'No'}
-                        </span>
+                        {/* Pulsing dot for active */}
+                        <div className="flex items-center gap-1.5">
+                          <span className="relative flex h-2 w-2">
+                            {v.isActive && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>}
+                            <span className={`relative inline-flex rounded-full h-2 w-2 ${v.isActive ? 'bg-green-500' : 'bg-gray-300'}`}></span>
+                          </span>
+                          <span className={`text-xs font-semibold ${v.isActive ? 'text-green-600' : 'text-gray-400'}`}>
+                            {v.isActive ? 'Active' : 'Inactive'}
+                          </span>
+                        </div>
                       </td>
                       {/* Actions — stop row click from firing */}
                       <td className="px-4 py-4" onClick={e => e.stopPropagation()}>
@@ -740,12 +778,12 @@ const Vehicles = () => {
                           </button>
                         </div>
                       </td>
-                    </tr>
+                    </motion.tr>
                   ))}
                 </tbody>
               </table>
           )}
-        </div>
+        </motion.div>
       </div>
     </>
   );

@@ -103,8 +103,16 @@ export const authService = {
             // ── Case 1: Got user + token in response ──────────────────
             if (user && (user.role || user.email)) {
                 localStorage.setItem('moveryy_user', JSON.stringify(user));
+                // Store tokens
+                if (token) TokenManager.setToken(token);
+                if (refreshToken) TokenManager.setRefreshToken(refreshToken);
                 console.log('✅ Login successful (body):', user?.email);
-                return { token, user };
+                return {
+                    token,
+                    user,
+                    needsOrganizationSetup: response?.data?.needsOrganizationSetup ?? response?.needsOrganizationSetup ?? false,
+                    activeOrganization: response?.data?.activeOrganization ?? response?.activeOrganization ?? null,
+                };
             }
 
             // ── Case 2: Cookie-based / message-only response ──────────
@@ -130,7 +138,12 @@ export const authService = {
                     if (fetchedUser && (fetchedUser.role || fetchedUser.email)) {
                         localStorage.setItem('moveryy_user', JSON.stringify(fetchedUser));
                         console.log('✅ User profile fetched:', fetchedUser?.email);
-                        return { token: token || null, user: fetchedUser };
+                        return {
+                            token: token || null,
+                            user: fetchedUser,
+                            needsOrganizationSetup: response?.data?.needsOrganizationSetup ?? response?.needsOrganizationSetup ?? false,
+                            activeOrganization: response?.data?.activeOrganization ?? response?.activeOrganization ?? null,
+                        };
                     }
                 } catch (profileErr) {
                     console.warn('⚠️ Profile fetch failed, using email fallback:', profileErr?.message);

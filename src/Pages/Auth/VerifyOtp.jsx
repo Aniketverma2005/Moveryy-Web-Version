@@ -12,7 +12,7 @@ const VerifyOtp = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const email = location.state?.email || '';
-    const redirectTo = location.state?.redirectTo || '/';
+    const redirectTo = location.state?.redirectTo || '/login';
 
     const [otp, setOtp] = useState(Array(OTP_LENGTH).fill(''));
     const [timer, setTimer] = useState(OTP_EXPIRY);
@@ -61,7 +61,7 @@ const VerifyOtp = () => {
         setLoading(true); setError('');
         try {
             await authService.verifyOtp(email, otpStr);
-            setSuccess('Email verified successfully! Redirecting...');
+            setSuccess('Email verified successfully! Redirecting to login...');
             setTimeout(() => navigate(redirectTo), 1500);
         } catch (err) {
             setError(err?.message || 'Invalid or expired OTP.');
