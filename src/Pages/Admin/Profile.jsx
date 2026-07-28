@@ -1,15 +1,16 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   MdOutlineCloud, MdOutlineVerified, MdOutlineStar, MdOutlinePeople,
   MdOutlineAccessTime, MdOutlineAttachMoney, MdOutlineAddLocation
 } from 'react-icons/md';
+import { api } from '../../services/api';
 
 // Helper component for styled info fields
 const InfoField = ({ label, value }) => (
   <div className="flex flex-col gap-1">
     <span className="text-sm font-medium text-gray-400">{label}</span>
     <div className="text-sm text-gray-700 bg-gray-50 px-3 py-2 rounded-md border border-gray-200">
-      {value}
+      {value || '—'}
     </div>
   </div>
 );
@@ -38,7 +39,56 @@ const BusinessStat = ({ title, value, icon, iconBg, iconColor }) => (
   </div>
 );
 
+// ── Capitalize first letter of each word ─────────────────────────────────────
+const cap = (str) => {
+  if (!str) return str;
+  return String(str).replace(/\b\w/g, c => c.toUpperCase());
+};
+
 const ProfilePage = () => {
+  const [org, setOrg]         = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api.get('/api/v1/organizations/all')
+      .then(res => {
+        // Response: { message: "...", data: [...] }
+        const list = res?.data || [];
+        if (list.length > 0) setOrg(list[0]);
+      })
+      .catch(err => console.error('❌ Fetch org error:', err))
+      .finally(() => setLoading(false));
+  }, []);
+
+  // ── Derived display values ─────────────────────────────────────────────────
+  const orgName    = cap(org?.organizationName  || org?.businessName || 'Organisation');
+  const businessName = cap(org?.businessName    || '—');
+  const about      = cap(org?.about             || '—');
+  const phone      = org?.phone                 || '—';
+  const email      = org?.email                 || '—';
+  const domain     = org?.domain                || '—';
+  const status     = cap(org?.status            || '—');
+  const orgType    = cap(org?.organizationType  || '—');
+  const city       = cap(org?.city              || '');
+  const state      = cap(org?.state             || '');
+  const country    = cap(org?.country           || '');
+  const pincode    = org?.pincode               || '';
+  const addr1      = cap(org?.addressLine1      || '');
+  const addr2      = cap(org?.addressLine2      || '');
+  const fullAddress = [addr1, addr2, city, state, pincode, country].filter(Boolean).join(', ') || '—';
+  const createdYear = org?.createdAt ? new Date(org.createdAt).getFullYear() : null;
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
+          <p className="text-gray-500 text-sm">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-gray-100 min-h-screen p-6 font-inter w-full">
       {/* Header Section */}
@@ -47,10 +97,13 @@ const ProfilePage = () => {
           <MdOutlineCloud size={48} className="text-blue-600 bg-blue-100 p-2 rounded-md" />
           <div>
             <h1 className="text-2xl font-bold text-gray-800 flex items-center gap-2">
-              Swift Movers Ltd
-              <MdOutlineVerified size={20} className="text-blue-600" />
+              {orgName}
+              {status === 'active' && <MdOutlineVerified size={20} className="text-blue-600" />}
             </h1>
-            <p className="text-gray-500 text-sm">since 2018 | Licensed & Verified</p>
+            <p className="text-gray-500 text-sm">
+              {createdYear ? `since ${createdYear}` : ''}{createdYear ? ' | ' : ''}
+              {status}
+            </p>
           </div>
         </div>
       </div>
@@ -58,21 +111,22 @@ const ProfilePage = () => {
       {/* Main Two-Column Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
-        {/* Left Column: Information Cards */}
+        {/* Left Column */}
         <div className="lg:col-span-2 flex flex-col gap-6">
 
           {/* Company Information Card */}
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Company Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <InfoField label="Company Name" value="Swift Movers Ltd" />
-              <InfoField label="GST Number" value="GST123456789" />
+              <InfoField label="Organisation Name"  value={orgName} />
+              <InfoField label="Business Name"      value={businessName} />
               <div className="md:col-span-2">
-                <InfoField label="Business Address" value="23 Industrial Area, Sector 15, Gurgaon, Haryana 122015" />
+                <InfoField label="Business Address" value={fullAddress} />
               </div>
-              <InfoField label="Contact Number" value="+91 98765 43210" />
-              <InfoField label="Email Address" value="info@swiftmovers.com" />
-              <InfoField label="Website" value="www.swiftmovers.com" />
+              <InfoField label="Contact Number"  value={phone} />
+              <InfoField label="Email Address"   value={email} />
+              <InfoField label="Domain"          value={domain} />
+              <InfoField label="Organisation Type" value={orgType} />
             </div>
           </div>
 
@@ -80,9 +134,24 @@ const ProfilePage = () => {
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Service Areas</h2>
             <div className="flex flex-wrap gap-2">
-              {['Delhi', 'Mumbai', 'Bangalore', 'Chennai', 'Kolkata'].map(city => (
-                <span key={city} className="bg-blue-100 text-blue-600 px-3 py-1 text-sm font-medium rounded-full cursor-pointer hover:bg-blue-200">{city}</span>
-              ))}
+              {city && (
+                <span className="bg-blue-100 text-blue-600 px-3 py-1 text-sm font-medium rounded-full cursor-pointer hover:bg-blue-200">
+                  {city.charAt(0).toUpperCase() + city.slice(1)}
+                </span>
+              )}
+              {state && (
+                <span className="bg-blue-100 text-blue-600 px-3 py-1 text-sm font-medium rounded-full cursor-pointer hover:bg-blue-200">
+                  {state.charAt(0).toUpperCase() + state.slice(1)}
+                </span>
+              )}
+              {country && (
+                <span className="bg-blue-100 text-blue-600 px-3 py-1 text-sm font-medium rounded-full cursor-pointer hover:bg-blue-200">
+                  {country.charAt(0).toUpperCase() + country.slice(1)}
+                </span>
+              )}
+              {!city && !state && !country && (
+                <span className="text-sm text-gray-400">No service areas available</span>
+              )}
             </div>
           </div>
 
@@ -125,13 +194,11 @@ const ProfilePage = () => {
           {/* About Us Card */}
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">About Us</h2>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              Swift Movers Ltd is a leading packers and movers company with over 5 years of experience in providing reliable and efficient relocation services across India. We specialize in household shifting, office relocation, vehicle transportation, and warehousing solutions. Our trained professionals ensure safe and on-time delivery of your belongings with complete care and transparency.
-            </p>
+            <p className="text-sm text-gray-600 leading-relaxed">{about}</p>
           </div>
         </div>
 
-        {/* Right Column: Stats and Actions */}
+        {/* Right Column */}
         <div className="lg:col-span-1 flex flex-col gap-6">
 
           {/* Customer Ratings Card */}
@@ -139,11 +206,7 @@ const ProfilePage = () => {
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Customer ratings</h2>
             <div className="flex items-center gap-2 mb-2">
               <div className="flex text-yellow-500">
-                <MdOutlineStar />
-                <MdOutlineStar />
-                <MdOutlineStar />
-                <MdOutlineStar />
-                <MdOutlineStar />
+                <MdOutlineStar /><MdOutlineStar /><MdOutlineStar /><MdOutlineStar /><MdOutlineStar />
               </div>
               <span className="text-3xl font-bold text-gray-800">4.3</span>
             </div>
@@ -161,9 +224,15 @@ const ProfilePage = () => {
           <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
             <h2 className="text-lg font-semibold text-gray-800 mb-4">Business Statistics</h2>
             <div className="flex flex-col gap-4">
-              <BusinessStat title="Total Completed" value="898" icon={<MdOutlineVerified />} iconBg="bg-blue-100" iconColor="text-blue-600" />
-              <BusinessStat title="Active Customers" value="234" icon={<MdOutlinePeople />} iconBg="bg-blue-100" iconColor="text-blue-600" />
-              <BusinessStat title="Years in Business" value="6+" icon={<MdOutlineAccessTime />} iconBg="bg-blue-100" iconColor="text-blue-600" />
+              <BusinessStat title="Total Completed"  value="898"  icon={<MdOutlineVerified />} iconBg="bg-blue-100" iconColor="text-blue-600" />
+              <BusinessStat title="Active Customers" value="234"  icon={<MdOutlinePeople />}   iconBg="bg-blue-100" iconColor="text-blue-600" />
+              <BusinessStat
+                title="Years in Business"
+                value={createdYear ? `${new Date().getFullYear() - createdYear}+` : '—'}
+                icon={<MdOutlineAccessTime />}
+                iconBg="bg-blue-100"
+                iconColor="text-blue-600"
+              />
             </div>
           </div>
 
