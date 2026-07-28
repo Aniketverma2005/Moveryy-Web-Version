@@ -46,81 +46,98 @@ const MoverSearchPage = () => {
       </header>
 
       {/* ── Blue Hero ── */}
-      <div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 overflow-hidden">
-        {/* Background blobs */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute -top-32 -right-32 w-72 h-72 bg-blue-500 rounded-full opacity-10" />
-          <div className="absolute -bottom-32 -left-32 w-72 h-72 bg-blue-400 rounded-full opacity-10" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-white rounded-full opacity-5" />
-        </div>
+<div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 overflow-hidden">
+  {/* Background blobs */}
+  <div className="absolute inset-0 pointer-events-none overflow-hidden">
+    <div className="absolute -top-32 -right-32 w-72 h-72 bg-blue-500 rounded-full opacity-10" />
+    <div className="absolute -bottom-32 -left-32 w-72 h-72 bg-blue-400 rounded-full opacity-10" />
+    <div className="absolute top-1/2 left-1/2 w-96 h-96 -translate-x-1/2 -translate-y-1/2 bg-white rounded-full opacity-5" />
+  </div>
 
-        <div className="relative z-10 max-w-5xl mx-auto px-8 md:px-14 pt-12 pb-28">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-12">
+  <div className="relative z-10 max-w-6xl mx-auto px-8 md:px-14 pt-4 pb-52">
+    <div className="flex flex-col lg:flex-row items-start lg:items-start justify-between gap-12 w-full">
+      
+      {/* Left — text content */}
+      <div className="flex flex-col gap-3 max-w-xl text-left">
+        <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight">
+          Hassle-free <br />
+          <span className="text-yellow-400">House Moving</span>
+        </h1>
 
-            {/* Left — text content only, no icon above */}
-            <div className="flex flex-col gap-4 max-w-xl">
-              {/* Heading — house icon removed */}
-              <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight">
-                Hassle-free <br />
-                <span className="text-yellow-400">House Moving</span>
-              </h1>
+        <span className="inline-flex items-center gap-2 bg-blue-500/60 border border-white/20 text-white text-sm font-semibold px-4 py-2 rounded-full w-fit shadow-md backdrop-blur-sm">
+          <MdOutlineStar className="text-yellow-400" size={16} />
+          Trusted House Relocation
+        </span>
+      </div>
 
-              {/* Trusted quote badge */}
-              <span className="inline-flex items-center gap-2 bg-blue-500/60 border border-white/20 text-white text-sm font-semibold px-4 py-2 rounded-full w-fit shadow-md backdrop-blur-sm">
-                <MdOutlineStar className="text-yellow-400" size={16} />
-                Trusted House Relocation
-              </span>
-
-              <p className="text-base md:text-lg text-blue-100 leading-relaxed mt-1">
-                Reliable movers, transparent pricing, and seamless relocation
-                from door to door — anywhere in India.
-              </p>
+      {/* Right — stats card */}
+      <div className="hidden lg:flex justify-end flex-shrink-0 ml-auto">
+        <div className="w-[280px] bg-white/10 border border-white/20 rounded-3xl p-7 shadow-2xl space-y-6 backdrop-blur-md">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-yellow-400 rounded-2xl flex items-center justify-center shadow-md">
+              <MdOutlineStar size={24} className="text-white" />
             </div>
 
-            {/* Right — stats card */}
-            <div className="hidden lg:flex flex-shrink-0">
-              <div className="bg-white/10 border border-white/20 rounded-3xl p-8 shadow-2xl space-y-6 min-w-[240px]">
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-yellow-400 rounded-2xl flex items-center justify-center shadow-md">
-                    <MdOutlineStar size={24} className="text-white" />
-                  </div>
-                  <div>
-                    <p className="text-xl font-bold text-white">4.8★</p>
-                    <p className="text-xs text-blue-200">Customer Rating</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-green-400 rounded-2xl flex items-center justify-center shadow-md">
-                    <MdOutlineLocalShipping size={24} className="text-white" />
-                  </div>
-                  <div>
-                    <p className="text-xl font-bold text-white">5000+</p>
-                    <p className="text-xs text-blue-200">Verified Movers</p>
-                  </div>
-                </div>
-              </div>
+            <div>
+              <p className="text-2xl font-black text-white">4.8★</p>
+              <p className="text-xs text-blue-100 font-medium">
+                Customer Rating
+              </p>
+            </div>
+          </div>
+
+          <div className="h-px bg-white/15" />
+
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 bg-green-400 rounded-2xl flex items-center justify-center shadow-md">
+              <MdOutlineLocalShipping size={24} className="text-white" />
+            </div>
+
+            <div>
+              <p className="text-2xl font-black text-white">5000+</p>
+              <p className="text-xs text-blue-100 font-medium">
+                Verified Movers
+              </p>
             </div>
           </div>
         </div>
-
-        {/* Wave */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none">
-            <path d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H1380C1320 120 1200 120 1080 120C960 120 840 120 720 120C600 120 480 120 360 120C240 120 120 120 60 120H0Z" fill="#F8FAFC" />
-          </svg>
-        </div>
       </div>
+    </div>
+
+    {/* Bottom Text */}
+    <p className="absolute left-8 md:left-14 bottom-9 max-w-xl text-base md:text-lg text-blue-100 leading-relaxed">
+      Reliable movers, transparent pricing, and seamless relocation
+      from door to door — anywhere in India.
+    </p>
+  </div>
+
+  {/* Wave */}
+  <div className="absolute bottom-0 left-0 right-0">
+    <svg
+      viewBox="0 0 1440 120"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className="w-full h-[95px]"
+      preserveAspectRatio="none"
+    >
+      <path
+        d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H0Z"
+        fill="#F8FAFC"
+      />
+    </svg>
+  </div>
+</div>
 
       {/* ── Main content ── */}
-      <div className="max-w-5xl mx-auto px-6 md:px-14 pb-10">
+      <div className="max-w-5xl mx-auto px-6 md:px-14 pb-10 w-full h-full z-20">
 
         {/* Where are you moving — pulled up to overlap the wave */}
         <motion.div
           variants={cardVariants}
-          className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-500 rounded-3xl px-8 py-10 shadow-2xl relative mt-10"
+          className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-500 rounded-3xl px-8 py-10 shadow-2xl relative mt-10 w-full h-full center mx-auto flex flex-col items-center justify-center gap-6 md:gap-8 text-center"
         >
-          <div className="absolute top-0 right-0 w-48 h-48 bg-white opacity-10 rounded-full -mr-20 -mt-20" />
-          <div className="absolute bottom-0 left-0 w-32 h-32 bg-white opacity-10 rounded-full -ml-16 -mb-16" />
+          <div className="absolute top-0 right-0 w-full h-full bg-white opacity-10 rounded-full -mr-20 -mt-20" />
+          <div className="absolute bottom-0 left-0 w-full h-full bg-white opacity-10 rounded-full -ml-16 -mb-16" />
 
           <h2 className="text-xl font-black text-white mb-6 relative z-10 tracking-wide">
             Where are you moving?
@@ -132,19 +149,27 @@ const MoverSearchPage = () => {
               <input
                 type="text"
                 placeholder="Drop Location"
-                className="w-full pl-10 pr-5 py-4 bg-white rounded-2xl text-slate-800 font-semibold text-sm focus:ring-4 focus:ring-yellow-300 shadow-md placeholder:text-slate-400 outline-none"
+                className="w-210 pl-10 pr-5 py-4 bg-white rounded-2xl text-slate-800 font-semibold text-sm focus:ring-4 focus:ring-yellow-300 shadow-md placeholder:text-slate-400 outline-none"
               />
-            </div>
+            </div><br></br>
             <div className="relative">
-              <MdCalendarToday size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
+              <MdLocationOn size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#22C55E' }} />
+              <input
+                type="text"
+                placeholder="Pickup Location"
+                className="w-210 pl-10 pr-5 py-4 bg-white rounded-2xl text-slate-700 font-semibold text-sm focus:ring-4 focus:ring-yellow-300 shadow-md outline-none"
+              />
+            </div><br></br>
+            <div className="relative">
+              <MdCalendarToday size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
               <input
                 type="date"
-                className="w-full pl-10 pr-5 py-4 bg-white rounded-2xl text-slate-700 font-semibold text-sm focus:ring-4 focus:ring-yellow-300 shadow-md outline-none"
+                className="w-210 pl-10 pr-5 py-4 bg-white rounded-2xl text-slate-700 font-semibold text-sm focus:ring-4 focus:ring-yellow-300 shadow-md outline-none"
               />
             </div>
           </div>
 
-          <button className="mt-6 relative z-10 bg-white text-orange-500 font-black px-9 py-3 rounded-2xl shadow-lg hover:bg-orange-50 active:scale-95 transition-all text-sm tracking-wide">
+          <button className="w-full mt-6 relative z-10 bg-white text-orange-500 font-black px-9 py-3 rounded-2xl shadow-lg hover:bg-orange-50 active:scale-95 transition-all text-sm tracking-wide">
             Find Movers →
           </button>
         </motion.div>
