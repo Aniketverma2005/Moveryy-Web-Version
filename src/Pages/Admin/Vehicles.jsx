@@ -357,7 +357,7 @@ const EditVehicleModal = ({ vehicle, onClose, onSuccess }) => {
         registrarName:      form.registrarName.trim(),
         chassisNumber:      form.chassisNumber.trim(),
       };
-      const res = await api.put(`/api/v1/vehicles/${vehicle.vehicleId}`, payload);
+      const res = await api.patch(`/api/v1/vehicles/${vehicle.vehicleId}`, payload);
       if (res?.success || res?.message) {
         setSuccess('Vehicle updated successfully!');
         setTimeout(() => { onSuccess(); onClose(); }, 1200);
