@@ -29,10 +29,19 @@ const Login = () => {
     const clearError = () => { if (error) setError(''); };
 
     // ── redirect after login ──────────────────────────────────────────────────
-    const redirectByRole = (role) => {
-        if (role === 'admin') navigate('/admin');
-        else if (role === 'transport') navigate('/transport');
-        else navigate('/');
+    const redirectByRole = (role, data) => {
+        if (role === 'admin') {
+            // If organization setup is needed, redirect to org registration
+            if (data?.needsOrganizationSetup === true) {
+                navigate('/admin/register-organization');
+            } else {
+                navigate('/admin');
+            }
+        } else if (role === 'transport') {
+            navigate('/transport');
+        } else {
+            navigate('/');
+        }
     };
 
     // ── start countdown timer ─────────────────────────────────────────────────
@@ -55,7 +64,8 @@ const Login = () => {
         setLoading(true);
         try {
             const result = await authService.login({ email, password });
-            redirectByRole(result?.user?.role);
+            console.log('🔍 Login result:', result);
+            redirectByRole(result?.user?.role, result);
         } catch (err) {
             setError(err?.message || 'Invalid email or password. Please try again.');
         } finally {
@@ -117,7 +127,7 @@ const Login = () => {
         setLoading(true);
         try {
             const result = await authService.loginWithOtp(email, otp);
-            redirectByRole(result?.user?.role);
+            redirectByRole(result?.user?.role, result);
         } catch (err) {
             setError(err?.message || 'Invalid or expired OTP. Please try again.');
         } finally {
