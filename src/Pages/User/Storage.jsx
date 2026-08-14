@@ -2,8 +2,9 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   MdOutlinePerson, MdClose, MdArrowBack, MdSearch, MdLocationOn,
-  MdMyLocation, MdOutlineApartment, MdOutlineFilterList,
+  MdMyLocation, MdOutlineWarehouse, MdOutlineFilterList,
   MdOutlineStar as MdStar, MdOutlineInfo, MdOutlineKeyboardArrowDown,
+  MdOutlineInventory2,
 } from 'react-icons/md';
 import { NavLink } from 'react-router-dom';
 import { cardVariants, containerVariants, pageVariants } from '../../utils/animations';
@@ -19,7 +20,7 @@ const getInitials = () => {
   return null;
 };
 
-// ── LocationSearchOverlay — same implementation as MoveryyGo ─────────────────
+// ── LocationSearchOverlay — same as OfficeShift / Rides / MoveryyGo ──────────
 const LocationSearchOverlay = ({ type, onSelect, onClose }) => {
   const [query,      setQuery]      = useState('');
   const [results,    setResults]    = useState([]);
@@ -86,14 +87,20 @@ const LocationSearchOverlay = ({ type, onSelect, onClose }) => {
         <div className="flex-1 flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2.5">
           <MdSearch size={17} className="text-gray-400 flex-shrink-0" />
           <input ref={inputRef} type="text" value={query} onChange={handleChange}
-            placeholder={isPickup ? 'Search current office location…' : 'Search new office location…'}
+            placeholder={isPickup ? 'Search pickup location…' : 'Search storage location…'}
             className="flex-1 bg-transparent text-gray-800 text-sm outline-none placeholder:text-gray-400" />
-          {query && <button onClick={() => { setQuery(''); setResults([]); }}><MdClose size={15} className="text-gray-400" /></button>}
+          {query && (
+            <button onClick={() => { setQuery(''); setResults([]); }}>
+              <MdClose size={15} className="text-gray-400" />
+            </button>
+          )}
         </div>
       </div>
       <div className="flex items-center gap-2.5 px-5 py-2 bg-gray-50 border-b border-gray-100">
         <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: isPickup ? '#22C55E' : '#EF4444' }} />
-        <span className="text-xs text-gray-500 font-medium">{isPickup ? 'Current Office Location' : 'New Office Location'}</span>
+        <span className="text-xs text-gray-500 font-medium">
+          {isPickup ? 'Pickup Location' : 'Storage Location'}
+        </span>
       </div>
       <div className="flex-1 overflow-y-auto">
         <button onClick={handleGPS} disabled={gpsLoading}
@@ -137,23 +144,16 @@ const LocationSearchOverlay = ({ type, onSelect, onClose }) => {
   );
 };
 
-// ── Office mover data ─────────────────────────────────────────────────────────
-const movers = [
-  { name: 'Corporate Move Pro',    rating: 4.8, reviews: 142, distance: '1.2 km away', time: '1-2 days', price: '₹3,500', tags: ['Legal Offices', 'IT Equipment', 'Secure Documents', 'Weekend Service'], color: 'text-blue-600'   },
-  { name: 'BizShift Solutions',    rating: 4.8, reviews: 107, distance: '2.1 km away', time: '2-3 days', price: '₹2,800', tags: ['Small Offices', 'Quick Setup', 'Budget Friendly', 'Insurance Included'],  color: 'text-red-500'    },
-  { name: 'Enterprise Relocators', rating: 4.7, reviews: 189, distance: '3.6 km away', time: '1 day',    price: '₹4,200', tags: ['Large Offices', 'High Value Removal', 'Premium Service', 'Same Day'],      color: 'text-green-500'  },
-  { name: 'StartupMove Express',   rating: 4.6, reviews: 152, distance: '2.8 km away', time: '2-3 days', price: '₹2,200', tags: ['Co-working Spaces', 'Quick Moves', 'Startup Friendly', 'Flexible Timing'], color: 'text-purple-500' },
+// ── Storage facility data ─────────────────────────────────────────────────────
+const facilities = [
+  { name: 'SecureStore Depot',      rating: 4.9, reviews: 198, distance: '1.1 km away', size: '50 sq ft',  price: '₹1,200/mo', tags: ['Climate Controlled', '24/7 Access', 'CCTV Security', 'Insurance Included'], color: 'text-blue-600'   },
+  { name: 'SafeKeep Warehouse',     rating: 4.8, reviews: 143, distance: '2.3 km away', size: '100 sq ft', price: '₹2,100/mo', tags: ['Large Units', 'Fork Lift Access', 'Commercial Storage', 'Flexible Tenure'],   color: 'text-green-600'  },
+  { name: 'QuickSpace Storage',     rating: 4.7, reviews: 117, distance: '3.0 km away', size: '25 sq ft',  price: '₹700/mo',  tags: ['Mini Units', 'Short Term', 'Budget Friendly', 'Easy Access'],                  color: 'text-orange-500' },
+  { name: 'PremiumVault Solutions', rating: 4.8, reviews: 162, distance: '2.7 km away', size: '200 sq ft', price: '₹3,800/mo', tags: ['Premium Facility', 'Humidity Control', 'Luxury Storage', 'Full Insurance'],    color: 'text-purple-500' },
 ];
 
-const specialReqs = [
-  'Fragile equipment handling',
-  'IT setup assistance',
-  'Furniture assembly/disassembly',
-  'Secure document handling',
-];
-
-// ── Mover card ────────────────────────────────────────────────────────────────
-const MoverCard = ({ m }) => (
+// ── Facility card ─────────────────────────────────────────────────────────────
+const FacilityCard = ({ f }) => (
   <motion.div
     variants={cardVariants}
     whileHover={{ y: -4, boxShadow: '0 12px 32px rgba(0,0,0,0.10)' }}
@@ -162,31 +162,31 @@ const MoverCard = ({ m }) => (
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-3">
         <div className="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center">
-          <MdOutlineApartment size={22} className={m.color} />
+          <MdOutlineWarehouse size={22} className={f.color} />
         </div>
         <div>
-          <p className="font-bold text-gray-900 text-sm">{m.name}</p>
+          <p className="font-bold text-gray-900 text-sm">{f.name}</p>
           <div className="flex items-center gap-1.5 text-xs text-gray-500 mt-0.5 flex-wrap">
             <MdStar size={12} className="text-yellow-400" />
-            <span className="font-semibold">{m.rating}</span>
-            <span className="text-gray-300">({m.reviews})</span>
+            <span className="font-semibold">{f.rating}</span>
+            <span className="text-gray-300">({f.reviews})</span>
             <span className="text-gray-300">·</span>
-            <span>{m.distance}</span>
+            <span>{f.distance}</span>
             <span className="text-gray-300">·</span>
-            <span>{m.time}</span>
+            <span>{f.size}</span>
           </div>
         </div>
       </div>
       <span className="text-xs font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full border border-green-100">Verified</span>
     </div>
     <div className="flex flex-wrap gap-2 mb-5">
-      {m.tags.map(t => (
+      {f.tags.map(t => (
         <span key={t} className="px-2.5 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-full border border-blue-100">{t}</span>
       ))}
     </div>
     <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
       <div>
-        <p className="text-xl font-bold text-blue-600">{m.price}</p>
+        <p className="text-xl font-bold text-blue-600">{f.price}</p>
         <p className="text-xs text-gray-400">starting from</p>
       </div>
       <button className="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors active:scale-95">
@@ -197,7 +197,7 @@ const MoverCard = ({ m }) => (
 );
 
 // ── Main page ─────────────────────────────────────────────────────────────────
-const OfficeRelocationSearchPage = () => {
+const StoragePage = () => {
   const initials = getInitials();
 
   const [pickup,          setPickup]          = useState('');
@@ -206,8 +206,8 @@ const OfficeRelocationSearchPage = () => {
   const [detailsOpen,     setDetailsOpen]     = useState(false);
   const [searching,       setSearching]       = useState(false);
 
-  const handleContinue = () => {
-    if (!pickup.trim() || !drop.trim()) return;
+  const handleSearch = () => {
+    if (!pickup.trim()) return;
     setSearching(true);
     setTimeout(() => setSearching(false), 1200);
   };
@@ -216,7 +216,7 @@ const OfficeRelocationSearchPage = () => {
     <motion.div variants={pageVariants} initial="hidden" animate="show"
       className="min-h-screen bg-[#F3F4F6] font-sans">
 
-      {/* ── Navbar — identical to MoveryyGo ── */}
+      {/* ── Navbar — identical to OfficeShift / Rides ── */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
         <div className="w-full px-6 md:px-10 h-14 flex items-center justify-between">
           <NavLink to="/"><img src={logo} alt="Moveryy" className="h-9 w-auto object-contain" /></NavLink>
@@ -243,15 +243,15 @@ const OfficeRelocationSearchPage = () => {
         )}
       </AnimatePresence>
 
-      {/* ── Main content — MoveryyGo layout ── */}
+      {/* ── Main content — MoveryyGo / OfficeShift layout ── */}
       <div className="min-h-[calc(100vh-56px)] bg-white">
         <div className="w-full px-6 md:px-10 pt-8 pb-10">
 
           {/* Heading + subtitle */}
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">Office Shifting</h1>
-          <p className="text-gray-500 text-sm mb-8">Secure, efficient office relocation with minimal downtime</p>
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">Storage</h1>
+          <p className="text-gray-500 text-sm mb-8">Secure storage units near you — short or long term</p>
 
-          {/* ── Location fields — identical dotted connector as MoveryyGo ── */}
+          {/* ── Location fields — dotted connector same as OfficeShift ── */}
           <div className="w-full relative">
             <div style={{
               position: 'absolute', left: '24px', top: '26px',
@@ -260,47 +260,55 @@ const OfficeRelocationSearchPage = () => {
               zIndex: 1,
             }} />
 
-            {/* Current office (pickup) */}
+            {/* Pickup */}
             <div className="w-full flex items-center gap-4 px-5 py-4 bg-[#F3F4F6] cursor-pointer hover:bg-[#EAECEE] transition-colors"
               onClick={() => setLocationOverlay('pickup')}>
               <div style={{ width: 16, height: 16, borderRadius: '50%', border: '4px solid #22C55E', backgroundColor: '#fff', flexShrink: 0, zIndex: 2 }} />
               <span className={`flex-1 text-sm select-none ${pickup ? 'text-gray-800 font-medium' : 'text-gray-400'}`}>
-                {pickup || 'Enter current office location here'}
+                {pickup || 'Enter pickup location here'}
               </span>
-              {pickup && <button onClick={e => { e.stopPropagation(); setPickup(''); }}><MdClose size={14} className="text-gray-400 hover:text-gray-600" /></button>}
+              {pickup && (
+                <button onClick={e => { e.stopPropagation(); setPickup(''); }}>
+                  <MdClose size={14} className="text-gray-400 hover:text-gray-600" />
+                </button>
+              )}
             </div>
 
             {/* Gap */}
             <div className="h-7 bg-white" />
 
-            {/* New office (drop) */}
+            {/* Drop */}
             <div className="w-full flex items-center gap-4 px-5 py-4 bg-[#F3F4F6] cursor-pointer hover:bg-[#EAECEE] transition-colors"
               onClick={() => setLocationOverlay('drop')}>
               <div style={{ width: 16, height: 16, borderRadius: '50%', border: '4px solid #EF4444', backgroundColor: '#fff', flexShrink: 0, zIndex: 2 }} />
               <span className={`flex-1 text-sm select-none ${drop ? 'text-gray-800 font-medium' : 'text-gray-400'}`}>
-                {drop || 'Enter new office location here'}
+                {drop || 'Enter drop location here'}
               </span>
-              {drop && <button onClick={e => { e.stopPropagation(); setDrop(''); }}><MdClose size={14} className="text-gray-400 hover:text-gray-600" /></button>}
+              {drop && (
+                <button onClick={e => { e.stopPropagation(); setDrop(''); }}>
+                  <MdClose size={14} className="text-gray-400 hover:text-gray-600" />
+                </button>
+              )}
             </div>
           </div>
 
-          {/* Continue button — identical to MoveryyGo */}
-          <button onClick={handleContinue}
-            disabled={searching || !pickup.trim() || !drop.trim()}
+          {/* Search button — identical to OfficeShift / Rides */}
+          <button onClick={handleSearch}
+            disabled={searching || !pickup.trim()}
             className="mt-5 w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3.5 text-sm tracking-wide uppercase transition-colors flex items-center justify-center gap-2">
             {searching
               ? <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Searching…</>
-              : 'Find Office Movers'
+              : 'Find Storage Units'
             }
           </button>
-
           <p className="text-center text-gray-400 text-xs mt-5">
-            Secure office shifting with minimal downtime &amp; full support
+            Secure, affordable storage with 24/7 access &amp; full insurance
           </p>
         </div>
       </div>
+
     </motion.div>
   );
 };
 
-export default OfficeRelocationSearchPage;
+export default StoragePage;

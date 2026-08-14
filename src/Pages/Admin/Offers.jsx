@@ -21,19 +21,22 @@ const formatDate = (d) => d ? new Date(d).toLocaleDateString('en-GB') : '—';
 const toInputDate = (d) => d ? new Date(d).toISOString().slice(0, 10) : '';
 
 const statusBadge = (offer) => {
-  const now = new Date();
+  const now   = new Date();
   const end   = offer.endDate   ? new Date(offer.endDate)   : null;
   const start = offer.startDate ? new Date(offer.startDate) : null;
-  if (!offer.isActive)      return 'bg-red-100 text-red-700';
+  // isActive can be boolean true/false OR integer 1/0 from DB
+  const active = offer.isActive === true || offer.isActive === 1;
+  if (!active)              return 'bg-red-100 text-red-700';
   if (end && end < now)     return 'bg-gray-100 text-gray-500';
   if (start && start > now) return 'bg-yellow-100 text-yellow-700';
   return 'bg-green-100 text-green-700';
 };
 const statusLabel = (offer) => {
-  const now = new Date();
+  const now   = new Date();
   const end   = offer.endDate   ? new Date(offer.endDate)   : null;
   const start = offer.startDate ? new Date(offer.startDate) : null;
-  if (!offer.isActive)      return 'Inactive';
+  const active = offer.isActive === true || offer.isActive === 1;
+  if (!active)              return 'Inactive';
   if (end && end < now)     return 'Expired';
   if (start && start > now) return 'Scheduled';
   return 'Active';
@@ -276,7 +279,7 @@ const OffersPage = () => {
 
   // ── Stats ──────────────────────────────────────────────────────────────────
   const total    = list.length;
-  const active   = list.filter(o => o.isActive).length;
+  const active  = list.filter(o => o.isActive === true || o.isActive === 1).length;
   const now      = new Date();
   const expired  = list.filter(o => o.endDate && new Date(o.endDate) < now).length;
 

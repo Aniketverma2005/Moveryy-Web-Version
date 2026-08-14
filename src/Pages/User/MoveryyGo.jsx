@@ -447,27 +447,24 @@ const MoveryyGoPage = () => {
   return (
     <motion.div variants={pageVariants} initial="hidden" animate="show" className="min-h-screen bg-[#F3F4F6] font-sans">
 
-      {/* Navbar */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="w-full px-6 md:px-10 h-14 flex items-center justify-between">
-          <NavLink to="/"><img src={logo} alt="Moveryy" className="h-9 w-auto object-contain" /></NavLink>
-          <NavLink to="/profile">
-            <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold text-sm hover:bg-blue-700 transition-colors cursor-pointer">
-              {initials ?? <MdOutlinePerson size={18} />}
-            </div>
-          </NavLink>
-        </div>
-      </header>
 
       <AnimatePresence mode="wait">
 
         {/* ── STEP 1: WELCOME ── */}
         {step === 'welcome' && (
           <motion.div key="welcome" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25 }}
-            className="min-h-[calc(100vh-56px)] bg-white">
-            <div className="w-full px-6 md:px-10 pt-8 pb-10">
+            className="min-h-[calc(100vh-56px)] bg-white relative overflow-hidden">
 
-              <h1 className="text-2xl font-bold text-gray-900 mb-1">Welcome to Moveryy Go!</h1>
+            {/* Full-page #MOVERYY watermark */}
+            <div className="absolute inset-0 flex items-top justify-center pointer-events-none select-none z-0">
+              <span className="text-[11vw] font-black text-gray-100 tracking-tighter whitespace-nowrap">
+                #MOVERYY
+              </span>
+            </div>
+
+            <div className="w-full px-6 md:px-10 pt-8 pb-10 relative z-10">
+
+              <h1 className="text-2xl font-bold text-gray-900 mb-1">Welcome to <span className="text-blue-600">Moveryy Go!</span></h1>
               <p className="text-gray-500 text-sm mb-8">Book your hassle-free trip with Moveryy Go</p>
 
               {/* Input fields with dot connector */}

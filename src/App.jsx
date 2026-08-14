@@ -12,6 +12,7 @@ import Users from './Pages/Admin/Users.jsx';
 import Vehicles from './Pages/Admin/Vehicles.jsx';
 import Payments from './Pages/Admin/Payments.jsx';
 import Offers from './Pages/Admin/Offers.jsx';
+import VehicleOffers from './Pages/Admin/VehicleOffers.jsx';
 import Bookings from './Pages/Admin/Bookings.jsx';
 import Analytics from './Pages/Admin/Analytics.jsx';
 import Profile from './Pages/Admin/Profile.jsx';
@@ -24,6 +25,7 @@ import CarTransportSearchPage from './Pages/User/CarTransportsearch.jsx';
 import OfficeRelocationSearchPage from './Pages/User/OfficeShift.jsx';
 import MoveryyGoPage from './Pages/User/MoveryyGo.jsx';
 import RidesPage from './Pages/User/Rides.jsx';
+import StoragePage from './Pages/User/Storage.jsx';
 
 // Transport/Driver Pages
 import TransportHome from './Pages/Transport/Home.jsx';
@@ -68,6 +70,7 @@ function App() {
                 <Route path="/rides" element={<RidesPage />} />
                 <Route path="/car-moving" element={<CarTransportSearchPage />} />
                 <Route path="/office-shifting" element={<OfficeRelocationSearchPage />} />
+                <Route path="/storage" element={<StoragePage />} />
 
                 {/* User Routes */}
                 <Route path="/" element={<UserLayout />}>
@@ -88,6 +91,7 @@ function App() {
                     <Route path="transport" element={<Vehicles />} />
                     <Route path="payment" element={<Payments />} />
                     <Route path="offers" element={<Offers />} />
+                    <Route path="vehicle-offers" element={<VehicleOffers />} />
                     <Route path="analytics" element={<Analytics />} />
                     <Route path="profile" element={<Profile />} />
                     <Route path="reviews" element={<Review />} />

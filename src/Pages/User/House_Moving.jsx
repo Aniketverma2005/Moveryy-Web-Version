@@ -1,239 +1,325 @@
-import { motion } from 'framer-motion';
-import { MdOutlineStar, MdOutlineLocalShipping, MdCalendarToday, MdLocationOn, MdOutlinePerson, MdOutlineMyLocation } from 'react-icons/md';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  MdOutlinePerson, MdClose, MdArrowBack,
+  MdSearch, MdLocationOn, MdMyLocation,
+} from 'react-icons/md';
 import { NavLink } from 'react-router-dom';
-import { cardVariants, pageVariants } from '../../utils/animations';
-import houseShiftIcon from '../../assets/houseshift.png';
+import { pageVariants } from '../../utils/animations';
 import logo from '../../assets/logo2.png';
 
+// ── helpers ───────────────────────────────────────────────────────────────────
 const getInitials = () => {
   try {
     const u = JSON.parse(localStorage.getItem('moveryy_user'));
     if (u?.firstName) return u.firstName.charAt(0).toUpperCase();
-    if (u?.name) return u.name.charAt(0).toUpperCase();
+    if (u?.name)      return u.name.charAt(0).toUpperCase();
   } catch { /* empty */ }
   return null;
 };
 
+// ── LocationSearchOverlay — copied verbatim from MoveryyGo ───────────────────
+// Only the component name differs; every hook, API call, and class is identical.
+const LocationSearchOverlay = ({ type, onSelect, onClose }) => {
+  const [query,      setQuery]      = useState('');
+  const [results,    setResults]    = useState([]);
+  const [loading,    setLoading]    = useState(false);
+  const [gpsLoading, setGpsLoading] = useState(false);
+  const inputRef    = useRef(null);
+  const debounceRef = useRef(null);
+  const isPickup    = type === 'pickup';
+
+  useEffect(() => { setTimeout(() => inputRef.current?.focus(), 100); }, []);
+
+  const searchLocations = useCallback(async (q) => {
+    if (!q.trim() || q.trim().length < 2) { setResults([]); return; }
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(q)}&format=json&addressdetails=1&limit=6&countrycodes=in`,
+        { headers: { 'Accept-Language': 'en' } }
+      );
+      const data = await res.json();
+      setResults(data.map(item => ({
+        id:   item.place_id,
+        name: item.display_name.split(',').slice(0, 2).join(', '),
+        full: item.display_name,
+      })));
+    } catch { setResults([]); }
+    finally   { setLoading(false); }
+  }, []);
+
+  const handleChange = (e) => {
+    const val = e.target.value;
+    setQuery(val);
+    clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => searchLocations(val), 350);
+  };
+
+  // GPS — exact same implementation as MoveryyGo
+  const handleGPS = () => {
+    if (!navigator.geolocation) return;
+    setGpsLoading(true);
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        try {
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${pos.coords.latitude}&lon=${pos.coords.longitude}&format=json`,
+            { headers: { 'Accept-Language': 'en' } }
+          );
+          const data = await res.json();
+          onSelect(data.display_name?.split(',').slice(0, 3).join(', ') || 'Current Location');
+        } catch { onSelect('Current Location'); }
+        finally   { setGpsLoading(false); }
+      },
+      () => setGpsLoading(false),
+      { timeout: 8000 }
+    );
+  };
+
+  return (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 bg-white flex flex-col">
+
+      {/* Search bar header */}
+      <div className="flex items-center gap-3 px-4 py-3 border-b border-gray-100">
+        <button onClick={onClose}
+          className="w-9 h-9 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+          <MdArrowBack size={20} className="text-gray-600" />
+        </button>
+        <div className="flex-1 flex items-center gap-2 bg-gray-100 rounded-lg px-3 py-2.5">
+          <MdSearch size={17} className="text-gray-400 flex-shrink-0" />
+          <input
+            ref={inputRef}
+            type="text"
+            value={query}
+            onChange={handleChange}
+            placeholder={isPickup ? 'Search pickup location…' : 'Search drop location…'}
+            className="flex-1 bg-transparent text-gray-800 text-sm outline-none placeholder:text-gray-400"
+          />
+          {query && (
+            <button onClick={() => { setQuery(''); setResults([]); }}>
+              <MdClose size={15} className="text-gray-400" />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Type indicator */}
+      <div className="flex items-center gap-2.5 px-5 py-2 bg-gray-50 border-b border-gray-100">
+        <div style={{
+          width: 8, height: 8, borderRadius: '50%',
+          backgroundColor: isPickup ? '#22C55E' : '#EF4444',
+        }} />
+        <span className="text-xs text-gray-500 font-medium">
+          {isPickup ? 'Pickup Location' : 'Drop Location'}
+        </span>
+      </div>
+
+      {/* Results list */}
+      <div className="flex-1 overflow-y-auto">
+
+        {/* GPS button */}
+        <button
+          onClick={handleGPS}
+          disabled={gpsLoading}
+          className="w-full flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors border-b border-gray-100"
+        >
+          <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+            {gpsLoading
+              ? <span className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+              : <MdMyLocation size={18} className="text-blue-600" />
+            }
+          </div>
+          <div className="text-left">
+            <p className="text-sm font-semibold text-gray-800">Use Current Location</p>
+            <p className="text-xs text-gray-400">Using GPS</p>
+          </div>
+        </button>
+
+        {/* Loading spinner */}
+        {loading && (
+          <div className="flex flex-col items-center py-14 gap-3">
+            <span className="w-7 h-7 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            <p className="text-sm text-gray-400">Searching locations…</p>
+          </div>
+        )}
+
+        {/* Search results */}
+        {!loading && results.length > 0 && results.map(r => (
+          <button
+            key={r.id}
+            onClick={() => onSelect(r.name)}
+            className="w-full flex items-start gap-4 px-5 py-3.5 hover:bg-gray-50 transition-colors border-b border-gray-50 text-left"
+          >
+            <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+              <MdLocationOn size={16} className="text-gray-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-gray-800 truncate">{r.name}</p>
+              <p className="text-xs text-gray-400 truncate mt-0.5">{r.full}</p>
+            </div>
+          </button>
+        ))}
+
+        {/* Empty state */}
+        {!loading && query.length >= 2 && results.length === 0 && (
+          <div className="flex flex-col items-center py-14 gap-2">
+            <MdLocationOn size={32} className="text-gray-300" />
+            <p className="text-sm text-gray-400">No locations found</p>
+          </div>
+        )}
+      </div>
+    </motion.div>
+  );
+};
+
+// ── Main page ─────────────────────────────────────────────────────────────────
 const MoverSearchPage = () => {
   const initials = getInitials();
+
+  const [pickup,          setPickup]          = useState('');
+  const [drop,            setDrop]            = useState('');
+  const [locationOverlay, setLocationOverlay] = useState(null); // 'pickup' | 'drop' | null
+  const [searching,       setSearching]       = useState(false);
+
+  const handleContinue = () => {
+    if (!pickup.trim() || !drop.trim()) return;
+    setSearching(true);
+    setTimeout(() => setSearching(false), 1200);
+  };
 
   return (
     <motion.div
       variants={pageVariants}
       initial="hidden"
       animate="show"
-      className="bg-[#F8FAFC] min-h-screen font-sans"
+      className="min-h-screen bg-[#F3F4F6] font-sans"
     >
-      {/* ── White Navbar ── */}
-      <header className="bg-white border-b border-gray-100 shadow-sm sticky top-0 z-50">
-        <div className="max-w-5xl mx-auto px-8 md:px-14 h-14 flex items-center justify-between">
-          {/* Logo */}
-          <NavLink to="/">
-            <img
-              src={logo}
-              alt="Moveryy"
-              className="h-9 w-auto object-contain"
-            />
-          </NavLink>
 
-          {/* Profile avatar */}
+      {/* ── Navbar — identical to MoveryyGo ── */}
+      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
+        <div className="w-full px-6 md:px-10 h-14 flex items-center justify-between">
+          <NavLink to="/">
+            <img src={logo} alt="Moveryy" className="h-9 w-auto object-contain" />
+          </NavLink>
           <NavLink to="/profile">
-            <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm hover:bg-blue-700 transition-colors cursor-pointer shadow-sm">
+            <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold text-sm hover:bg-blue-700 transition-colors cursor-pointer">
               {initials ?? <MdOutlinePerson size={18} />}
             </div>
           </NavLink>
         </div>
       </header>
 
-      {/* ── Blue Hero ── */}
-<div className="relative bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 overflow-hidden">
-  {/* Background blobs */}
-  <div className="absolute inset-0 pointer-events-none overflow-hidden">
-    <div className="absolute -top-32 -right-32 w-72 h-72 bg-blue-500 rounded-full opacity-10" />
-    <div className="absolute -bottom-32 -left-32 w-72 h-72 bg-blue-400 rounded-full opacity-10" />
-    <div className="absolute top-1/2 left-1/2 w-96 h-96 -translate-x-1/2 -translate-y-1/2 bg-white rounded-full opacity-5" />
-  </div>
+      {/* ── Location overlay (full-screen, same as MoveryyGo) ── */}
+      <AnimatePresence>
+        {locationOverlay && (
+          <LocationSearchOverlay
+            type={locationOverlay}
+            onSelect={(val) => {
+              if (locationOverlay === 'pickup') setPickup(val);
+              else setDrop(val);
+              setLocationOverlay(null);
+            }}
+            onClose={() => setLocationOverlay(null)}
+          />
+        )}
+      </AnimatePresence>
 
-  <div className="relative z-10 max-w-6xl mx-auto px-8 md:px-14 pt-4 pb-52">
-    <div className="flex flex-col lg:flex-row items-start lg:items-start justify-between gap-12 w-full">
-      
-      {/* Left — text content */}
-      <div className="flex flex-col gap-3 max-w-xl text-left">
-        <h1 className="text-4xl md:text-5xl font-extrabold text-white leading-tight tracking-tight">
-          Hassle-free <br />
-          <span className="text-yellow-400">House Moving</span>
-        </h1>
-
-        <span className="inline-flex items-center gap-2 bg-blue-500/60 border border-white/20 text-white text-sm font-semibold px-4 py-2 rounded-full w-fit shadow-md backdrop-blur-sm">
-          <MdOutlineStar className="text-yellow-400" size={16} />
-          Trusted House Relocation
-        </span>
-      </div>
-
-      {/* Right — stats card */}
-      <div className="hidden lg:flex justify-end flex-shrink-0 ml-auto">
-        <div className="w-[280px] bg-white/10 border border-white/20 rounded-3xl p-7 shadow-2xl space-y-6 backdrop-blur-md">
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-yellow-400 rounded-2xl flex items-center justify-center shadow-md">
-              <MdOutlineStar size={24} className="text-white" />
-            </div>
-
-            <div>
-              <p className="text-2xl font-black text-white">4.8★</p>
-              <p className="text-xs text-blue-100 font-medium">
-                Customer Rating
-              </p>
-            </div>
-          </div>
-
-          <div className="h-px bg-white/15" />
-
-          <div className="flex items-center gap-4">
-            <div className="w-12 h-12 bg-green-400 rounded-2xl flex items-center justify-center shadow-md">
-              <MdOutlineLocalShipping size={24} className="text-white" />
-            </div>
-
-            <div>
-              <p className="text-2xl font-black text-white">5000+</p>
-              <p className="text-xs text-blue-100 font-medium">
-                Verified Movers
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {/* Bottom Text */}
-    <p className="absolute left-8 md:left-14 bottom-9 max-w-xl text-base md:text-lg text-blue-100 leading-relaxed">
-      Reliable movers, transparent pricing, and seamless relocation
-      from door to door — anywhere in India.
-    </p>
-  </div>
-
-  {/* Wave */}
-  <div className="absolute bottom-0 left-0 right-0">
-    <svg
-      viewBox="0 0 1440 120"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-full h-[95px]"
-      preserveAspectRatio="none"
-    >
-      <path
-        d="M0 120L60 110C120 100 240 80 360 70C480 60 600 60 720 65C840 70 960 80 1080 85C1200 90 1320 90 1380 90L1440 90V120H0Z"
-        fill="#F8FAFC"
-      />
-    </svg>
-  </div>
-</div>
-
-      {/* ── Main content ── */}
-      <div className="max-w-5xl mx-auto px-6 md:px-14 pb-10 w-full h-full z-20">
-
-        {/* Where are you moving — pulled up to overlap the wave */}
+      {/* ── Welcome step — identical layout to MoveryyGo ── */}
+      <AnimatePresence mode="wait">
         <motion.div
-          variants={cardVariants}
-          className="bg-gradient-to-r from-yellow-400 via-yellow-500 to-orange-500 rounded-3xl px-8 py-10 shadow-2xl relative mt-10 w-full h-full center mx-auto flex flex-col items-center justify-center gap-6 md:gap-8 text-center"
+          key="house-shift-welcome"
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -12 }}
+          transition={{ duration: 0.25 }}
+          className="min-h-[calc(100vh-56px)] bg-white"
         >
-          <div className="absolute top-0 right-0 w-full h-full bg-white opacity-10 rounded-full -mr-20 -mt-20" />
-          <div className="absolute bottom-0 left-0 w-full h-full bg-white opacity-10 rounded-full -ml-16 -mb-16" />
+          <div className="w-full px-6 md:px-10 pt-8 pb-10">
 
-          <h2 className="text-xl font-black text-white mb-6 relative z-10 tracking-wide">
-            Where are you moving?
-          </h2>
+            {/* Heading + subtitle — exact same classes as MoveryyGo */}
+            <h1 className="text-2xl font-bold text-gray-900 mb-1">Welcome to House Shifting</h1>
+            <p className="text-gray-500 text-sm mb-8">Book your hassle-free move with Moveryy</p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 relative z-10">
-            <div className="relative">
-              <MdLocationOn size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#22C55E' }} />
-              <input
-                type="text"
-                placeholder="Drop Location"
-                className="w-210 pl-10 pr-5 py-4 bg-white rounded-2xl text-slate-800 font-semibold text-sm focus:ring-4 focus:ring-yellow-300 shadow-md placeholder:text-slate-400 outline-none"
-              />
-            </div><br></br>
-            <div className="relative">
-              <MdLocationOn size={18} className="absolute left-4 top-1/2 -translate-y-1/2" style={{ color: '#22C55E' }} />
-              <input
-                type="text"
-                placeholder="Pickup Location"
-                className="w-210 pl-10 pr-5 py-4 bg-white rounded-2xl text-slate-700 font-semibold text-sm focus:ring-4 focus:ring-yellow-300 shadow-md outline-none"
-              />
-            </div><br></br>
-            <div className="relative">
-              <MdCalendarToday size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input
-                type="date"
-                className="w-210 pl-10 pr-5 py-4 bg-white rounded-2xl text-slate-700 font-semibold text-sm focus:ring-4 focus:ring-yellow-300 shadow-md outline-none"
-              />
+            {/* Location fields with dotted connector — exact same as MoveryyGo */}
+            <div className="w-full relative">
+
+              {/* Dotted connector line — exact same inline style as MoveryyGo */}
+              <div style={{
+                position: 'absolute',
+                left: '24px',
+                top: '26px',
+                width: '1.5px',
+                height: 'calc(100% - 52px)',
+                background: 'repeating-linear-gradient(to bottom,#9CA3AF 0,#9CA3AF 4px,transparent 4px,transparent 9px)',
+                zIndex: 1,
+              }} />
+
+              {/* Pickup row — exact same as MoveryyGo, now opens overlay on click */}
+              <div
+                className="w-full flex items-center gap-4 px-5 py-4 bg-[#F3F4F6] cursor-pointer hover:bg-[#EAECEE] transition-colors"
+                onClick={() => setLocationOverlay('pickup')}
+              >
+                <div style={{
+                  width: 16, height: 16, borderRadius: '50%',
+                  border: '4px solid #22C55E', backgroundColor: '#fff',
+                  flexShrink: 0, zIndex: 2,
+                }} />
+                <span className={`flex-1 text-sm select-none ${pickup ? 'text-gray-800 font-medium' : 'text-gray-400'}`}>
+                  {pickup || 'Enter pickup location here'}
+                </span>
+                {pickup && (
+                  <button onClick={e => { e.stopPropagation(); setPickup(''); }}>
+                    <MdClose size={14} className="text-gray-400 hover:text-gray-600" />
+                  </button>
+                )}
+              </div>
+
+              {/* Gap — exact same as MoveryyGo */}
+              <div className="h-7 bg-white" />
+
+              {/* Drop row — exact same as MoveryyGo, opens overlay on click */}
+              <div
+                className="w-full flex items-center gap-4 px-5 py-4 bg-[#F3F4F6] cursor-pointer hover:bg-[#EAECEE] transition-colors"
+                onClick={() => setLocationOverlay('drop')}
+              >
+                <div style={{
+                  width: 16, height: 16, borderRadius: '50%',
+                  border: '4px solid #EF4444', backgroundColor: '#fff',
+                  flexShrink: 0, zIndex: 2,
+                }} />
+                <span className={`flex-1 text-sm select-none ${drop ? 'text-gray-800 font-medium' : 'text-gray-400'}`}>
+                  {drop || 'Enter drop location here'}
+                </span>
+                {drop && (
+                  <button onClick={e => { e.stopPropagation(); setDrop(''); }}>
+                    <MdClose size={14} className="text-gray-400 hover:text-gray-600" />
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
 
-          <button className="w-full mt-6 relative z-10 bg-white text-orange-500 font-black px-9 py-3 rounded-2xl shadow-lg hover:bg-orange-50 active:scale-95 transition-all text-sm tracking-wide">
-            Find Movers →
-          </button>
+            {/* Continue button — exact same as MoveryyGo */}
+            <button
+              onClick={handleContinue}
+              disabled={searching || !pickup.trim() || !drop.trim()}
+              className="mt-5 w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3.5 text-sm tracking-wide uppercase transition-colors flex items-center justify-center gap-2"
+            >
+              {searching
+                ? <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Searching…</>
+                : 'Continue'
+              }
+            </button>
+
+            {/* Secondary text — exact same as MoveryyGo */}
+            <p className="text-center text-gray-400 text-xs mt-5">
+              Reliable movers, transparent pricing &amp; seamless relocation
+            </p>
+
+          </div>
         </motion.div>
-
-        {/* Trust badges */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-10">
-          {[
-            { label: 'Verified Movers', value: '5000+', bg: 'bg-blue-50', border: 'border-blue-100', text: 'text-blue-700' },
-            { label: 'Moves Completed', value: '50K+', bg: 'bg-green-50', border: 'border-green-100', text: 'text-green-700' },
-            { label: 'Customer Rating', value: '4.8★', bg: 'bg-yellow-50', border: 'border-yellow-100', text: 'text-yellow-700' },
-            { label: 'Cities Covered', value: '400+', bg: 'bg-purple-50', border: 'border-purple-100', text: 'text-purple-700' },
-          ].map((b) => (
-            <div key={b.label} className={`${b.bg} ${b.border} border rounded-2xl p-5 text-center shadow-sm`}>
-              <p className={`text-2xl font-black ${b.text}`}>{b.value}</p>
-              <p className="text-xs text-slate-500 font-semibold mt-1">{b.label}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* How it works */}
-        <div className="mt-12">
-          <h3 className="text-xl font-black text-slate-900 mb-1">How it works</h3>
-          <div className="w-12 h-1 bg-yellow-400 rounded-full mb-7" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-            {[
-              { step: '01', title: 'Enter Details', desc: 'Tell us your drop location and preferred moving date.', color: 'bg-blue-600' },
-              { step: '02', title: 'Get Quotes', desc: 'Receive instant quotes from verified movers near you.', color: 'bg-yellow-500' },
-              { step: '03', title: 'Relax & Move', desc: 'Book your mover and let the professionals handle the rest.', color: 'bg-green-500' },
-            ].map((s) => (
-              <div key={s.step} className="bg-white rounded-2xl p-6 border border-slate-100 shadow-sm flex gap-4 items-start">
-                <div className={`${s.color} text-white text-xs font-black w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0`}>
-                  {s.step}
-                </div>
-                <div>
-                  <p className="font-bold text-slate-900 mb-1 text-sm">{s.title}</p>
-                  <p className="text-xs text-slate-500 leading-relaxed">{s.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Why choose us */}
-        <div className="mt-10 bg-white rounded-2xl border border-slate-100 shadow-sm p-8">
-          <h3 className="text-xl font-black text-slate-900 mb-1">Why choose Moveryy?</h3>
-          <div className="w-12 h-1 bg-yellow-400 rounded-full mb-7" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            {[
-              { title: 'Transparent Pricing', desc: 'No hidden charges. What you see is what you pay.' },
-              { title: 'Insured Moves', desc: 'Your belongings are covered throughout the move.' },
-              { title: 'Trained Professionals', desc: 'Experienced packers and movers at your service.' },
-              { title: '24/7 Support', desc: 'Our team is always available to assist you.' },
-            ].map((f) => (
-              <div key={f.title} className="flex gap-3 items-start">
-                <div className="w-2 h-2 rounded-full bg-yellow-400 mt-1.5 flex-shrink-0" />
-                <div>
-                  <p className="font-bold text-slate-800 text-sm">{f.title}</p>
-                  <p className="text-xs text-slate-500 mt-0.5 leading-relaxed">{f.desc}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+      </AnimatePresence>
     </motion.div>
   );
 };

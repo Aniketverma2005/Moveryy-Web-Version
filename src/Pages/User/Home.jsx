@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
@@ -992,6 +992,43 @@ const HomePage = () => {
       {/* Footer */}
       {/* Scroll anchor for Contact Us */}
       <div id="section-contact" style={{ scrollMarginTop: '72px' }} />
+
+      {/* ── Made for India branding section ── */}
+      <div className="max-w-7xl mx-auto px-6 mb-0">
+        <div className="p-8 text-center relative overflow-hidden">
+          {/* Watermark */}
+          <p className="absolute inset-0 flex items-center justify-center text-7xl font-black text-gray-100 select-none pointer-events-none tracking-tighter opacity-60">
+            #Moveryy
+          </p>
+          <div className="relative z-10">
+            <div className="flex items-center justify-center gap-2 mb-1">
+              <img
+                src="https://flagcdn.com/w40/in.png"
+                alt="India Flag"
+                className="w-8 h-auto rounded-sm shadow-sm"
+              />
+              <h3 className="text-2xl font-black text-blue-700">Made for India</h3>
+            </div>
+            <div className="flex items-center justify-center gap-1.5 mb-2">
+              <span className="text-lg">❤️</span>
+              <p className="text-base font-bold text-gray-700">Crafted in Noida</p>
+            </div>
+            <p className="text-sm text-gray-400 mb-6">India's #1 Moving Platform</p>
+            <div className="flex items-center justify-center gap-12">
+              <div>
+                <p className="text-3xl font-black text-gray-900">5000+</p>
+                <p className="text-xs text-gray-500 mt-1">Happy Users</p>
+              </div>
+              <div className="w-px h-12 bg-gray-200" />
+              <div>
+                <p className="text-3xl font-black text-yellow-500">4.8★</p>
+                <p className="text-xs text-gray-500 mt-1">Rating</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <footer className="bg-gray-50 border-t border-gray-200 mt-20">
         <div className="max-w-7xl mx-auto px-6 py-12">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
