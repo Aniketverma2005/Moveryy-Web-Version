@@ -1,16 +1,12 @@
 ﻿import { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  MdOutlinePerson, MdClose, MdArrowBack, MdSearch, MdLocationOn,
+  MdClose, MdArrowBack, MdSearch, MdLocationOn,
   MdMyLocation, MdOutlineDirectionsCar, MdOutlinePhone, MdCheck, MdEdit,
-  MdOutlineAccessTime, MdOutlineVerified, MdTwoWheeler,
+  MdOutlineAccessTime, MdOutlineVerified, MdSecurity,
   MdOutlineStar as MdStar,
 } from 'react-icons/md';
-import { NavLink } from 'react-router-dom';
 import { cardVariants, containerVariants, pageVariants } from '../../utils/animations';
-import logo from '../../assets/logo2.png';
-import ridesIcon from '../../assets/rides.png';
-import moveryyGoIcon from '../../assets/moveryygo.png';
 
 // ── helpers ───────────────────────────────────────────────────────────────────
 const getInitials = () => {
@@ -265,8 +261,6 @@ const DriverCard = ({ driver, rideType, offeredPrice, onPriceChange, onSelect, i
 
 // ── Main page ─────────────────────────────────────────────────────────────────
 const RidesPage = () => {
-  const initials = getInitials();
-
   const [pickup,          setPickup]          = useState('');
   const [drop,            setDrop]            = useState('');
   const [locationOverlay, setLocationOverlay] = useState(null);
@@ -294,18 +288,6 @@ const RidesPage = () => {
     <motion.div variants={pageVariants} initial="hidden" animate="show"
       className="min-h-screen bg-[#F3F4F6] font-sans">
 
-      {/* ── Navbar — identical to OfficeShift / MoveryyGo ── */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="w-full px-6 md:px-10 h-14 flex items-center justify-between">
-          <NavLink to="/"><img src={logo} alt="Moveryy" className="h-9 w-auto object-contain" /></NavLink>
-          <NavLink to="/profile">
-            <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold text-sm hover:bg-blue-700 transition-colors cursor-pointer">
-              {initials ?? <MdOutlinePerson size={18} />}
-            </div>
-          </NavLink>
-        </div>
-      </header>
-
       {/* ── Location overlay ── */}
       <AnimatePresence>
         {locationOverlay && (
@@ -321,27 +303,93 @@ const RidesPage = () => {
         )}
       </AnimatePresence>
 
-      {/* ── Main content — MoveryyGo / OfficeShift layout ── */}
-      <div className="min-h-[calc(100vh-56px)] bg-white">
-        <div className="w-full px-6 md:px-10 pt-8 pb-10">
+      {/* ── Welcome panel — same design as MoveryyGo ── */}
+      <div className="min-h-[calc(100vh-56px)] bg-white relative overflow-hidden flex flex-col">
 
-          {/* Heading + subtitle */}
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">Rides</h1>
+        {/* Top badge strip */}
+        <div className="w-full flex items-center justify-center gap-6 py-3 bg-white border-b border-gray-100 relative z-10">
+          <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <img
+              src="https://flagcdn.com/w40/in.png"
+              alt="India flag"
+              className="w-6 h-4 object-cover rounded-sm"
+            />
+            Made for India
+          </span>
+          <span className="w-px h-5 bg-gray-200" />
+          <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#EF4444" className="flex-shrink-0">
+              <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+            </svg>
+            Crafted in Noida
+          </span>
+        </div>
+
+        {/* #MOVERYY watermark removed */}
+
+        {/* Decorative left location pin */}
+        <div className="absolute left-0 bottom-16 pointer-events-none select-none z-0 opacity-[0.07]">
+          <svg width="120" height="160" viewBox="0 0 120 160" fill="none">
+            <path d="M60 0C26.863 0 0 26.863 0 60c0 45 60 100 60 100S120 105 120 60C120 26.863 93.137 0 60 0z" fill="#3B82F6"/>
+            <circle cx="60" cy="60" r="24" fill="white"/>
+          </svg>
+        </div>
+
+        {/* Decorative right location pin */}
+        <div className="absolute right-0 top-16 pointer-events-none select-none z-0 opacity-[0.07]">
+          <svg width="80" height="110" viewBox="0 0 120 160" fill="none">
+            <path d="M60 0C26.863 0 0 26.863 0 60c0 45 60 100 60 100S120 105 120 60C120 26.863 93.137 0 60 0z" fill="#3B82F6"/>
+            <circle cx="60" cy="60" r="24" fill="white"/>
+          </svg>
+        </div>
+
+        {/* City skyline watermark */}
+        <div className="absolute right-0 bottom-0 pointer-events-none select-none z-0 opacity-[0.06]">
+          <svg width="320" height="200" viewBox="0 0 320 200" fill="none">
+            <rect x="10"  y="100" width="30" height="100" fill="#3B82F6"/>
+            <rect x="18"  y="80"  width="14" height="20"  fill="#3B82F6"/>
+            <rect x="48"  y="60"  width="28" height="140" fill="#3B82F6"/>
+            <rect x="54"  y="40"  width="10" height="20"  fill="#3B82F6"/>
+            <rect x="84"  y="80"  width="22" height="120" fill="#3B82F6"/>
+            <rect x="114" y="50"  width="36" height="150" fill="#3B82F6"/>
+            <rect x="120" y="30"  width="8"  height="20"  fill="#3B82F6"/>
+            <rect x="130" y="20"  width="8"  height="30"  fill="#3B82F6"/>
+            <rect x="158" y="70"  width="26" height="130" fill="#3B82F6"/>
+            <rect x="192" y="90"  width="20" height="110" fill="#3B82F6"/>
+            <rect x="220" y="55"  width="32" height="145" fill="#3B82F6"/>
+            <rect x="226" y="35"  width="8"  height="20"  fill="#3B82F6"/>
+            <rect x="260" y="75"  width="24" height="125" fill="#3B82F6"/>
+            <rect x="292" y="95"  width="28" height="105" fill="#3B82F6"/>
+            <rect x="16"  y="110" width="6" height="6" fill="white" opacity="0.4"/>
+            <rect x="26"  y="110" width="6" height="6" fill="white" opacity="0.4"/>
+            <rect x="52"  y="70"  width="5" height="5" fill="white" opacity="0.4"/>
+            <rect x="62"  y="70"  width="5" height="5" fill="white" opacity="0.4"/>
+            <rect x="118" y="60"  width="6" height="6" fill="white" opacity="0.4"/>
+            <rect x="132" y="60"  width="6" height="6" fill="white" opacity="0.4"/>
+            <rect x="220" y="65"  width="5" height="5" fill="white" opacity="0.4"/>
+            <rect x="232" y="65"  width="5" height="5" fill="white" opacity="0.4"/>
+          </svg>
+        </div>
+
+        {/* Main content */}
+        <div className="flex-1 flex flex-col w-full pt-3 pb-12 relative z-10" style={{ paddingLeft: 15, paddingRight: 15 }}>
+
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">
+            Welcome to <span className="text-blue-600">Moveryy Rides!</span>
+          </h1>
           <p className="text-gray-500 text-sm mb-8">Book a cab, bike or auto — negotiate your fare</p>
 
-          
-
-          {/* ── Location fields — identical dotted connector as OfficeShift ── */}
+          {/* Location fields with dotted connector */}
           <div className="w-full relative">
             <div style={{
-              position: 'absolute', left: '24px', top: '26px',
+              position: 'absolute', left: '28px', top: '26px',
               width: '1.5px', height: 'calc(100% - 52px)',
               background: 'repeating-linear-gradient(to bottom,#9CA3AF 0,#9CA3AF 4px,transparent 4px,transparent 9px)',
               zIndex: 1,
             }} />
 
             {/* Pickup */}
-            <div className="w-full flex items-center gap-4 px-5 py-4 bg-[#F3F4F6] cursor-pointer hover:bg-[#EAECEE] transition-colors"
+            <div className="w-full flex items-center gap-4 px-5 py-4 bg-[#F3F4F6] rounded-md cursor-pointer hover:bg-[#EAECEE] transition-colors"
               onClick={() => setLocationOverlay('pickup')}>
               <div style={{ width: 16, height: 16, borderRadius: '50%', border: '4px solid #22C55E', backgroundColor: '#fff', flexShrink: 0, zIndex: 2 }} />
               <span className={`flex-1 text-sm select-none ${pickup ? 'text-gray-800 font-medium' : 'text-gray-400'}`}>
@@ -358,7 +406,7 @@ const RidesPage = () => {
             <div className="h-7 bg-white" />
 
             {/* Drop */}
-            <div className="w-full flex items-center gap-4 px-5 py-4 bg-[#F3F4F6] cursor-pointer hover:bg-[#EAECEE] transition-colors"
+            <div className="w-full flex items-center gap-4 px-5 py-4 bg-[#F3F4F6] rounded-md cursor-pointer hover:bg-[#EAECEE] transition-colors"
               onClick={() => setLocationOverlay('drop')}>
               <div style={{ width: 16, height: 16, borderRadius: '50%', border: '4px solid #EF4444', backgroundColor: '#fff', flexShrink: 0, zIndex: 2 }} />
               <span className={`flex-1 text-sm select-none ${drop ? 'text-gray-800 font-medium' : 'text-gray-400'}`}>
@@ -372,24 +420,26 @@ const RidesPage = () => {
             </div>
           </div>
 
-          {/* Search button — identical to OfficeShift Continue button */}
+          {/* Search button — same periwinkle style as MoveryyGo */}
           <button onClick={handleSearch}
             disabled={searching || !pickup.trim() || !drop.trim()}
-            className="mt-5 w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3.5 text-sm tracking-wide uppercase transition-colors flex items-center justify-center gap-2">
+            className="mt-5 w-full bg-[#7B9FE8] hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 text-sm tracking-widest uppercase rounded-sm transition-colors flex items-center justify-center gap-2">
             {searching
               ? <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Searching…</>
-              : 'Search Drivers'
+              : 'SEARCH DRIVERS'
             }
           </button>
 
-          <p className="text-center text-gray-400 text-xs mt-5">
-            Safe, fast &amp; affordable rides with verified drivers
-          </p>
+          {/* Shield badge */}
+          <div className="flex items-center justify-center gap-2 mt-6">
+            <MdSecurity size={20} className="text-blue-400 flex-shrink-0" />
+            <p className="text-gray-400 text-sm">Safe, fast &amp; affordable rides</p>
+          </div>
         </div>
       </div>
 
-      {/* ── Content below ── */}
-      <div className="w-full px-6 md:px-10 pb-20 max-w-5xl mx-auto">
+      {/* ── Driver results section ── */}
+      <div className="w-full pb-20" style={{ paddingLeft: 15, paddingRight: 15 }}>
 
         {/* Driver results — all logic unchanged */}
         <AnimatePresence>

@@ -462,7 +462,7 @@ const HomePage = () => {
       {/* Scroll anchor for Services — offset accounts for sticky navbar height */}
       <div id="section-services" style={{ scrollMarginTop: '72px' }} />
 
-      <div className="max-w-7xl mx-auto px-6 py-10">
+      <div className="w-full py-10" style={{ paddingLeft: 20, paddingRight: 20 }}>
         {/* Services Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -687,15 +687,15 @@ const HomePage = () => {
           </div>
 
           {/* Three Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 items-stretch">
             {/* Card 1 - Quick Pickup */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 1.0 }}
-              className="group"
+              className="group h-full"
             >
-              <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+              <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow h-full flex flex-col">
                 {/* Image */}
                 <div className="relative h-64 bg-gradient-to-br from-blue-100 to-blue-200 overflow-hidden">
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -734,9 +734,9 @@ const HomePage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 1.1 }}
-              className="group"
+              className="group h-full"
             >
-              <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+              <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow h-full flex flex-col">
                 {/* Image */}
                 <div className="relative h-64 bg-gradient-to-br from-green-100 to-green-200 overflow-hidden">
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -777,9 +777,9 @@ const HomePage = () => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 1.2 }}
-              className="group"
+              className="group h-full"
             >
-              <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+              <div className="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow h-full flex flex-col">
                 {/* Image */}
                 <div className="relative h-64 bg-gradient-to-br from-yellow-100 to-orange-200 overflow-hidden">
                   <div className="absolute inset-0 flex items-center justify-center">
@@ -823,6 +823,11 @@ const HomePage = () => {
               </div>
             </motion.div>
           </div>
+        </motion.div>
+      </div>
+
+      {/* Earn with Moveryy + Stats — full width with 16px side gap */}
+      <div style={{ paddingLeft: 20, paddingRight: 20 }} className="mt-10 space-y-6">
 
           {/* Earn with Moveryy Section */}
           <motion.div
@@ -910,7 +915,6 @@ const HomePage = () => {
               </motion.div>
             </div>
           </motion.div>
-        </motion.div>
 
         {/* Stats Banner */}
         <motion.div
@@ -935,58 +939,6 @@ const HomePage = () => {
           </div>
         </motion.div>
 
-        {/* Download Now Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.6 }}
-          className="mt-16"
-        >
-          <div className="text-center mb-10">
-            <h2 className="text-3xl font-bold text-gray-900 mb-2">
-              Download Now
-            </h2>
-            <div className="w-16 h-1 bg-yellow-400 rounded-full mx-auto"></div>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-            {/* User App Card */}
-            <motion.div
-              whileHover={{ y: -5, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
-              className="bg-white rounded-3xl p-6 shadow-lg border border-gray-100 flex items-center gap-5"
-            >
-              <div className="flex-shrink-0">
-                <img
-                  src={logo}
-                  alt="Moveryy"
-                  className="w-20 h-20 object-contain rounded-2xl shadow-md"
-                />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-2xl font-bold text-gray-900 mb-1">Moveryy</h3>
-                <p className="text-gray-500 text-sm">House Shift, Car Moving & More</p>
-              </div>
-            </motion.div>
-
-            {/* Driver App Card */}
-            <motion.div
-              whileHover={{ y: -5, boxShadow: "0 20px 40px rgba(0,0,0,0.1)" }}
-              className="bg-white rounded-3xl p-6 shadow-lg border border-gray-100 flex items-center gap-5"
-            >
-              <div className="flex-shrink-0">
-                <img
-                  src={logo}
-                  alt="Moveryy Captain"
-                  className="w-20 h-20 object-contain rounded-2xl shadow-md"
-                />
-              </div>
-              <div className="flex-1">
-                <h3 className="text-2xl font-bold text-gray-900 mb-1">Moveryy Captain</h3>
-                <p className="text-gray-500 text-sm">Drive & Earn</p>
-              </div>
-            </motion.div>
-          </div>
-        </motion.div>
       </div>
 
       {/* Footer */}
@@ -994,7 +946,7 @@ const HomePage = () => {
       <div id="section-contact" style={{ scrollMarginTop: '72px' }} />
 
       {/* ── Made for India branding section ── */}
-      <div className="max-w-7xl mx-auto px-6 mb-0">
+      <div className="w-full mb-0" style={{ paddingLeft: 20, paddingRight: 20 }}>
         <div className="p-8 text-center relative overflow-hidden">
           {/* Watermark */}
           <p className="absolute inset-0 flex items-center justify-center text-7xl font-black text-gray-100 select-none pointer-events-none tracking-tighter opacity-60">
@@ -1029,77 +981,189 @@ const HomePage = () => {
         </div>
       </div>
 
-      <footer className="bg-gray-50 border-t border-gray-200 mt-20">
-        <div className="max-w-7xl mx-auto px-6 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            {/* Logo and Description */}
-            <div className="md:col-span-1">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-10 h-10 bg-blue-600 rounded-lg flex items-center justify-center">
+      <footer className="bg-white border-t border-gray-100 mt-20">
+        {/* Main footer content */}
+        <div className="w-full py-12" style={{ paddingLeft: 20, paddingRight: 20 }}>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
+
+            {/* Col 1 — Logo + contact */}
+            <div>
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-11 h-11 bg-blue-600 rounded-xl flex items-center justify-center shadow-md">
                   <span className="text-white font-bold text-xl">M</span>
                 </div>
                 <span className="text-xl font-bold text-gray-900">Moveryy</span>
               </div>
-              <p className="text-gray-600 text-sm leading-relaxed">
+              <p className="text-gray-500 text-sm leading-relaxed mb-6">
                 India's #1 Moving Platform. Your trusted partner for all relocation needs.
               </p>
-            </div>
-
-            {/* Quick Links */}
-            <div>
-              <h3 className="font-bold text-gray-900 mb-4">Company</h3>
-              <ul className="space-y-2">
-                <li><Link to="/about" className="text-gray-600 hover:text-blue-600 text-sm">About Us</Link></li>
-                <li><Link to="/careers" className="text-gray-600 hover:text-blue-600 text-sm">Careers</Link></li>
-                <li><Link to="/safety" className="text-gray-600 hover:text-blue-600 text-sm">Safety</Link></li>
-                <li><Link to="/blog" className="text-gray-600 hover:text-blue-600 text-sm">Blog</Link></li>
+              <ul className="space-y-3">
+                <li className="flex items-center gap-3 text-sm text-gray-600">
+                  <div className="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                    </svg>
+                  </div>
+                  +91 97764 93069
+                </li>
+                <li className="flex items-center gap-3 text-sm text-gray-600">
+                  <div className="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                  </div>
+                  moveryyy@gmail.com
+                </li>
+                <li className="flex items-center gap-3 text-sm text-gray-600">
+                  <div className="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <circle cx="12" cy="12" r="10"/><path strokeLinecap="round" strokeLinejoin="round" d="M2 12h20M12 2a15.3 15.3 0 010 20M12 2a15.3 15.3 0 000 20"/>
+                    </svg>
+                  </div>
+                  www.moveryy.com
+                </li>
+                <li className="flex items-center gap-3 text-sm text-gray-600">
+                  <div className="w-7 h-7 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                    <svg className="w-3.5 h-3.5 text-blue-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                    </svg>
+                  </div>
+                  Gurugram, Haryana, India
+                </li>
               </ul>
             </div>
 
-            {/* Services */}
+            {/* Col 2 — Company */}
             <div>
-              <h3 className="font-bold text-gray-900 mb-4">Services</h3>
-              <ul className="space-y-2">
-                <li><Link to="/house-moving" className="text-gray-600 hover:text-blue-600 text-sm">House Shift</Link></li>
-                <li><Link to="/car-moving" className="text-gray-600 hover:text-blue-600 text-sm">Car Moving</Link></li>
-                <li><Link to="/office-shifting" className="text-gray-600 hover:text-blue-600 text-sm">Office Shifting</Link></li>
-                <li><Link to="/rides" className="text-gray-600 hover:text-blue-600 text-sm">Rides</Link></li>
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21"/>
+                  </svg>
+                </div>
+                <h3 className="font-bold text-gray-900">Company</h3>
+              </div>
+              <div className="w-8 h-0.5 bg-blue-500 rounded-full mb-5 ml-10" />
+              <ul className="space-y-3">
+                {['About Us','Careers','Safety','Blog','News & Media'].map(item => (
+                  <li key={item}>
+                    <Link to={`/${item.toLowerCase().replace(/\s+/g,'-')}`} className="text-gray-500 hover:text-blue-600 text-sm transition-colors">
+                      {item}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
 
-            {/* Legal */}
+            {/* Col 3 — Services */}
             <div>
-              <h3 className="font-bold text-gray-900 mb-4">Legal</h3>
-              <ul className="space-y-2">
-                <li><Link to="/terms" className="text-gray-600 hover:text-blue-600 text-sm">Terms & Conditions</Link></li>
-                <li><Link to="/privacy" className="text-gray-600 hover:text-blue-600 text-sm">Privacy Policy</Link></li>
-                <li><Link to="/contact" className="text-gray-600 hover:text-blue-600 text-sm">Contact Us</Link></li>
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-8 h-8 rounded-lg bg-green-50 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-green-500" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/>
+                  </svg>
+                </div>
+                <h3 className="font-bold text-gray-900">Services</h3>
+              </div>
+              <div className="w-8 h-0.5 bg-green-500 rounded-full mb-5 ml-10" />
+              <ul className="space-y-3">
+                {[
+                  { label: 'House Shift',       path: '/house-moving' },
+                  { label: 'Car Moving',         path: '/car-moving' },
+                  { label: 'Office Shifting',    path: '/office-shifting' },
+                  { label: 'Rides',              path: '/rides' },
+                  { label: 'Packing Services',   path: '/packing' },
+                  { label: 'Storage Solutions',  path: '/storage' },
+                ].map(s => (
+                  <li key={s.label}>
+                    <Link to={s.path} className="text-gray-500 hover:text-blue-600 text-sm transition-colors">
+                      {s.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* Col 4 — Legal */}
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <div className="w-8 h-8 rounded-lg bg-purple-50 flex items-center justify-center">
+                  <svg className="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" strokeWidth="1.5" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+                  </svg>
+                </div>
+                <h3 className="font-bold text-gray-900">Legal</h3>
+              </div>
+              <div className="w-8 h-0.5 bg-purple-400 rounded-full mb-5 ml-10" />
+              <ul className="space-y-3">
+                {[
+                  { label: 'Terms & Conditions',  path: '/terms' },
+                  { label: 'Privacy Policy',       path: '/privacy' },
+                  { label: 'Cancellation Policy',  path: '/cancellation' },
+                  { label: 'Contact Us',           path: '/contact' },
+                ].map(l => (
+                  <li key={l.label}>
+                    <Link to={l.path} className="text-gray-500 hover:text-blue-600 text-sm transition-colors">
+                      {l.label}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
           </div>
+        </div>
 
-          {/* Bottom Bar */}
-          <div className="border-t border-gray-200 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-600 text-sm">
-              © 2024 Moveryy Transportation. All rights reserved.
+        {/* Bottom dark bar */}
+        <div className="bg-[#1A2340] w-full">
+          <div className="w-full py-5 flex flex-col md:flex-row items-center justify-between gap-4" style={{ paddingLeft: 20, paddingRight: 20 }}>
+
+            {/* Left — shield + safety text */}
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-xl bg-blue-700/40 border border-blue-500/40 flex items-center justify-center flex-shrink-0">
+                <svg className="w-5 h-5 text-blue-300" fill="none" stroke="currentColor" strokeWidth="1.8" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
+                </svg>
+              </div>
+              <div>
+                <p className="text-white font-semibold text-sm">Your Safety, Our Priority</p>
+                <p className="text-blue-300 text-xs">Verified partners. Safe relocation.</p>
+              </div>
+            </div>
+
+            {/* Divider */}
+            <div className="hidden md:block w-px h-8 bg-white/10" />
+
+            {/* Center — copyright */}
+            <p className="text-gray-400 text-sm text-center">
+              © 2024 Moveryy Transportation.<br className="md:hidden" /> All rights reserved.
             </p>
 
-            {/* Social Links */}
-            <div className="flex items-center gap-4">
-              <a href="#" className="w-10 h-10 bg-gray-200 hover:bg-blue-600 rounded-full flex items-center justify-center transition-colors group">
-                <svg className="w-5 h-5 text-gray-600 group-hover:text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z" />
-                  <path d="M12 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+            {/* Divider */}
+            <div className="hidden md:block w-px h-8 bg-white/10" />
+
+            {/* Right — Follow Us + icons */}
+            <div className="flex items-center gap-3">
+              <span className="text-gray-300 text-sm font-medium">Follow Us</span>
+              {/* Instagram */}
+              <a href="#" aria-label="Instagram"
+                className="w-9 h-9 rounded-full border border-pink-500/60 flex items-center justify-center text-pink-400 hover:bg-pink-500/20 transition-colors">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073z"/>
+                  <path d="M12 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
                 </svg>
               </a>
-              <a href="#" className="w-10 h-10 bg-gray-200 hover:bg-blue-600 rounded-full flex items-center justify-center transition-colors group">
-                <svg className="w-5 h-5 text-gray-600 group-hover:text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+              {/* YouTube */}
+              <a href="#" aria-label="YouTube"
+                className="w-9 h-9 rounded-full border border-red-500/60 flex items-center justify-center text-red-400 hover:bg-red-500/20 transition-colors">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                 </svg>
               </a>
-              <a href="#" className="w-10 h-10 bg-gray-200 hover:bg-blue-600 rounded-full flex items-center justify-center transition-colors group">
-                <svg className="w-5 h-5 text-gray-600 group-hover:text-white" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              {/* X */}
+              <a href="#" aria-label="X (Twitter)"
+                className="w-9 h-9 rounded-full border border-gray-500/60 flex items-center justify-center text-gray-400 hover:bg-white/10 transition-colors">
+                <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                 </svg>
               </a>
             </div>

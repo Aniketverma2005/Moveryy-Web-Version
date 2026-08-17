@@ -6,6 +6,7 @@ import {
   MdOutlineDirectionsCar, MdCheck, MdOutlineAccessTime,
   MdOutlineVerified, MdOutlineAddCircleOutline,
   MdCalendarToday, MdClose, MdArrowBack, MdSearch, MdMyLocation, MdHistory,
+  MdSecurity,
 } from 'react-icons/md';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { cardVariants, containerVariants, pageVariants } from '../../utils/animations';
@@ -453,65 +454,154 @@ const MoveryyGoPage = () => {
         {/* ── STEP 1: WELCOME ── */}
         {step === 'welcome' && (
           <motion.div key="welcome" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -12 }} transition={{ duration: 0.25 }}
-            className="min-h-[calc(100vh-56px)] bg-white relative overflow-hidden">
+            className="min-h-[calc(100vh-56px)] bg-white relative overflow-hidden flex flex-col">
 
-            {/* Full-page #MOVERYY watermark */}
-            <div className="absolute inset-0 flex items-top justify-center pointer-events-none select-none z-0">
-              <span className="text-[11vw] font-black text-gray-100 tracking-tighter whitespace-nowrap">
-                #MOVERYY
+            {/* ── Top badge strip ── */}
+            <div className="w-full flex items-center justify-center gap-6 py-3 bg-white border-b border-gray-100 relative z-10">
+              <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <img
+                  src="https://flagcdn.com/w40/in.png"
+                  alt="India flag"
+                  className="w-6 h-4 object-cover rounded-sm"
+                  style={{ display: 'inline-block' }}
+                />
+                Made for India
+              </span>
+              <span className="w-px h-5 bg-gray-200" />
+              <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#EF4444" className="flex-shrink-0">
+                  <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+                </svg>
+                Crafted in Noida
               </span>
             </div>
 
-            <div className="w-full px-6 md:px-10 pt-8 pb-10 relative z-10">
+            {/* ── #MOVERYY watermark — sits in lower half so it doesn't clash with inputs ── */}
+            <div className="absolute bottom-0 left-0 right-0 flex items-end justify-center pb-4 pointer-events-none select-none z-0 overflow-hidden">
+              <span className="text-[10vw] font-black tracking-tighter whitespace-nowrap"
+                style={{ color: '#f3f7ff' }}>
+                
+              </span>
+            </div>
 
-              <h1 className="text-2xl font-bold text-gray-900 mb-1">Welcome to <span className="text-blue-600">Moveryy Go!</span></h1>
+            {/* ── Decorative left location pin ── */}
+            <div className="absolute left-0 bottom-16 pointer-events-none select-none z-0 opacity-[0.07]">
+              <svg width="120" height="160" viewBox="0 0 120 160" fill="none">
+                <path d="M60 0C26.863 0 0 26.863 0 60c0 45 60 100 60 100S120 105 120 60C120 26.863 93.137 0 60 0z" fill="#3B82F6"/>
+                <circle cx="60" cy="60" r="24" fill="white"/>
+              </svg>
+            </div>
+
+            {/* ── Decorative right location pin ── */}
+            <div className="absolute right-0 top-16 pointer-events-none select-none z-0 opacity-[0.07]">
+              <svg width="80" height="110" viewBox="0 0 120 160" fill="none">
+                <path d="M60 0C26.863 0 0 26.863 0 60c0 45 60 100 60 100S120 105 120 60C120 26.863 93.137 0 60 0z" fill="#3B82F6"/>
+                <circle cx="60" cy="60" r="24" fill="white"/>
+              </svg>
+            </div>
+
+            {/* ── City skyline watermark (right side) ── */}
+            <div className="absolute right-0 bottom-0 pointer-events-none select-none z-0 opacity-[0.06]">
+              <svg width="320" height="200" viewBox="0 0 320 200" fill="none">
+                {/* Buildings */}
+                <rect x="10"  y="100" width="30" height="100" fill="#3B82F6"/>
+                <rect x="18"  y="80"  width="14" height="20"  fill="#3B82F6"/>
+                <rect x="48"  y="60"  width="28" height="140" fill="#3B82F6"/>
+                <rect x="54"  y="40"  width="10" height="20"  fill="#3B82F6"/>
+                <rect x="84"  y="80"  width="22" height="120" fill="#3B82F6"/>
+                <rect x="114" y="50"  width="36" height="150" fill="#3B82F6"/>
+                <rect x="120" y="30"  width="8"  height="20"  fill="#3B82F6"/>
+                <rect x="130" y="20"  width="8"  height="30"  fill="#3B82F6"/>
+                <rect x="158" y="70"  width="26" height="130" fill="#3B82F6"/>
+                <rect x="192" y="90"  width="20" height="110" fill="#3B82F6"/>
+                <rect x="220" y="55"  width="32" height="145" fill="#3B82F6"/>
+                <rect x="226" y="35"  width="8"  height="20"  fill="#3B82F6"/>
+                <rect x="260" y="75"  width="24" height="125" fill="#3B82F6"/>
+                <rect x="292" y="95"  width="28" height="105" fill="#3B82F6"/>
+                {/* Windows */}
+                <rect x="16"  y="110" width="6" height="6" fill="white" opacity="0.4"/>
+                <rect x="26"  y="110" width="6" height="6" fill="white" opacity="0.4"/>
+                <rect x="52"  y="70"  width="5" height="5" fill="white" opacity="0.4"/>
+                <rect x="62"  y="70"  width="5" height="5" fill="white" opacity="0.4"/>
+                <rect x="118" y="60"  width="6" height="6" fill="white" opacity="0.4"/>
+                <rect x="132" y="60"  width="6" height="6" fill="white" opacity="0.4"/>
+                <rect x="220" y="65"  width="5" height="5" fill="white" opacity="0.4"/>
+                <rect x="232" y="65"  width="5" height="5" fill="white" opacity="0.4"/>
+              </svg>
+            </div>
+
+            {/* ── Main content ── */}
+            <div className="flex-1 flex flex-col w-full pt-1 pb-12 relative z-10" style={{ paddingLeft: 15, paddingRight: 15 }}>
+
+              <h1 className="text-2xl font-bold text-gray-900 mb-1">
+                Welcome to <span className="text-blue-600">Moveryy Go!</span>
+              </h1>
               <p className="text-gray-500 text-sm mb-8">Book your hassle-free trip with Moveryy Go</p>
 
-              {/* Input fields with dot connector */}
+              {/* ── Input fields with dot connector ── */}
               <div className="w-full relative">
                 {/* Dotted connector line */}
                 <div style={{
-                  position: 'absolute', left: '24px', top: '26px',
+                  position: 'absolute', left: '28px', top: '26px',
                   width: '1.5px', height: 'calc(100% - 52px)',
                   background: 'repeating-linear-gradient(to bottom,#9CA3AF 0,#9CA3AF 4px,transparent 4px,transparent 9px)',
                   zIndex: 1,
                 }} />
 
-                {/* Pickup */}
-                <div className="w-full flex items-center gap-4 px-5 py-4 bg-[#F3F4F6] cursor-pointer hover:bg-[#EAECEE] transition-colors"
+                {/* Pickup row */}
+                <div className="w-full flex items-center gap-4 px-5 py-4 bg-[#F3F4F6] rounded-md cursor-pointer hover:bg-[#EAECEE] transition-colors"
                   onClick={() => setLocationOverlay('pickup')}>
-                  <div style={{ width: 16, height: 16, borderRadius: '50%', border: '4px solid #22C55E', backgroundColor: '#fff', flexShrink: 0, zIndex: 2 }} />
+                  <div style={{ width: 16, height: 16, borderRadius: '70%', border: '4px solid #22C55E', backgroundColor: '#fff', flexShrink: 0, zIndex: 2 }} />
                   <span className={`flex-1 text-sm select-none ${pickup ? 'text-gray-800 font-medium' : 'text-gray-400'}`}>
-                    {pickup || 'Enter pickup location here'}
+                    {pickup || 'Where are you...'}
                   </span>
-                  {pickup && <button onClick={e => { e.stopPropagation(); setPickup(''); }}><MdClose size={14} className="text-gray-400 hover:text-gray-600" /></button>}
+                  {pickup && (
+                    <button onClick={e => { e.stopPropagation(); setPickup(''); }}>
+                      <MdClose size={14} className="text-gray-400 hover:text-gray-600" />
+                    </button>
+                  )}
                 </div>
 
-                {/* Gap */}
+                {/* Gap with white spacer */}
                 <div className="h-7 bg-white" />
 
-                {/* Drop */}
-                <div className="w-full flex items-center gap-4 px-5 py-4 bg-[#F3F4F6] cursor-pointer hover:bg-[#EAECEE] transition-colors"
+                {/* Drop row */}
+                <div className="w-full flex items-center gap-4 px-5 py-4 bg-[#F3F4F6] rounded-md cursor-pointer hover:bg-[#EAECEE] transition-colors"
                   onClick={() => setLocationOverlay('drop')}>
                   <div style={{ width: 16, height: 16, borderRadius: '50%', border: '4px solid #EF4444', backgroundColor: '#fff', flexShrink: 0, zIndex: 2 }} />
                   <span className={`flex-1 text-sm select-none ${drop ? 'text-gray-800 font-medium' : 'text-gray-400'}`}>
-                    {drop || 'Enter drop location here'}
+                    {drop || 'Where are you moving...'}
                   </span>
-                  {drop && <button onClick={e => { e.stopPropagation(); setDrop(''); }}><MdClose size={14} className="text-gray-400 hover:text-gray-600" /></button>}
+                  {drop && (
+                    <button onClick={e => { e.stopPropagation(); setDrop(''); }}>
+                      <MdClose size={14} className="text-gray-400 hover:text-gray-600" />
+                    </button>
+                  )}
                 </div>
               </div>
 
-              {/* Continue */}
-              <button onClick={handleContinue} disabled={searching || !pickup.trim() || !drop.trim()}
-                className="mt-5 w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3.5 text-sm tracking-wide uppercase transition-colors flex items-center justify-center gap-2">
-                {searching ? <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Searching…</> : 'Continue'}
+              {/* ── Continue button ── */}
+              <button
+                onClick={handleContinue}
+                disabled={searching || !pickup.trim() || !drop.trim()}
+                className="mt-5 w-full bg-[#7B9FE8] hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 text-sm tracking-widest uppercase rounded-sm transition-colors flex items-center justify-center gap-2">
+                {searching
+                  ? <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Searching…</>
+                  : 'CONTINUE'}
               </button>
 
-              <p className="text-center text-gray-400 text-xs mt-5">Smart ridepooling &amp; sharing</p>
+              {/* ── Shield badge ── */}
+              <div className="flex items-center justify-center gap-2 mt-6">
+                <MdSecurity size={20} className="text-blue-400 flex-shrink-0" />
+                <p className="text-gray-400 text-sm">Smart ridepooling &amp; sharing</p>
+              </div>
 
+              {/* ── Driver section ── */}
               <div className="mt-10 text-center">
                 <p className="text-gray-400 text-sm mb-2">Are you a driver?</p>
-                <button onClick={() => setShowPublish(true)} className="inline-flex items-center gap-1.5 text-blue-600 font-semibold text-sm hover:underline">
+                <button
+                  onClick={() => setShowPublish(true)}
+                  className="inline-flex items-center gap-1.5 text-blue-600 font-semibold text-sm hover:underline">
                   <MdOutlineAddCircleOutline size={17} /> Offer a Ride
                 </button>
               </div>

@@ -12,6 +12,9 @@ const navItems = [
   { name: 'Services', path: '/', sectionId: 'section-services' },
   { name: 'Compare', path: '/compare', sectionId: null },
   { name: 'Bookings', path: '/bookings', sectionId: null },
+  { name: 'Blog', path: '/blog', sectionId: null },
+  { name: 'Careers', path: '/careers', sectionId: null },
+  { name: 'Press', path: '/press', sectionId: null },
   { name: 'Contact Us', path: '/', sectionId: 'section-contact' },
 ];
 
