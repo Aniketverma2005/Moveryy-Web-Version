@@ -14,7 +14,7 @@ const navItems = [
   { name: 'Blog',       path: '/blog',     end: false, sectionId: null },
   { name: 'Careers',    path: '/careers',  end: false, sectionId: null },
   { name: 'Press',      path: '/press',    end: false, sectionId: null },
-  { name: 'Contact Us', path: '/',         end: false, sectionId: 'section-contact' },
+  { name: 'Contact Us', path: '/contact',  end: false, sectionId: null },
 ];
 
 const UserLayout = () => {

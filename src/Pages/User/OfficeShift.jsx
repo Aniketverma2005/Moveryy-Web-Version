@@ -4,12 +4,12 @@ import {
   MdOutlinePerson, MdClose, MdArrowBack, MdSearch, MdLocationOn,
   MdMyLocation, MdOutlineApartment, MdOutlineFilterList,
   MdOutlineStar as MdStar, MdOutlineInfo, MdOutlineKeyboardArrowDown,
+  MdHistory, MdSecurity,
 } from 'react-icons/md';
 import { NavLink } from 'react-router-dom';
 import { cardVariants, containerVariants, pageVariants } from '../../utils/animations';
 import logo from '../../assets/logo2.png';
 
-// ── helpers ───────────────────────────────────────────────────────────────────
 const getInitials = () => {
   try {
     const u = JSON.parse(localStorage.getItem('moveryy_user'));
@@ -19,7 +19,6 @@ const getInitials = () => {
   return null;
 };
 
-// ── LocationSearchOverlay — same implementation as MoveryyGo ─────────────────
 const LocationSearchOverlay = ({ type, onSelect, onClose }) => {
   const [query,      setQuery]      = useState('');
   const [results,    setResults]    = useState([]);
@@ -99,8 +98,7 @@ const LocationSearchOverlay = ({ type, onSelect, onClose }) => {
         <button onClick={handleGPS} disabled={gpsLoading}
           className="w-full flex items-center gap-4 px-5 py-4 hover:bg-gray-50 transition-colors border-b border-gray-100">
           <div className="w-9 h-9 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
-            {gpsLoading
-              ? <span className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            {gpsLoading ? <span className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
               : <MdMyLocation size={18} className="text-blue-600" />}
           </div>
           <div className="text-left">
@@ -128,8 +126,20 @@ const LocationSearchOverlay = ({ type, onSelect, onClose }) => {
         ))}
         {!loading && query.length >= 2 && results.length === 0 && (
           <div className="flex flex-col items-center py-14 gap-2">
-            <MdLocationOn size={32} className="text-gray-300" />
-            <p className="text-sm text-gray-400">No locations found</p>
+            <MdSearch size={36} className="text-gray-200" />
+            <p className="text-sm text-gray-400">No results for "{query}"</p>
+          </div>
+        )}
+        {!loading && query.length < 2 && (
+          <div className="px-5 pt-5">
+            <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Popular Cities</p>
+            {['Delhi', 'Mumbai', 'Bangalore', 'Hyderabad', 'Chennai', 'Kolkata'].map(city => (
+              <button key={city} onClick={() => { setQuery(city); searchLocations(city); }}
+                className="w-full flex items-center gap-3 py-3 border-b border-gray-50 hover:bg-gray-50 transition-colors text-left">
+                <MdHistory size={15} className="text-gray-300 flex-shrink-0" />
+                <span className="text-sm text-gray-600">{city}</span>
+              </button>
+            ))}
           </div>
         )}
       </div>
@@ -137,28 +147,18 @@ const LocationSearchOverlay = ({ type, onSelect, onClose }) => {
   );
 };
 
-// ── Office mover data ─────────────────────────────────────────────────────────
+// ── Office mover data — unchanged ─────────────────────────────────────────────
 const movers = [
   { name: 'Corporate Move Pro',    rating: 4.8, reviews: 142, distance: '1.2 km away', time: '1-2 days', price: '₹3,500', tags: ['Legal Offices', 'IT Equipment', 'Secure Documents', 'Weekend Service'], color: 'text-blue-600'   },
   { name: 'BizShift Solutions',    rating: 4.8, reviews: 107, distance: '2.1 km away', time: '2-3 days', price: '₹2,800', tags: ['Small Offices', 'Quick Setup', 'Budget Friendly', 'Insurance Included'],  color: 'text-red-500'    },
   { name: 'Enterprise Relocators', rating: 4.7, reviews: 189, distance: '3.6 km away', time: '1 day',    price: '₹4,200', tags: ['Large Offices', 'High Value Removal', 'Premium Service', 'Same Day'],      color: 'text-green-500'  },
   { name: 'StartupMove Express',   rating: 4.6, reviews: 152, distance: '2.8 km away', time: '2-3 days', price: '₹2,200', tags: ['Co-working Spaces', 'Quick Moves', 'Startup Friendly', 'Flexible Timing'], color: 'text-purple-500' },
 ];
+const specialReqs = ['Fragile equipment handling', 'IT setup assistance', 'Furniture assembly/disassembly', 'Secure document handling'];
 
-const specialReqs = [
-  'Fragile equipment handling',
-  'IT setup assistance',
-  'Furniture assembly/disassembly',
-  'Secure document handling',
-];
-
-// ── Mover card ────────────────────────────────────────────────────────────────
 const MoverCard = ({ m }) => (
-  <motion.div
-    variants={cardVariants}
-    whileHover={{ y: -4, boxShadow: '0 12px 32px rgba(0,0,0,0.10)' }}
-    className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm flex flex-col"
-  >
+  <motion.div variants={cardVariants} whileHover={{ y: -4, boxShadow: '0 12px 32px rgba(0,0,0,0.10)' }}
+    className="bg-white rounded-2xl p-6 border border-gray-200 shadow-sm flex flex-col">
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-3">
         <div className="w-11 h-11 bg-blue-50 rounded-xl flex items-center justify-center">
@@ -170,28 +170,19 @@ const MoverCard = ({ m }) => (
             <MdStar size={12} className="text-yellow-400" />
             <span className="font-semibold">{m.rating}</span>
             <span className="text-gray-300">({m.reviews})</span>
-            <span className="text-gray-300">·</span>
-            <span>{m.distance}</span>
-            <span className="text-gray-300">·</span>
-            <span>{m.time}</span>
+            <span className="text-gray-300">·</span><span>{m.distance}</span>
+            <span className="text-gray-300">·</span><span>{m.time}</span>
           </div>
         </div>
       </div>
       <span className="text-xs font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full border border-green-100">Verified</span>
     </div>
     <div className="flex flex-wrap gap-2 mb-5">
-      {m.tags.map(t => (
-        <span key={t} className="px-2.5 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-full border border-blue-100">{t}</span>
-      ))}
+      {m.tags.map(t => <span key={t} className="px-2.5 py-1 text-xs font-medium text-blue-600 bg-blue-50 rounded-full border border-blue-100">{t}</span>)}
     </div>
     <div className="flex items-center justify-between pt-4 border-t border-gray-100 mt-auto">
-      <div>
-        <p className="text-xl font-bold text-blue-600">{m.price}</p>
-        <p className="text-xs text-gray-400">starting from</p>
-      </div>
-      <button className="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors active:scale-95">
-        Book Now
-      </button>
+      <div><p className="text-xl font-bold text-blue-600">{m.price}</p><p className="text-xs text-gray-400">starting from</p></div>
+      <button className="px-5 py-2.5 text-sm font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition-colors active:scale-95">Book Now</button>
     </div>
   </motion.div>
 );
@@ -199,7 +190,6 @@ const MoverCard = ({ m }) => (
 // ── Main page ─────────────────────────────────────────────────────────────────
 const OfficeRelocationSearchPage = () => {
   const initials = getInitials();
-
   const [pickup,          setPickup]          = useState('');
   const [drop,            setDrop]            = useState('');
   const [locationOverlay, setLocationOverlay] = useState(null);
@@ -216,89 +206,111 @@ const OfficeRelocationSearchPage = () => {
     <motion.div variants={pageVariants} initial="hidden" animate="show"
       className="min-h-screen bg-[#F3F4F6] font-sans">
 
-      {/* ── Navbar — identical to MoveryyGo ── */}
-      <header className="bg-white border-b border-gray-200 sticky top-0 z-40">
-        <div className="w-full px-6 md:px-10 h-14 flex items-center justify-between">
-          <NavLink to="/"><img src={logo} alt="Moveryy" className="h-9 w-auto object-contain" /></NavLink>
-          <NavLink to="/profile">
-            <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center font-semibold text-sm hover:bg-blue-700 transition-colors cursor-pointer">
-              {initials ?? <MdOutlinePerson size={18} />}
-            </div>
-          </NavLink>
-        </div>
-      </header>
-
-      {/* ── Location overlay ── */}
       <AnimatePresence>
         {locationOverlay && (
           <LocationSearchOverlay
             type={locationOverlay}
-            onSelect={val => {
-              if (locationOverlay === 'pickup') setPickup(val);
-              else setDrop(val);
-              setLocationOverlay(null);
-            }}
+            onSelect={val => { if (locationOverlay === 'pickup') setPickup(val); else setDrop(val); setLocationOverlay(null); }}
             onClose={() => setLocationOverlay(null)}
           />
         )}
       </AnimatePresence>
 
-      {/* ── Main content — MoveryyGo layout ── */}
-      <div className="min-h-[calc(100vh-56px)] bg-white">
-        <div className="w-full px-6 md:px-10 pt-8 pb-10">
+      {/* ── Same layout as House_Moving / MoveryyGo ── */}
+      <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.25 }}
+        className="min-h-[calc(100vh)] bg-white relative overflow-hidden flex flex-col border-b border-gray-200">
 
-          {/* Heading + subtitle */}
-          <h1 className="text-2xl font-bold text-gray-900 mb-1">Office Shifting</h1>
+        {/* Top badge strip */}
+        <div className="w-full flex items-center justify-center gap-6 py-3 bg-white border-b border-gray-100 relative z-10">
+          <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <img src="https://flagcdn.com/w40/in.png" alt="India flag" className="w-6 h-4 object-cover rounded-sm" style={{ display: 'inline-block' }} />
+            Made for India
+          </span>
+          <span className="w-px h-5 bg-gray-200" />
+          <span className="flex items-center gap-2 text-sm font-medium text-gray-700">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#EF4444" className="flex-shrink-0">
+              <path d="M12 21.593c-5.63-5.539-11-10.297-11-14.402 0-3.791 3.068-5.191 5.281-5.191 1.312 0 4.151.501 5.719 4.457 1.59-3.968 4.464-4.447 5.726-4.447 2.54 0 5.274 1.621 5.274 5.181 0 4.069-5.136 8.625-11 14.402z"/>
+            </svg>
+            Crafted in Noida
+          </span>
+        </div>
+
+        {/* Decorative left location pin */}
+        <div className="absolute left-0 bottom-16 pointer-events-none select-none z-0 opacity-[0.07]">
+          <svg width="120" height="160" viewBox="0 0 120 160" fill="none">
+            <path d="M60 0C26.863 0 0 26.863 0 60c0 45 60 100 60 100S120 105 120 60C120 26.863 93.137 0 60 0z" fill="#3B82F6"/>
+            <circle cx="60" cy="60" r="24" fill="white"/>
+          </svg>
+        </div>
+
+        {/* Decorative right location pin */}
+        <div className="absolute right-0 top-16 pointer-events-none select-none z-0 opacity-[0.07]">
+          <svg width="80" height="110" viewBox="0 0 120 160" fill="none">
+            <path d="M60 0C26.863 0 0 26.863 0 60c0 45 60 100 60 100S120 105 120 60C120 26.863 93.137 0 60 0z" fill="#3B82F6"/>
+            <circle cx="60" cy="60" r="24" fill="white"/>
+          </svg>
+        </div>
+
+        {/* City skyline watermark */}
+        <div className="absolute right-0 bottom-0 pointer-events-none select-none z-0 opacity-[0.06]">
+          <svg width="320" height="200" viewBox="0 0 320 200" fill="none">
+            <rect x="10"  y="100" width="30" height="100" fill="#3B82F6"/><rect x="18"  y="80"  width="14" height="20"  fill="#3B82F6"/>
+            <rect x="48"  y="60"  width="28" height="140" fill="#3B82F6"/><rect x="54"  y="40"  width="10" height="20"  fill="#3B82F6"/>
+            <rect x="84"  y="80"  width="22" height="120" fill="#3B82F6"/>
+            <rect x="114" y="50"  width="36" height="150" fill="#3B82F6"/><rect x="120" y="30"  width="8"  height="20"  fill="#3B82F6"/>
+            <rect x="130" y="20"  width="8"  height="30"  fill="#3B82F6"/>
+            <rect x="158" y="70"  width="26" height="130" fill="#3B82F6"/>
+            <rect x="192" y="90"  width="20" height="110" fill="#3B82F6"/>
+            <rect x="220" y="55"  width="32" height="145" fill="#3B82F6"/><rect x="226" y="35"  width="8"  height="20"  fill="#3B82F6"/>
+            <rect x="260" y="75"  width="24" height="125" fill="#3B82F6"/>
+            <rect x="292" y="95"  width="28" height="105" fill="#3B82F6"/>
+            <rect x="16"  y="110" width="6" height="6" fill="white" opacity="0.4"/>
+            <rect x="26"  y="110" width="6" height="6" fill="white" opacity="0.4"/>
+            <rect x="52"  y="70"  width="5" height="5" fill="white" opacity="0.4"/>
+            <rect x="62"  y="70"  width="5" height="5" fill="white" opacity="0.4"/>
+            <rect x="118" y="60"  width="6" height="6" fill="white" opacity="0.4"/>
+            <rect x="132" y="60"  width="6" height="6" fill="white" opacity="0.4"/>
+          </svg>
+        </div>
+
+        {/* Main content */}
+        <div className="flex-1 flex flex-col w-full px-6 md:px-10 pt-8 pb-10 relative z-10">
+
+          <h1 className="text-2xl font-bold text-gray-900 mb-1">Welcome to <span className="text-blue-600">Office Shifting!</span></h1>
           <p className="text-gray-500 text-sm mb-8">Secure, efficient office relocation with minimal downtime</p>
 
-          {/* ── Location fields — identical dotted connector as MoveryyGo ── */}
+          {/* Location fields */}
           <div className="w-full relative">
-            <div style={{
-              position: 'absolute', left: '24px', top: '26px',
-              width: '1.5px', height: 'calc(100% - 52px)',
-              background: 'repeating-linear-gradient(to bottom,#9CA3AF 0,#9CA3AF 4px,transparent 4px,transparent 9px)',
-              zIndex: 1,
-            }} />
-
-            {/* Current office (pickup) */}
-            <div className="w-full flex items-center gap-4 px-5 py-4 bg-[#F3F4F6] cursor-pointer hover:bg-[#EAECEE] transition-colors"
-              onClick={() => setLocationOverlay('pickup')}>
+            <div style={{ position: 'absolute', left: '24px', top: '26px', width: '1.5px', height: 'calc(100% - 52px)', background: 'repeating-linear-gradient(to bottom,#9CA3AF 0,#9CA3AF 4px,transparent 4px,transparent 9px)', zIndex: 1 }} />
+            <div className="w-full flex items-center gap-4 px-5 py-4 bg-[#F3F4F6] cursor-pointer hover:bg-[#EAECEE] transition-colors" onClick={() => setLocationOverlay('pickup')}>
               <div style={{ width: 16, height: 16, borderRadius: '50%', border: '4px solid #22C55E', backgroundColor: '#fff', flexShrink: 0, zIndex: 2 }} />
-              <span className={`flex-1 text-sm select-none ${pickup ? 'text-gray-800 font-medium' : 'text-gray-400'}`}>
-                {pickup || 'Enter current office location here'}
-              </span>
+              <span className={`flex-1 text-sm select-none ${pickup ? 'text-gray-800 font-medium' : 'text-gray-400'}`}>{pickup || 'Where are you...'}</span>
               {pickup && <button onClick={e => { e.stopPropagation(); setPickup(''); }}><MdClose size={14} className="text-gray-400 hover:text-gray-600" /></button>}
             </div>
-
-            {/* Gap */}
             <div className="h-7 bg-white" />
-
-            {/* New office (drop) */}
-            <div className="w-full flex items-center gap-4 px-5 py-4 bg-[#F3F4F6] cursor-pointer hover:bg-[#EAECEE] transition-colors"
-              onClick={() => setLocationOverlay('drop')}>
+            <div className="w-full flex items-center gap-4 px-5 py-4 bg-[#F3F4F6] cursor-pointer hover:bg-[#EAECEE] transition-colors" onClick={() => setLocationOverlay('drop')}>
               <div style={{ width: 16, height: 16, borderRadius: '50%', border: '4px solid #EF4444', backgroundColor: '#fff', flexShrink: 0, zIndex: 2 }} />
-              <span className={`flex-1 text-sm select-none ${drop ? 'text-gray-800 font-medium' : 'text-gray-400'}`}>
-                {drop || 'Enter new office location here'}
-              </span>
+              <span className={`flex-1 text-sm select-none ${drop ? 'text-gray-800 font-medium' : 'text-gray-400'}`}>{drop || 'Where are you moving...'}</span>
               {drop && <button onClick={e => { e.stopPropagation(); setDrop(''); }}><MdClose size={14} className="text-gray-400 hover:text-gray-600" /></button>}
             </div>
           </div>
 
-          {/* Continue button — identical to MoveryyGo */}
+          
+
+          {/* CONTINUE button — same as MoveryyGo */}
           <button onClick={handleContinue}
             disabled={searching || !pickup.trim() || !drop.trim()}
-            className="mt-5 w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-40 disabled:cursor-not-allowed text-white font-semibold py-3.5 text-sm tracking-wide uppercase transition-colors flex items-center justify-center gap-2">
-            {searching
-              ? <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Searching…</>
-              : 'Find Office Movers'
-            }
+            className="mt-5 w-full bg-[#7B9FE8] hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-4 text-sm tracking-widest uppercase rounded-sm transition-colors flex items-center justify-center gap-2">
+            {searching ? <><span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" /> Searching…</> : 'CONTINUE'}
           </button>
 
-          <p className="text-center text-gray-400 text-xs mt-5">
-            Secure office shifting with minimal downtime &amp; full support
-          </p>
+          {/* Shield badge — same as MoveryyGo */}
+          <div className="flex items-center justify-center gap-2 mt-6">
+            <MdSecurity size={20} className="text-blue-400 flex-shrink-0" />
+            <p className="text-gray-400 text-sm">Smart ridepooling &amp; sharing</p>
+          </div>
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 };

@@ -26,6 +26,7 @@ import OfficeRelocationSearchPage from './Pages/User/OfficeShift.jsx';
 import MoveryyGoPage from './Pages/User/MoveryyGo.jsx';
 import RidesPage from './Pages/User/Rides.jsx';
 import StoragePage from './Pages/User/Storage.jsx';
+import ContactUs from './Pages/User/ContactUs.jsx';
 
 // Transport/Driver Pages
 import TransportHome from './Pages/Transport/Home.jsx';
@@ -78,9 +79,8 @@ function App() {
                     <Route path="compare" element={<ComparePage />} />
                     <Route path="service/:id" element={<ServiceDetail />} />
                     <Route path="bookings" element={<BookingsPage />} />
-
-                    {/* ADDED PROFILE ROUTE HERE */}
                     <Route path="profile" element={<Userprofile />} />
+                    <Route path="contact" element={<ContactUs />} />
                 </Route>
 
                 {/* Admin Routes */}

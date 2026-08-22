@@ -680,7 +680,6 @@ const MoveryyGoPage = () => {
             onClose={() => setLocationOverlay(null)} />
         )}
       </AnimatePresence>
-
     </motion.div>
   );
 };
