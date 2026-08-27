@@ -109,6 +109,16 @@ const OrgRegistration = () => {
     try {
       const token = localStorage.getItem('moveryy_token');
 
+      // Guard: if no token, session expired — redirect to login
+      if (!token) {
+        setApiError('Session expired. Please log in again.');
+        setLoading(false);
+        navigate('/login');
+        return;
+      }
+
+      console.log('📋 Token present:', token.substring(0, 30) + '...');
+
       // Send text fields as urlencoded — avoids multer vs express-fileupload conflict.
       // Both multer and express-fileupload only activate on multipart/form-data.
       // urlencoded bodies go straight through to express.urlencoded → req.body. ✅
