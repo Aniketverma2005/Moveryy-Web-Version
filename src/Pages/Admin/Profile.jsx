@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { useSelector } from 'react-redux';
 import {
   MdOutlineVerified, MdOutlineStar, MdOutlinePeople,
   MdOutlineAccessTime, MdOutlineAttachMoney, MdOutlineAddLocation,
@@ -47,18 +48,37 @@ const RatingBar = ({ stars, percentage }) => (
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 const ProfilePage = () => {
-  const [org, setOrg]         = useState(null);
+  const selectedOrg         = useSelector((state) => state.users.organization);
+  const [org, setOrg]       = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    api.get('/api/v1/organizations/all')
-      .then(res => {
-        const list = res?.data || [];
-        if (list.length > 0) setOrg(list[0]);
-      })
-      .catch(err => console.error('❌ Fetch org error:', err))
-      .finally(() => setLoading(false));
-  }, []);
+    setLoading(true);
+
+    // Always fetch fresh org data from backend — ensures status is up to date after switch
+    const orgId = selectedOrg?.organizationId ?? selectedOrg?.id ?? null;
+
+    if (orgId) {
+      // Fetch the specific org by fetching all and finding the selected one
+      api.get('/api/v1/organizations/all')
+        .then(res => {
+          const list     = res?.organizations ?? res?.data ?? [];
+          const fresh    = list.find(o => (o.organizationId ?? o.id) == orgId) ?? selectedOrg;
+          setOrg(fresh);
+        })
+        .catch(() => setOrg(selectedOrg)) // fallback to Redux if fetch fails
+        .finally(() => setLoading(false));
+    } else {
+      // No selected org in Redux — fetch first available
+      api.get('/api/v1/organizations/all')
+        .then(res => {
+          const list = res?.organizations ?? res?.data ?? [];
+          if (list.length > 0) setOrg(list[0]);
+        })
+        .catch(err => console.error('❌ Fetch org error:', err))
+        .finally(() => setLoading(false));
+    }
+  }, [selectedOrg?.organizationId]);
 
   const orgName     = cap(org?.organizationName || org?.businessName || 'Organisation');
   const businessName = cap(org?.businessName || '—');
