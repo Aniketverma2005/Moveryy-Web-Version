@@ -47,9 +47,10 @@ import OrgRegistration from './Pages/Admin/OrgRegistration.jsx';
 
 // Import the new Profile Page
 import Userprofile from './Pages/User/Userprofile.jsx';
+import CareersPage from './Pages/User/Careers.jsx';
 
 function App() {
-
+//https://us-east-1.signin.aws/platform/d-9067642ac7/login?workflowStateHandle=e57247bf-98aa-426d-83c2-bf0b33fc427d
     return (
         <>
             <ScrollToTop />
@@ -80,7 +81,6 @@ function App() {
                     <Route path="service/:id" element={<ServiceDetail />} />
                     <Route path="bookings" element={<BookingsPage />} />
                     <Route path="profile" element={<Userprofile />} />
-                    <Route path="contact" element={<ContactUs />} />
                 </Route>
 
                 {/* Admin Routes */}
